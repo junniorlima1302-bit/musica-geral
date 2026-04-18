@@ -531,3 +531,32 @@ button {
 }html {
   scroll-behavior: smooth;
 }
+#escala-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.escala-titulo {
+  background: #1b4580;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.escala-data {
+  background: #eaf1fb;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.escala-item {
+  background: #ffffff;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}

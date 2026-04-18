@@ -454,3 +454,37 @@ async function carregarRespostas() {
     });
   });
 });
+async function carregarEscala() {
+  const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTDAyfgYeK7Pw5JsEtLu88ep9ix5fvdVygcB6eECwj1r8CHd5zF4Mgg9apAla3S0LHSogjZpJSBboWp/pub?gid=0&single=true&output=csv";
+
+  const res = await fetch(url);
+  const texto = await res.text();
+
+  const linhas = texto.split("\n").map(l => l.split(","));
+
+  renderEscala(linhas);
+}
+
+function renderEscala(linhas) {
+  const container = document.getElementById("escala-container");
+  container.innerHTML = "";
+
+  linhas.forEach(linha => {
+    const conteudo = linha.join(" ").trim();
+
+    if (!conteudo) return;
+
+    const div = document.createElement("div");
+
+    if (conteudo.includes("MISSA") || conteudo.includes("SEMANA")) {
+      div.className = "escala-titulo";
+    } else if (conteudo.match(/\d{1,2}\/|\d{1,2}abr/)) {
+      div.className = "escala-data";
+    } else {
+      div.className = "escala-item";
+    }
+
+    div.innerText = conteudo;
+    container.appendChild(div);
+  });
+}

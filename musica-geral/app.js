@@ -442,4 +442,15 @@ async function carregarRespostas() {
   });
 }function voltarPagina() {
   window.history.back();
-}
+}document.addEventListener("DOMContentLoaded", () => {
+  const inputs = document.querySelectorAll("input");
+
+  inputs.forEach(input => {
+    input.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        login(); // 👈 chama sua função de login
+      }
+    });
+  });
+});

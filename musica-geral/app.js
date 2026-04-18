@@ -488,3 +488,4 @@ function renderEscala(linhas) {
     container.appendChild(div);
   });
 }
+window.onload = carregarEscala;

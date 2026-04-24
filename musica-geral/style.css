@@ -657,4 +657,10 @@ button {
   font-size: 12px;
   color: #888;
   margin-top: 4px;
+}.busca-box {
+  align-items: center;
+}
+
+.busca-box input {
+  flex: 1;
 }

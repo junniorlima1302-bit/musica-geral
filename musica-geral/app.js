@@ -416,7 +416,5 @@ async function fazerLogin() {
     return;
   }
 
-  alert("Login realizado com sucesso!");
-
   window.location.href = "dashboard.html";
 }

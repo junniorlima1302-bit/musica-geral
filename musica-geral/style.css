@@ -231,4 +231,33 @@ textarea {
   padding: 10px;
   border-radius: 8px;
   margin-top: 6px;
+}.grupo-evento {
+  margin-top: 25px;
+}
+
+/* título do evento */
+.grupo-evento h3 {
+  background: #1b4580;
+  color: white;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* container das pessoas */
+.lista-pessoas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+/* cada pessoa */
+.item-pessoa {
+  background: #f5f5f5;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
 }

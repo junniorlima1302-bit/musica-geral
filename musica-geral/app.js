@@ -392,16 +392,8 @@ async function carregarRespostas() {
 function renderizarRespostas(listaDados) {
 
   const lista = document.getElementById("lista-respostas");
-  if (!lista) return;
-
   lista.innerHTML = "";
 
-  if (listaDados.length === 0) {
-    lista.innerHTML = "<p>Nenhuma disponibilidade encontrada.</p>";
-    return;
-  }
-
-  // AGRUPAR POR EVENTO
   const agrupado = {};
 
   listaDados.forEach(item => {
@@ -414,28 +406,32 @@ function renderizarRespostas(listaDados) {
     agrupado[chave].push(item);
   });
 
-  // RENDERIZAR
   Object.keys(agrupado).forEach(evento => {
 
     const grupoDiv = document.createElement("div");
     grupoDiv.className = "grupo-evento";
 
-    grupoDiv.innerHTML = `<h3>${evento}</h3>`;
+    const titulo = document.createElement("h3");
+    titulo.textContent = evento;
+
+    const listaPessoas = document.createElement("div");
+    listaPessoas.className = "lista-pessoas";
 
     agrupado[evento].forEach(pessoa => {
 
       const item = document.createElement("div");
       item.className = "item-pessoa";
+      item.textContent = pessoa.nome_pessoa;
 
-      item.textContent = `${pessoa.nome_pessoa} - ${pessoa.ministerio}`;
-
-      grupoDiv.appendChild(item);
+      listaPessoas.appendChild(item);
     });
+
+    grupoDiv.appendChild(titulo);
+    grupoDiv.appendChild(listaPessoas);
 
     lista.appendChild(grupoDiv);
   });
 }
-
 //////////////////////////////////////////////////////
 // FILTRO EVENTOS
 //////////////////////////////////////////////////////

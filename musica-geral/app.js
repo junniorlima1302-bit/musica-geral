@@ -418,5 +418,5 @@ async function fazerLogin() {
 
   alert("Login realizado com sucesso!");
 
-  window.location.href = "respostas.html";
+  window.location.href = "dashboard.html";
 }

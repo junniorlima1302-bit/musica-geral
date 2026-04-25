@@ -53,130 +53,6 @@ function continuar() {
 }
 
 //////////////////////////////////////////////////////
-// FILTROS
-//////////////////////////////////////////////////////
-
-let filtroAtual = "todos";
-let filtroEvento = "todos";
-let filtroPessoa = "";
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  const selectMin = document.getElementById("filtroMinisterio");
-  const selectEv = document.getElementById("filtroEvento");
-  const inputBusca = document.getElementById("buscaNome");
-
-  if (selectMin) {
-    selectMin.addEventListener("change", () => {
-      filtroAtual = normalizar(selectMin.value);
-      carregarRespostas();
-    });
-  }
-
-  if (selectEv) {
-    selectEv.addEventListener("change", () => {
-      filtroEvento = normalizar(selectEv.value);
-      carregarRespostas();
-    });
-  }
-
-  if (inputBusca) {
-    inputBusca.addEventListener("keypress", function (e) {
-      if (e.key === "Enter") aplicarBusca();
-    });
-  }
-});
-
-function aplicarBusca() {
-  const input = document.getElementById("buscaNome");
-  if (!input) return;
-
-  filtroPessoa = normalizar(input.value);
-  carregarRespostas();
-}
-
-//////////////////////////////////////////////////////
-// CARREGAR RESPOSTAS
-//////////////////////////////////////////////////////
-
-async function carregarRespostas() {
-
-  const { data, error } = await supabase
-    .from("disponibilidades")
-    .select("*");
-
-  if (error) return console.error(error);
-
-  const lista = document.getElementById("lista-respostas");
-  if (!lista) return;
-
-  lista.innerHTML = "";
-
-  let eventos = {};
-  let eventosUnicos = new Set();
-
-  data.forEach(item => {
-
-    if (filtroAtual !== "todos" && normalizar(item.ministerio) !== normalizar(filtroAtual)) return;
-    if (filtroEvento !== "todos" && normalizar(item.evento) !== normalizar(filtroEvento)) return;
-    if (filtroPessoa && !normalizar(item.nome_pessoa).includes(filtroPessoa)) return;
-
-    const chave = `${item.evento} - ${item.turno}`;
-    eventosUnicos.add(item.evento);
-
-    if (!eventos[chave]) eventos[chave] = [];
-    eventos[chave].push(item);
-  });
-
-  Object.keys(eventos).forEach(evento => {
-
-    const div = document.createElement("div");
-    div.className = "grupo";
-
-    const titulo = document.createElement("h3");
-    titulo.innerText = evento;
-
-    const container = document.createElement("div");
-    container.className = "nomes-container";
-
-    eventos[evento].forEach(pessoa => {
-
-      const tag = document.createElement("div");
-      tag.className = "nome-tag";
-
-      tag.innerHTML = `
-        <div onclick="editarDisponibilidade('${pessoa.id}')" style="cursor:pointer;">
-          ${pessoa.nome_pessoa} (${pessoa.ministerio})
-        </div>
-      `;
-
-      container.appendChild(tag);
-    });
-
-    div.appendChild(titulo);
-    div.appendChild(container);
-    lista.appendChild(div);
-  });
-}
-
-//////////////////////////////////////////////////////
-// EDITAR DISPONIBILIDADE
-//////////////////////////////////////////////////////
-
-async function editarDisponibilidade(id) {
-
-  const novoTurno = prompt("Editar turno:");
-  if (!novoTurno) return;
-
-  await supabase
-    .from("disponibilidades")
-    .update({ turno: novoTurno })
-    .eq("id", id);
-
-  carregarRespostas();
-}
-
-//////////////////////////////////////////////////////
 // CARREGAR DISPONIBILIDADES
 //////////////////////////////////////////////////////
 
@@ -288,15 +164,20 @@ async function fazerLogin() {
 }
 
 //////////////////////////////////////////////////////
-// COMPROMISSOS
+// COMPROMISSOS (CORRIGIDO DEFINITIVO)
 //////////////////////////////////////////////////////
 
 async function carregarCompromissos() {
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("compromissos")
     .select("*")
     .order("id");
+
+  if (error) {
+    console.error(error);
+    return;
+  }
 
   const lista = document.getElementById("lista-compromissos");
   if (!lista) return;
@@ -305,12 +186,15 @@ async function carregarCompromissos() {
 
   data.forEach(item => {
 
+    // 🔥 pega qualquer campo de texto automaticamente
+    const texto = Object.values(item).find(v => typeof v === "string") || "Sem conteúdo";
+
     const div = document.createElement("div");
     div.className = "item-compromisso";
 
     div.innerHTML = `
       <input type="checkbox" value="${item.id}">
-      <span>${item.texto || "Sem conteúdo"}</span>
+      <span>${texto}</span>
     `;
 
     lista.appendChild(div);
@@ -321,11 +205,25 @@ async function cadastrarTudo() {
 
   const texto = document.getElementById("entrada").value;
 
-  const linhas = texto.split("\n").filter(l => l.trim() !== "");
+  if (!texto.trim()) {
+    alert("Digite os compromissos.");
+    return;
+  }
+
+  const linhas = texto
+    .split("\n")
+    .map(l => l.trim())
+    .filter(l => l !== "");
 
   const dados = linhas.map(l => ({ texto: l }));
 
-  await supabase.from("compromissos").insert(dados);
+  const { error } = await supabase.from("compromissos").insert(dados);
+
+  if (error) {
+    console.error(error);
+    alert("Erro ao cadastrar.");
+    return;
+  }
 
   document.getElementById("entrada").value = "";
 
@@ -333,6 +231,8 @@ async function cadastrarTudo() {
 }
 
 async function limparTudo() {
+
+  if (!confirm("Apagar tudo?")) return;
 
   await supabase.from("compromissos").delete().neq("id", 0);
 
@@ -342,6 +242,11 @@ async function limparTudo() {
 async function excluirSelecionados() {
 
   const selecionados = document.querySelectorAll("#lista-compromissos input:checked");
+
+  if (selecionados.length === 0) {
+    alert("Selecione pelo menos um.");
+    return;
+  }
 
   const ids = Array.from(selecionados).map(cb => Number(cb.value));
 

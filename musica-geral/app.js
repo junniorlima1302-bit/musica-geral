@@ -34,7 +34,7 @@ function voltarPagina() {
 }
 
 //////////////////////////////////////////////////////
-// IDENTIFICAÇÃO (FUNCIONANDO COM RADIO)
+// IDENTIFICAÇÃO
 //////////////////////////////////////////////////////
 
 function continuar() {
@@ -231,8 +231,10 @@ async function editarDisponibilidade(id) {
     .eq("id", id);
 
   carregarRespostas();
-}//////////////////////////////////////////////////////
-// CARREGAR DISPONIBILIDADES (FALTAVA ISSO)
+}
+
+//////////////////////////////////////////////////////
+// CARREGAR DISPONIBILIDADES (VISUAL CORRETO)
 //////////////////////////////////////////////////////
 
 async function carregarDisponibilidades() {
@@ -261,44 +263,33 @@ async function carregarDisponibilidades() {
   Object.keys(grupos).forEach(nome => {
 
     const divGrupo = document.createElement("div");
+    divGrupo.className = "grupo";
 
     const titulo = document.createElement("h3");
     titulo.innerText = nome;
 
     divGrupo.appendChild(titulo);
 
+    const container = document.createElement("div");
+    container.className = "botoes";
+
     grupos[nome].forEach(turno => {
 
       const btn = document.createElement("button");
 
       btn.innerText = turno;
-      btn.style.margin = "5px";
-      btn.style.padding = "10px";
-      btn.style.borderRadius = "8px";
-      btn.style.border = "none";
-      btn.style.cursor = "pointer";
-      btn.style.background = "#eee";
+      btn.className = "btn-disponibilidade";
 
       btn.dataset.valor = `${nome} | ${turno}`;
-      btn.dataset.selecionado = "false";
 
       btn.onclick = () => {
-        const ativo = btn.dataset.selecionado === "true";
-
-        btn.dataset.selecionado = (!ativo).toString();
-
-        if (btn.dataset.selecionado === "true") {
-          btn.style.background = "#1b4580";
-          btn.style.color = "white";
-        } else {
-          btn.style.background = "#eee";
-          btn.style.color = "black";
-        }
+        btn.classList.toggle("ativo");
       };
 
-      divGrupo.appendChild(btn);
+      container.appendChild(btn);
     });
 
+    divGrupo.appendChild(container);
     lista.appendChild(divGrupo);
   });
 }

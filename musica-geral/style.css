@@ -710,4 +710,49 @@ button {
   text-align: center;
   color: #1b4580;
   margin: 20px 0 10px;
+}/* FORÇA BOTÃO VISÍVEL */
+.btn-disponibilidade {
+  opacity: 1 !important;
+  background: #f2f2f2 !important;
+  color: #222 !important;
+  border: 1px solid #ccc !important;
+}
+
+/* HOVER */
+.btn-disponibilidade:hover {
+  background: #e0e0e0 !important;
+}
+
+/* ATIVO (SELECIONADO) */
+.btn-disponibilidade.ativo {
+  background: #1b4580 !important;
+  color: #fff !important;
+  border: none !important;
+}.botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn-disponibilidade {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  background: #f5f5f5;
+  color: #333;
+  cursor: pointer;
+  min-width: 180px;
+  transition: 0.2s;
+}
+
+.btn-disponibilidade:hover {
+  background: #eaeaea;
+}
+
+.btn-disponibilidade.ativo {
+  background: #1b4580;
+  color: white;
+  border: none;
+  box-shadow: 0 4px 10px rgba(27, 69, 128, 0.3);
 }

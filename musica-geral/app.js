@@ -34,6 +34,28 @@ function voltarPagina() {
 }
 
 //////////////////////////////////////////////////////
+// IDENTIFICAÇÃO (CORRIGIDO)
+//////////////////////////////////////////////////////
+
+function continuar() {
+  const nome = document.getElementById("nome")?.value;
+
+  const ministerioSelecionado = document.querySelector('input[name="ministerio"]:checked');
+
+  if (!nome || !ministerioSelecionado) {
+    alert("Preencha seu nome e selecione o ministério.");
+    return;
+  }
+
+  const ministerio = ministerioSelecionado.value;
+
+  localStorage.setItem("nome", nome);
+  localStorage.setItem("ministerio", ministerio);
+
+  window.location.href = "disponibilidade.html";
+}
+
+//////////////////////////////////////////////////////
 // FILTROS
 //////////////////////////////////////////////////////
 
@@ -81,6 +103,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function aplicarBusca() {
   const input = document.getElementById("buscaNome");
+  if (!input) return;
+
   filtroPessoa = normalizar(input.value);
   carregarRespostas();
 }
@@ -91,9 +115,14 @@ function aplicarBusca() {
 
 async function carregarRespostas() {
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("disponibilidades")
     .select("*");
+
+  if (error) {
+    console.error(error);
+    return;
+  }
 
   const lista = document.getElementById("lista-respostas");
   if (!lista) return;
@@ -107,12 +136,12 @@ async function carregarRespostas() {
 
     if (
       filtroAtual !== "todos" &&
-      normalizar(item.ministerio) !== filtroAtual
+      normalizar(item.ministerio) !== normalizar(filtroAtual)
     ) return;
 
     if (
       filtroEvento !== "todos" &&
-      normalizar(item.evento) !== filtroEvento
+      normalizar(item.evento) !== normalizar(filtroEvento)
     ) return;
 
     if (
@@ -127,7 +156,7 @@ async function carregarRespostas() {
     eventos[chave].push(item);
   });
 
-  // Preencher select de eventos (sem resetar)
+  // preencher select de eventos
   const selectEvento = document.getElementById("filtroEvento");
 
   if (selectEvento && selectEvento.options.length <= 1) {
@@ -139,7 +168,7 @@ async function carregarRespostas() {
     });
   }
 
-  // Renderização
+  // render
   Object.keys(eventos).forEach(evento => {
 
     const div = document.createElement("div");
@@ -161,9 +190,9 @@ async function carregarRespostas() {
       let info = "";
 
       if (pessoa.editado_por) {
-        const data = new Date(pessoa.editado_em).toLocaleString("pt-BR");
+        const dataFormatada = new Date(pessoa.editado_em).toLocaleString("pt-BR");
         info = `<div class="editado-info">
-          Editado por ${pessoa.editado_por} em ${data}
+          Editado por ${pessoa.editado_por} em ${dataFormatada}
         </div>`;
       }
 
@@ -204,25 +233,4 @@ async function editarDisponibilidade(id) {
     .eq("id", id);
 
   carregarRespostas();
-}//////////////////////////////////////////////////////
-// IDENTIFICAÇÃO
-//////////////////////////////////////////////////////
-
-function continuar() {
-  const nome = document.getElementById("nome")?.value;
-
-  // botão selecionado
-  const ministerioSelecionado = document.querySelector('.btn-ministerio.selecionado');
-
-  if (!nome || !ministerioSelecionado) {
-    alert("Preencha seu nome e selecione o ministério.");
-    return;
-  }
-
-  const ministerio = ministerioSelecionado.innerText;
-
-  localStorage.setItem("nome", nome);
-  localStorage.setItem("ministerio", ministerio);
-
-  window.location.href = "disponibilidade.html";
 }

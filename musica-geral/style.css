@@ -800,4 +800,19 @@ button {
   color: white;
   border: none;
   box-shadow: 0 3px 8px rgba(27, 69, 128, 0.3);
+}.container {
+  max-width: 1000px;
+}
+
+.botoes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.btn-disponibilidade {
+  padding: 8px;
+  font-size: 11px;
+  border-radius: 8px;
+  text-align: center;
 }

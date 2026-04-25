@@ -17,25 +17,23 @@
 
     <button class="btn-voltar" onclick="voltarPagina()">← Voltar</button>
 
-    <!-- TEXTAREA MELHORADA -->
-    <textarea 
-      id="entrada" 
-      placeholder="Digite os compromissos...
+    <textarea id="entrada" placeholder="Digite os compromissos...
 
-Use ENTER para separar cada item
-Use # para criar grupos (opcional)"
-    ></textarea>
+Use ENTER para separar
+Use # para criar grupos
 
-    <!-- BOTÕES -->
+Exemplo:
+# MISSAS DOMINICAIS
+DIA 3 - MISSA
+DIA 10 - MISSA"></textarea>
+
     <button onclick="cadastrarTudo()">Cadastrar</button>
     <button onclick="limparTudo()">Limpar Tudo</button>
     <button onclick="excluirSelecionados()">Excluir Selecionados</button>
 
-    <!-- LISTA -->
     <div id="lista-compromissos"></div>
   </div>
 
-  <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="supabase.js"></script>
   <script src="app.js"></script>

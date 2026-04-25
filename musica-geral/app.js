@@ -53,12 +53,20 @@ function continuar() {
 }
 
 //////////////////////////////////////////////////////
-// CARREGAR DISPONIBILIDADES
+// CARREGAR DISPONIBILIDADES (USANDO COMPROMISSOS)
 //////////////////////////////////////////////////////
 
 async function carregarDisponibilidades() {
 
-  const { data } = await supabase.from("compromissos").select("*");
+  const { data, error } = await supabase
+    .from("compromissos")
+    .select("*")
+    .order("nome");
+
+  if (error) {
+    console.error(error);
+    return;
+  }
 
   const lista = document.getElementById("lista-disponibilidade");
   if (!lista) return;
@@ -111,10 +119,15 @@ async function enviarDisponibilidade() {
   const nome = localStorage.getItem("nome");
   const ministerio = localStorage.getItem("ministerio");
 
+  if (!nome || !ministerio) {
+    alert("Volte e preencha seus dados.");
+    return;
+  }
+
   const selecionados = document.querySelectorAll(".btn-disponibilidade.ativo");
 
   if (selecionados.length === 0) {
-    alert("Selecione pelo menos uma.");
+    alert("Selecione pelo menos uma opção.");
     return;
   }
 
@@ -131,7 +144,15 @@ async function enviarDisponibilidade() {
     });
   });
 
-  await supabase.from("disponibilidades").insert(dados);
+  const { error } = await supabase
+    .from("disponibilidades")
+    .insert(dados);
+
+  if (error) {
+    console.error(error);
+    alert("Erro ao enviar.");
+    return;
+  }
 
   window.location.href = "index.html";
 }
@@ -160,11 +181,11 @@ async function fazerLogin() {
     return;
   }
 
-  window.location.href = "dashboard.html";
+  window.location.href = "compromissos.html";
 }
 
 //////////////////////////////////////////////////////
-// COMPROMISSOS (CORRIGIDO DEFINITIVO)
+// COMPROMISSOS (100% COMPATÍVEL COM SEU BANCO)
 //////////////////////////////////////////////////////
 
 async function carregarCompromissos() {
@@ -172,7 +193,7 @@ async function carregarCompromissos() {
   const { data, error } = await supabase
     .from("compromissos")
     .select("*")
-    .order("id");
+    .order("nome");
 
   if (error) {
     console.error(error);
@@ -184,22 +205,47 @@ async function carregarCompromissos() {
 
   lista.innerHTML = "";
 
+  let grupos = {};
+
   data.forEach(item => {
+    if (!grupos[item.nome]) grupos[item.nome] = [];
+    grupos[item.nome].push(item);
+  });
 
-    // 🔥 pega qualquer campo de texto automaticamente
-    const texto = Object.values(item).find(v => typeof v === "string") || "Sem conteúdo";
+  Object.keys(grupos).forEach(nome => {
 
-    const div = document.createElement("div");
-    div.className = "item-compromisso";
+    const divGrupo = document.createElement("div");
+    divGrupo.className = "grupo";
 
-    div.innerHTML = `
-      <input type="checkbox" value="${item.id}">
-      <span>${texto}</span>
-    `;
+    const titulo = document.createElement("h3");
+    titulo.innerText = nome;
 
-    lista.appendChild(div);
+    const container = document.createElement("div");
+    container.className = "lista-itens";
+
+    grupos[nome].forEach(item => {
+
+      const div = document.createElement("div");
+      div.className = "item-compromisso";
+
+      div.innerHTML = `
+        <input type="checkbox" value="${item.id}">
+        <span>${item.turno}</span>
+      `;
+
+      container.appendChild(div);
+    });
+
+    divGrupo.appendChild(titulo);
+    divGrupo.appendChild(container);
+
+    lista.appendChild(divGrupo);
   });
 }
+
+//////////////////////////////////////////////////////
+// CADASTRAR COMPROMISSOS
+//////////////////////////////////////////////////////
 
 async function cadastrarTudo() {
 
@@ -210,14 +256,27 @@ async function cadastrarTudo() {
     return;
   }
 
-  const linhas = texto
-    .split("\n")
-    .map(l => l.trim())
-    .filter(l => l !== "");
+  const linhas = texto.split("\n").filter(l => l.trim() !== "");
 
-  const dados = linhas.map(l => ({ texto: l }));
+  let grupoAtual = "OUTROS COMPROMISSOS";
+  let dados = [];
 
-  const { error } = await supabase.from("compromissos").insert(dados);
+  linhas.forEach(linha => {
+
+    if (linha.startsWith("#")) {
+      grupoAtual = linha.replace("#", "").trim().toUpperCase();
+    } else {
+      dados.push({
+        nome: grupoAtual,
+        turno: linha
+      });
+    }
+
+  });
+
+  const { error } = await supabase
+    .from("compromissos")
+    .insert(dados);
 
   if (error) {
     console.error(error);
@@ -230,14 +289,9 @@ async function cadastrarTudo() {
   carregarCompromissos();
 }
 
-async function limparTudo() {
-
-  if (!confirm("Apagar tudo?")) return;
-
-  await supabase.from("compromissos").delete().neq("id", 0);
-
-  carregarCompromissos();
-}
+//////////////////////////////////////////////////////
+// EXCLUIR SELECIONADOS
+//////////////////////////////////////////////////////
 
 async function excluirSelecionados() {
 
@@ -248,9 +302,33 @@ async function excluirSelecionados() {
     return;
   }
 
-  const ids = Array.from(selecionados).map(cb => Number(cb.value));
+  const ids = Array.from(selecionados).map(cb => cb.value);
 
-  await supabase.from("compromissos").delete().in("id", ids);
+  const { error } = await supabase
+    .from("compromissos")
+    .delete()
+    .in("id", ids);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  carregarCompromissos();
+}
+
+//////////////////////////////////////////////////////
+// LIMPAR TUDO
+//////////////////////////////////////////////////////
+
+async function limparTudo() {
+
+  if (!confirm("Tem certeza que deseja apagar tudo?")) return;
+
+  await supabase
+    .from("compromissos")
+    .delete()
+    .neq("id", "");
 
   carregarCompromissos();
 }

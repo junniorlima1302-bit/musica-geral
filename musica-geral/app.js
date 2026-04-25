@@ -34,7 +34,7 @@ function voltarPagina() {
 }
 
 //////////////////////////////////////////////////////
-// IDENTIFICAÇÃO (CORRIGIDO)
+// IDENTIFICAÇÃO (FUNCIONANDO COM RADIO)
 //////////////////////////////////////////////////////
 
 function continuar() {
@@ -156,7 +156,6 @@ async function carregarRespostas() {
     eventos[chave].push(item);
   });
 
-  // preencher select de eventos
   const selectEvento = document.getElementById("filtroEvento");
 
   if (selectEvento && selectEvento.options.length <= 1) {
@@ -168,7 +167,6 @@ async function carregarRespostas() {
     });
   }
 
-  // render
   Object.keys(eventos).forEach(evento => {
 
     const div = document.createElement("div");

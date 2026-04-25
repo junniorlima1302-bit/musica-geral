@@ -647,4 +647,26 @@ button {
   background: #1b4580;
   color: white;
   cursor: pointer;
+}.radio-item {
+  display: block;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.radio-item input {
+  display: none;
+}
+
+.radio-item span {
+  display: block;
+  padding: 12px;
+  border-radius: 10px;
+  background: #eee;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.radio-item input:checked + span {
+  background: #1b4580;
+  color: white;
 }

@@ -72,11 +72,9 @@ button:hover {
 
 /* INPUT */
 input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
   border: 1px solid #ccc;
-  margin: 10px 0;
+  border-radius: 8px;
+  padding: 10px;
 }
 
 /* TEXTAREA */
@@ -108,7 +106,6 @@ textarea {
   border-radius: 10px;
   background: #eee;
   text-align: center;
-  transition: 0.2s;
 }
 
 .radio-item input:checked + span {
@@ -126,16 +123,13 @@ textarea {
 }
 
 .btn-disponibilidade {
-  width: 100%;
   padding: 12px;
   border-radius: 10px;
   border: 1px solid #ddd;
   background: #f5f5f5;
-  color: #333;
-  cursor: pointer;
   text-align: center;
   font-size: 13px;
-  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .btn-disponibilidade:hover {
@@ -144,64 +138,54 @@ textarea {
 
 .btn-disponibilidade.ativo {
   background: #1b4580;
-  color: #fff;
-  border: none;
-  box-shadow: 0 3px 8px rgba(27, 69, 128, 0.3);
+  color: white;
 }
 
 /* ===== COMPROMISSOS ===== */
 
 .grupo {
   margin-top: 30px;
-  text-align: center;
 }
 
 .grupo h3 {
-  font-size: 14px;
-  color: #1b4580;
-  margin-bottom: 12px;
+  text-align: center;
+  margin-bottom: 15px;
 }
 
+/* lista */
 .lista-itens {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 12px;
+  align-items: center;
 }
 
-/* CARD */
+/* card */
 .item-compromisso {
-  width: 100%;
-  max-width: 500px;
-}
-
-/* LINHA INTERNA */
-.linha-compromisso {
   display: flex;
   align-items: center;
+  justify-content: flex-start; /* 👈 ESSENCIAL */
   gap: 12px;
+
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+
   background: #f5f5f5;
   padding: 12px 16px;
   border-radius: 10px;
-  cursor: pointer;
-  transition: 0.2s;
 }
 
-/* HOVER */
-.linha-compromisso:hover {
-  background: #eaeaea;
-}
-
-/* CHECKBOX */
-.linha-compromisso input {
+/* checkbox */
+.item-compromisso input {
   transform: scale(1.2);
-  cursor: pointer;
+  margin: 0;
 }
 
-/* TEXTO */
-.linha-compromisso span {
+/* texto */
+.item-compromisso span {
   font-size: 14px;
-  color: #333;
+  text-align: left;
 }
 
 /* RESPONSIVO */

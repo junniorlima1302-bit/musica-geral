@@ -16,7 +16,7 @@ body {
 
 /* CONTAINER */
 .container {
-  background: white;
+  background: #fff;
   width: 100%;
   max-width: 900px;
   padding: 25px;
@@ -34,10 +34,12 @@ h1, h2 {
 h3 {
   text-align: center;
   color: #1b4580;
-  margin: 20px 0 10px;
+  margin: 25px 0 10px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
 }
 
-/* BOTÃO PADRÃO */
+/* BOTÕES PADRÃO */
 button {
   width: 100%;
   padding: 12px;
@@ -103,15 +105,17 @@ input {
 
 /* ===== DISPONIBILIDADES ===== */
 
-/* GRID 2 COLUNAS */
+/* GRID CENTRALIZADO */
 .botoes {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 220px); /* largura fixa */
+  justify-content: center;
   gap: 12px;
 }
 
 /* BOTÕES DE DISPONIBILIDADE */
 .btn-disponibilidade {
+  width: 100%;
   padding: 12px;
   border-radius: 10px;
   border: 1px solid #ddd;
@@ -138,7 +142,7 @@ input {
 
 /* GRUPOS */
 .grupo {
-  margin-bottom: 15px;
+  margin-bottom: 30px;
 }
 
 /* RESPONSIVO */

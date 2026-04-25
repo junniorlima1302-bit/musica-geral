@@ -1,0 +1,51 @@
+[33m8bacdd8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m fix: layout da coordenação restaurado
+[33me34aa24[m fix: botões de disponibilidade + seleção visual
+[33mef59fe4[m fix: fluxo completo + seleção funcionando
+[33maa644a6[m fix: corrige carregamento da disponibilidade
+[33m5457765[m fix: sistema completo funcionando
+[33m36fe324[m fix: login e sistema completo estabilizado
+[33mf1f9f80[m fix: restaura função de login
+[33m6429828[m fix: filtros + busca + UX refinada
+[33m82d8e11[m fix: restaura tela de respostas
+[33mc6c1d20[m fix: fluxo completo funcionando
+[33m25ec58e[m fix: fluxo completo funcionando
+[33ma57bd07[m fix: corrige botão lupa layout
+[33m109174f[m fix: corrige botão lupa layout
+[33maad0a74[m style: ajusta tamanho da lupa + melhorias UX
+[33mf92dae2[m style: ajusta tamanho da lupa + melhorias UX
+[33mfc6a8bc[m fix: filtros + busca + UX refinada
+[33mbb3ef81[m fix: filtros funcionando + edição por clique
+[33m0360ba3[m feat: sistema completo de disponibilidades
+[33m7a411b3[m feat: navegação interna com histórico
+[33m9ab85ed[m style: escala fullscreen
+[33m35b938a[m revert: volta escala para iframe
+[33mb410dcb[m fix: corrige estrutura HTML da escala
+[33m775b6e3[m feat: escala integrada via CSV
+[33m504b434[m feat: escala integrada via CSV
+[33m4f46e07[m fix: ajusta escala (centralização e proporção)
+[33m602432f[m fix: ajusta altura da escala com scale
+[33m34088e1[m fix: ajusta escala responsiva
+[33m15bc307[m fix: ajusta escala responsiva
+[33m906e46e[m fix: ajusta escala responsiva
+[33m80cef81[m style: ajusta altura da escala
+[33m3a60f0a[m fix: ajusta escala responsiva
+[33mc2e81e4[m fix: ajusta escala responsiva
+[33m947cc8a[m feat: adiciona escala com integração Google Sheets
+[33m1d27e4b[m feat: adiciona escala com integração Google Sheets
+[33ma5783cd[m fix: ajuste exibição escala
+[33m45e3362[m feat: adiciona escala com integração Google Sheets
+[33m9b781e6[m feat: atualiza escala com integração Google Sheets
+[33m1f5aaff[m feat: adiciona escala com integração Google Sheets
+[33ma6c1810[m atualização
+[33mba6b693[m feat: ativa autocomplete login
+[33m1e9972a[m style: ajusta espaçamento dos inputs
+[33m8897472[m ajustes
+[33md2f6713[m revert: remove ajustes de login
+[33m208a8b7[m feat: login com enter + autofill automático
+[33mddd8d3d[m fix: corrige altura do container
+[33m50c5a51[m feat: login com enter
+[33ma099faf[m fix: melhora experiência mobile (input + teclado)
+[33medaaf8b[m feat: adiciona botão voltar
+[33mc5cd2cc[m feat: adiciona manifest
+[33mfb47c8a[m feat: atualização mobile
+[33md79204d[m primeiro commit

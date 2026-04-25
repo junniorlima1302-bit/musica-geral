@@ -421,7 +421,10 @@ function renderizarRespostas(listaDados) {
 
       const item = document.createElement("div");
       item.className = "item-pessoa";
-      item.textContent = pessoa.nome_pessoa;
+      item.innerHTML = `
+  <strong>${pessoa.nome_pessoa}</strong><br>
+  <span>${pessoa.ministerio}</span>
+`;
 
       listaPessoas.appendChild(item);
     });

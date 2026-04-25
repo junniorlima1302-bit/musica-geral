@@ -204,4 +204,25 @@ async function editarDisponibilidade(id) {
     .eq("id", id);
 
   carregarRespostas();
+}//////////////////////////////////////////////////////
+// IDENTIFICAÇÃO
+//////////////////////////////////////////////////////
+
+function continuar() {
+  const nome = document.getElementById("nome")?.value;
+
+  // botão selecionado
+  const ministerioSelecionado = document.querySelector('.btn-ministerio.selecionado');
+
+  if (!nome || !ministerioSelecionado) {
+    alert("Preencha seu nome e selecione o ministério.");
+    return;
+  }
+
+  const ministerio = ministerioSelecionado.innerText;
+
+  localStorage.setItem("nome", nome);
+  localStorage.setItem("ministerio", ministerio);
+
+  window.location.href = "disponibilidade.html";
 }

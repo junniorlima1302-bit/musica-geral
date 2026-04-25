@@ -333,4 +333,135 @@ async function limparTudo() {
     .neq("id", "");
 
   carregarCompromissos();
+}async function carregarRespostas() {
+
+  const { data, error } = await supabase
+    .from("disponibilidades")
+    .select("*");
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const container = document.getElementById("lista-respostas");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  data.forEach(item => {
+
+    const div = document.createElement("div");
+    div.className = "item-resposta";
+
+    div.innerHTML = `
+      <strong>${item.nome_pessoa}</strong> - ${item.ministerio}<br>
+      <span>${item.evento} | ${item.turno}</span>
+    `;
+
+    container.appendChild(div);
+  });
+}//////////////////////////////////////////////////////
+// VAR GLOBAL
+//////////////////////////////////////////////////////
+let respostasGlobais = [];
+
+//////////////////////////////////////////////////////
+// CARREGAR DADOS
+//////////////////////////////////////////////////////
+async function carregarRespostas() {
+
+  const { data, error } = await supabase
+    .from("disponibilidades")
+    .select("*");
+
+  if (error) {
+    console.error("Erro ao buscar:", error);
+    return;
+  }
+
+  respostasGlobais = data;
+
+  popularFiltroEventos(data);
+  renderizarRespostas(data);
+}
+
+//////////////////////////////////////////////////////
+// RENDERIZAR
+//////////////////////////////////////////////////////
+function renderizarRespostas(listaDados) {
+
+  const lista = document.getElementById("lista-respostas");
+  if (!lista) return;
+
+  lista.innerHTML = "";
+
+  if (listaDados.length === 0) {
+    lista.innerHTML = "<p>Nenhuma disponibilidade encontrada.</p>";
+    return;
+  }
+
+  listaDados.forEach(item => {
+
+    const div = document.createElement("div");
+    div.className = "item-resposta";
+
+    div.innerHTML = `
+      <strong>${item.nome_pessoa}</strong> - ${item.ministerio}<br>
+      <span>${item.evento} | ${item.turno}</span>
+    `;
+
+    lista.appendChild(div);
+  });
+}
+
+//////////////////////////////////////////////////////
+// FILTRO EVENTOS
+//////////////////////////////////////////////////////
+function popularFiltroEventos(dados) {
+
+  const select = document.getElementById("filtroEvento");
+
+  let eventosUnicos = [...new Set(dados.map(d => d.evento))];
+
+  select.innerHTML = `<option value="todos">Todos</option>`;
+
+  eventosUnicos.forEach(evento => {
+    select.innerHTML += `<option value="${evento}">${evento}</option>`;
+  });
+}
+
+//////////////////////////////////////////////////////
+// BUSCA + FILTRO
+//////////////////////////////////////////////////////
+function aplicarBusca() {
+
+  const ministerio = document.getElementById("filtroMinisterio").value;
+  const evento = document.getElementById("filtroEvento").value;
+  const nomeBusca = document.getElementById("buscaNome").value.toLowerCase();
+
+  let filtrados = respostasGlobais;
+
+  if (ministerio !== "todos") {
+    filtrados = filtrados.filter(r => r.ministerio === ministerio);
+  }
+
+  if (evento !== "todos") {
+    filtrados = filtrados.filter(r => r.evento === evento);
+  }
+
+  if (nomeBusca) {
+    filtrados = filtrados.filter(r =>
+      r.nome_pessoa.toLowerCase().includes(nomeBusca)
+    );
+  }
+
+  renderizarRespostas(filtrados);
+}
+
+//////////////////////////////////////////////////////
+// VOLTAR
+//////////////////////////////////////////////////////
+function voltarPagina() {
+  window.history.back();
 }

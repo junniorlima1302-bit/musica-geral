@@ -214,4 +214,21 @@ textarea {
   padding: 12px;
   border-radius: 10px;
   margin-top: 10px;
+}.grupo-evento {
+  margin-top: 20px;
+}
+
+.grupo-evento h3 {
+  background: #1b4580;
+  color: white;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.item-pessoa {
+  background: #f5f5f5;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 6px;
 }

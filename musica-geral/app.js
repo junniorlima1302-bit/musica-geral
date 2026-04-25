@@ -401,17 +401,38 @@ function renderizarRespostas(listaDados) {
     return;
   }
 
+  // AGRUPAR POR EVENTO
+  const agrupado = {};
+
   listaDados.forEach(item => {
+    const chave = `${item.evento} | ${item.turno}`;
 
-    const div = document.createElement("div");
-    div.className = "item-resposta";
+    if (!agrupado[chave]) {
+      agrupado[chave] = [];
+    }
 
-    div.innerHTML = `
-      <strong>${item.nome_pessoa}</strong> - ${item.ministerio}<br>
-      <span>${item.evento} | ${item.turno}</span>
-    `;
+    agrupado[chave].push(item);
+  });
 
-    lista.appendChild(div);
+  // RENDERIZAR
+  Object.keys(agrupado).forEach(evento => {
+
+    const grupoDiv = document.createElement("div");
+    grupoDiv.className = "grupo-evento";
+
+    grupoDiv.innerHTML = `<h3>${evento}</h3>`;
+
+    agrupado[evento].forEach(pessoa => {
+
+      const item = document.createElement("div");
+      item.className = "item-pessoa";
+
+      item.textContent = `${pessoa.nome_pessoa} - ${pessoa.ministerio}`;
+
+      grupoDiv.appendChild(item);
+    });
+
+    lista.appendChild(grupoDiv);
   });
 }
 

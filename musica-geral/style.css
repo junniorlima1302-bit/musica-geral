@@ -321,3 +321,6 @@ textarea {
   gap: 10px;
   flex-wrap: wrap;
 }
+.identificacao-page #campo-instrumento input {
+  margin-top: 5px;
+}

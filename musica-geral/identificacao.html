@@ -33,7 +33,26 @@
         <input type="radio" name="ministerio" value="Geral Eventos">
         <span>Geral Eventos</span>
       </label>
+     <h3>Como você participa?</h3>
 
+<div class="radio-group">
+
+  <label class="radio-item">
+    <input type="radio" name="tipo" value="canto" onchange="toggleInstrumento()">
+    <span>Canto</span>
+  </label>
+
+  <label class="radio-item">
+    <input type="radio" name="tipo" value="toco" onchange="toggleInstrumento()">
+    <span>Toco</span>
+  </label>
+
+</div>
+
+<!-- 🔥 CAMPO ESCONDIDO -->
+<div id="campo-instrumento" style="display: none; margin-top: 10px;">
+  <input type="text" id="instrumento" placeholder="Qual instrumento você toca?">
+</div>
     </div>
 
     <button onclick="continuar()">Continuar</button>

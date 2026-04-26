@@ -93,7 +93,7 @@ textarea {
   margin-bottom: 10px;
 }
 
-/* ===== COMPROMISSOS (FIX DEFINITIVO) ===== */
+/* ===== COMPROMISSOS ===== */
 
 .compromissos-page .grupo {
   margin-top: 30px;
@@ -113,11 +113,8 @@ textarea {
   align-items: center;
 }
 
+/* CARD */
 .compromissos-page .item-compromisso {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
@@ -127,17 +124,24 @@ textarea {
   border-radius: 12px;
 }
 
-/* 🔥 CHECKBOX */
-.compromissos-page .item-compromisso input {
+/* LINHA INTERNA (AQUI FICA PERFEITO) */
+.linha-compromisso {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* esquerda */
+  gap: 10px;
+  width: 100%;
+}
+
+/* CHECKBOX */
+.linha-compromisso input {
   margin: 0;
   transform: scale(1.2);
   flex-shrink: 0;
 }
 
-/* 🔥 TEXTO (AQUI ESTAVA O BUG) */
-.compromissos-page .item-compromisso span {
-  display: block; /* ESSENCIAL */
-  width: 100%;
+/* TEXTO */
+.linha-compromisso span {
   font-size: 14px;
   font-weight: 500;
 }
@@ -146,18 +150,4 @@ textarea {
 .compromissos-page .item-compromisso:hover {
   transform: scale(1.01);
   box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-}.linha-compromisso {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start; /* 🔥 CENTRALIZA TUDO */
-  gap: 12px;
-  width: 100%;
-}
-.linha-compromisso span {
-  flex: 1; /* 🔥 ocupa espaço disponível */
-  text-align: left;
-}
-.item-compromisso {
-  display: flex;
-  justify-content: center;
 }

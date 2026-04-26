@@ -149,8 +149,10 @@ textarea {
 }.linha-compromisso {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center; /* 🔥 CENTRALIZA TUDO */
+  gap: 10px;
   width: 100%;
-}.linha-compromisso span {
-  display: block;
+}
+.linha-compromisso span {
+  display: inline-block;
 }

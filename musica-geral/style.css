@@ -66,12 +66,13 @@ button:hover {
 }
 
 .btn-voltar:hover {
-  background: none !important;
   text-decoration: underline;
 }
 
-/* INPUT */
-input {
+/* INPUTS (ISOLADO - NÃO QUEBRA RADIO/CHECKBOX) */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
@@ -79,6 +80,14 @@ input {
   max-width: 320px;
   display: block;
   margin: 0 auto 10px auto;
+}
+
+/* RADIO E CHECKBOX NORMAL */
+input[type="radio"],
+input[type="checkbox"] {
+  width: auto;
+  display: inline-block;
+  margin: 0;
 }
 
 /* TEXTAREA */
@@ -93,61 +102,144 @@ textarea {
   margin-bottom: 10px;
 }
 
-/* ===== COMPROMISSOS ===== */
+/* ========================= */
+/* ===== DISPONIBILIDADE ==== */
+/* ========================= */
+
+.botoes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.btn-disponibilidade {
+  padding: 12px;
+  border-radius: 10px;
+  border: 2px solid #d0d7e2;
+  background: #f5f7fa;
+  color: #1b4580;
+  text-align: center;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.btn-disponibilidade:hover {
+  background: #e4e9f2;
+}
+
+.btn-disponibilidade.ativo {
+  background: #1b4580;
+  color: white;
+  border: 2px solid #1b4580;
+  transform: scale(1.02);
+}
+
+/* ========================= */
+/* ===== COMPROMISSOS ====== */
+/* ========================= */
 
 .compromissos-page .grupo {
   margin-top: 30px;
 }
 
 .compromissos-page .grupo h3 {
-  text-align: center;
   margin-bottom: 18px;
   font-size: 16px;
-  letter-spacing: 0.5px;
 }
 
+/* LISTA */
 .compromissos-page .lista-itens {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  align-items: center;
+  align-items: stretch; /* 🔥 não centraliza */
 }
 
 /* CARD */
 .compromissos-page .item-compromisso {
   width: 100%;
-  max-width: 480px;
+  max-width: 700px;
   margin: 0 auto;
-
   background: #f8f9fb;
   padding: 14px 18px;
   border-radius: 12px;
 }
 
-/* LINHA INTERNA (AQUI FICA PERFEITO) */
-.linha-compromisso {
+/* LINHA INTERNA */
+.compromissos-page .linha-compromisso {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* esquerda */
   gap: 10px;
-  width: 100%;
+  justify-content: flex-start;
 }
 
 /* CHECKBOX */
-.linha-compromisso input {
-  margin: 0;
+.compromissos-page .linha-compromisso input {
   transform: scale(1.2);
-  flex-shrink: 0;
 }
 
 /* TEXTO */
-.linha-compromisso span {
+.compromissos-page .linha-compromisso span {
   font-size: 14px;
   font-weight: 500;
 }
 
 /* HOVER */
 .compromissos-page .item-compromisso:hover {
-  transform: scale(1.01);
   box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+/* ========================= */
+/* ===== RESPOSTAS ========= */
+/* ========================= */
+
+.item-resposta {
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+/* ========================= */
+/* ===== EVENTOS =========== */
+/* ========================= */
+
+.grupo-evento {
+  margin-top: 25px;
+}
+
+.grupo-evento h3 {
+  background: #1b4580;
+  color: white;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.lista-pessoas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.item-pessoa {
+  background: #f5f5f5;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.item-pessoa strong {
+  display: block;
+  font-size: 14px;
+}
+
+.item-pessoa span {
+  font-size: 12px;
+  color: #666;
 }

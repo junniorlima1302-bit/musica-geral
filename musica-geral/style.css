@@ -274,10 +274,7 @@ textarea {
   align-items: center;
   gap: 6px;
 }
-.busca-box {
-  display: flex;
-  align-items: center;
-}
+
 
 /* input busca */
 .busca-box input {
@@ -299,4 +296,9 @@ textarea {
 /* ícone da lupa */
 .busca-box button span {
   font-size: 14px;
+}
+.busca-box {
+  display: flex;
+  align-items: center; /* 🔥 ALINHA VERTICALMENTE */
+  gap: 6px;
 }

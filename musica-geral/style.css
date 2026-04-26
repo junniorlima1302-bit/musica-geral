@@ -149,10 +149,15 @@ textarea {
 }.linha-compromisso {
   display: flex;
   align-items: center;
-  justify-content: center; /* 🔥 CENTRALIZA TUDO */
-  gap: 10px;
+  justify-content: flex-start; /* 🔥 CENTRALIZA TUDO */
+  gap: 12px;
 
 }
 .linha-compromisso span {
-  display: inline-block;
+  flex: 1; /* 🔥 ocupa espaço disponível */
+  text-align: left;
+}
+.item-compromisso {
+  display: flex;
+  justify-content: center;
 }

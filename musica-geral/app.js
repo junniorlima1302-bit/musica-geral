@@ -296,3 +296,29 @@ function toggleInstrumento() {
     campo.style.display = "none";
   }
 }
+//////////////////////////////////////////////////////
+// LOGIN
+//////////////////////////////////////////////////////
+
+async function fazerLogin() {
+
+  const email = document.getElementById("email")?.value;
+  const senha = document.getElementById("senha")?.value;
+
+  if (!email || !senha) {
+    alert("Preencha email e senha.");
+    return;
+  }
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password: senha
+  });
+
+  if (error) {
+    alert("Email ou senha inválidos.");
+    return;
+  }
+
+  window.location.href = "dashboard.html";
+}

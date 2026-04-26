@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head>
 
-<body class="identificacao-page"> <!-- 🔥 ESSENCIAL -->
+<body class="identificacao-page">
 
   <div class="container">
     <h2>Identificação</h2>
@@ -19,11 +19,10 @@
 
     <input type="text" id="nome" placeholder="Seu nome">
 
+    <!-- ===== MINISTÉRIO ===== -->
     <h3>Selecione seu ministério:</h3>
 
-    <!-- 🔥 AGRUPA AQUI -->
     <div class="radio-group">
-
       <label class="radio-item">
         <input type="radio" name="ministerio" value="Música Geral">
         <span>Música Geral</span>
@@ -33,28 +32,29 @@
         <input type="radio" name="ministerio" value="Geral Eventos">
         <span>Geral Eventos</span>
       </label>
-     <h3>Como você participa?</h3>
-
-<div class="radio-group">
-
-  <label class="radio-item">
-    <input type="radio" name="tipo" value="canto" onchange="toggleInstrumento()">
-    <span>Canto</span>
-  </label>
-
-  <label class="radio-item">
-    <input type="radio" name="tipo" value="toco" onchange="toggleInstrumento()">
-    <span>Toco</span>
-  </label>
-
-</div>
-
-<!-- 🔥 CAMPO ESCONDIDO -->
-<div id="campo-instrumento" style="display: none; margin-top: 10px;">
-  <input type="text" id="instrumento" placeholder="Qual instrumento você toca?">
-</div>
     </div>
 
+    <!-- ===== TIPO ===== -->
+    <h3>Como você participa?</h3>
+
+    <div class="radio-group">
+      <label class="radio-item">
+        <input type="radio" name="tipo" value="canto" onchange="toggleInstrumento()">
+        <span>Canto</span>
+      </label>
+
+      <label class="radio-item">
+        <input type="radio" name="tipo" value="toco" onchange="toggleInstrumento()">
+        <span>Toco</span>
+      </label>
+    </div>
+
+    <!-- ===== CAMPO DINÂMICO ===== -->
+    <div id="campo-instrumento" style="display: none; margin-top: 10px;">
+      <input type="text" id="instrumento" placeholder="Qual instrumento você toca?">
+    </div>
+
+    <!-- BOTÃO -->
     <button onclick="continuar()">Continuar</button>
   </div>
 

@@ -291,3 +291,33 @@ textarea {
   font-size: 12px;
   color: #666;
 }
+.identificacao-page input[type="radio"] {
+  display: none;
+}
+.identificacao-page .radio-item {
+  display: inline-block;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.identificacao-page .radio-item span {
+  display: block;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 2px solid #1b4580;
+  background: #f5f7fa;
+  color: #1b4580;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+.identificacao-page .radio-item input:checked + span {
+  background: #1b4580;
+  color: white;
+}
+.identificacao-page .radio-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}

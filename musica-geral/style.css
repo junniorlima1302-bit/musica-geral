@@ -146,4 +146,11 @@ textarea {
 .compromissos-page .item-compromisso:hover {
   transform: scale(1.01);
   box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}.linha-compromisso {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}.linha-compromisso span {
+  display: block;
 }

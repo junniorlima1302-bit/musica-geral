@@ -34,7 +34,7 @@ function voltarPagina() {
 }
 
 //////////////////////////////////////////////////////
-// IDENTIFICAÇÃO (CORRIGIDO)
+// IDENTIFICAÇÃO
 //////////////////////////////////////////////////////
 
 function continuar() {
@@ -43,31 +43,26 @@ function continuar() {
   const tipoSelecionado = document.querySelector('input[name="tipo"]:checked');
   const instrumento = document.getElementById("instrumento")?.value;
 
-  // validação básica
   if (!nome || !ministerioSelecionado) {
     alert("Preencha seu nome e selecione o ministério.");
     return;
   }
 
-  // valida tipo
   if (!tipoSelecionado) {
     alert("Selecione se você canta ou toca.");
     return;
   }
 
-  // valida instrumento
   if (tipoSelecionado.value === "toco" && !instrumento) {
     alert("Digite o instrumento que você toca.");
     return;
   }
 
-  // salvar dados
   localStorage.setItem("nome", nome);
   localStorage.setItem("ministerio", ministerioSelecionado.value);
   localStorage.setItem("tipo", tipoSelecionado.value);
   localStorage.setItem("instrumento", instrumento || "");
 
-  // próxima página
   window.location.href = "disponibilidade.html";
 }
 
@@ -182,30 +177,109 @@ async function enviarDisponibilidade() {
 }
 
 //////////////////////////////////////////////////////
-// LOGIN
+// COMPROMISSOS
 //////////////////////////////////////////////////////
 
-async function fazerLogin() {
+async function carregarCompromissos() {
 
-  const email = document.getElementById("email")?.value;
-  const senha = document.getElementById("senha")?.value;
-
-  if (!email || !senha) {
-    alert("Preencha email e senha.");
-    return;
-  }
-
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password: senha
-  });
+  const { data, error } = await supabase
+    .from("compromissos")
+    .select("*")
+    .order("nome");
 
   if (error) {
-    alert("Email ou senha inválidos.");
+    console.error(error);
     return;
   }
 
-  window.location.href = "dashboard.html";
+  const lista = document.getElementById("lista-compromissos");
+  if (!lista) return;
+
+  lista.innerHTML = "";
+
+  let grupos = {};
+
+  data.forEach(item => {
+    if (!grupos[item.nome]) grupos[item.nome] = [];
+    grupos[item.nome].push(item);
+  });
+
+  Object.keys(grupos).forEach(nome => {
+
+    const divGrupo = document.createElement("div");
+    divGrupo.className = "grupo";
+
+    const titulo = document.createElement("h3");
+    titulo.innerText = nome;
+
+    const container = document.createElement("div");
+    container.className = "lista-itens";
+
+    grupos[nome].forEach(item => {
+
+      const div = document.createElement("div");
+      div.className = "item-compromisso";
+
+      div.innerHTML = `
+        <label class="linha-compromisso">
+          <input type="checkbox" value="${item.id}">
+          <span>${item.turno}</span>
+        </label>
+      `;
+
+      container.appendChild(div);
+    });
+
+    divGrupo.appendChild(titulo);
+    divGrupo.appendChild(container);
+    lista.appendChild(divGrupo);
+  });
+}
+
+//////////////////////////////////////////////////////
+// CADASTRAR COMPROMISSOS
+//////////////////////////////////////////////////////
+
+async function cadastrarTudo() {
+
+  const texto = document.getElementById("entrada").value;
+
+  if (!texto.trim()) {
+    alert("Digite os compromissos.");
+    return;
+  }
+
+  const linhas = texto.split("\n").filter(l => l.trim() !== "");
+
+  let grupoAtual = "OUTROS COMPROMISSOS";
+  let dados = [];
+
+  linhas.forEach(linha => {
+
+    if (linha.startsWith("#")) {
+      grupoAtual = linha.replace("#", "").trim().toUpperCase();
+    } else {
+      dados.push({
+        nome: grupoAtual,
+        turno: linha
+      });
+    }
+
+  });
+
+  const { error } = await supabase
+    .from("compromissos")
+    .insert(dados);
+
+  if (error) {
+    console.error(error);
+    alert("Erro ao cadastrar.");
+    return;
+  }
+
+  document.getElementById("entrada").value = "";
+
+  carregarCompromissos();
 }
 
 //////////////////////////////////////////////////////

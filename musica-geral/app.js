@@ -322,3 +322,114 @@ async function fazerLogin() {
 
   window.location.href = "dashboard.html";
 }
+//////////////////////////////////////////////////////
+// RESPOSTAS (VISUALIZAÇÃO)
+//////////////////////////////////////////////////////
+
+let respostasGlobais = [];
+
+async function carregarRespostas() {
+
+  const { data, error } = await supabase
+    .from("disponibilidades")
+    .select("*");
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  respostasGlobais = data;
+
+  popularFiltroEventos(data);
+  renderizarRespostas(data);
+}
+
+function popularFiltroEventos(data) {
+
+  const select = document.getElementById("filtroEvento");
+  if (!select) return;
+
+  const eventosUnicos = [...new Set(data.map(item => item.evento))];
+
+  select.innerHTML = `<option value="todos">Todos</option>`;
+
+  eventosUnicos.forEach(evento => {
+    const option = document.createElement("option");
+    option.value = evento;
+    option.textContent = evento;
+    select.appendChild(option);
+  });
+}
+
+function aplicarBusca() {
+
+  const nomeBusca = normalizar(document.getElementById("buscaNome")?.value || "");
+  const filtroMinisterio = document.getElementById("filtroMinisterio")?.value;
+  const filtroEvento = document.getElementById("filtroEvento")?.value;
+
+  let filtrado = respostasGlobais.filter(pessoa => {
+
+    const nomeOk = normalizar(pessoa.nome_pessoa).includes(nomeBusca);
+
+    const ministerioOk =
+      filtroMinisterio === "todos" ||
+      pessoa.ministerio === filtroMinisterio;
+
+    const eventoOk =
+      filtroEvento === "todos" ||
+      pessoa.evento === filtroEvento;
+
+    return nomeOk && ministerioOk && eventoOk;
+  });
+
+  renderizarRespostas(filtrado);
+}
+
+function renderizarRespostas(data) {
+
+  const container = document.getElementById("lista-respostas");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  let agrupado = {};
+
+  data.forEach(item => {
+    const chave = `${item.evento}|||${item.turno}`;
+    if (!agrupado[chave]) agrupado[chave] = [];
+    agrupado[chave].push(item);
+  });
+
+  Object.keys(agrupado).forEach(chave => {
+
+    const [evento, turno] = chave.split("|||");
+
+    const divGrupo = document.createElement("div");
+    divGrupo.className = "grupo-evento";
+
+    const titulo = document.createElement("h3");
+    titulo.innerText = `${evento} - ${turno}`;
+
+    const lista = document.createElement("div");
+    lista.className = "lista-pessoas";
+
+    agrupado[chave].forEach(pessoa => {
+
+      const item = document.createElement("div");
+      item.className = "item-pessoa";
+
+      item.innerHTML = `
+        <strong>${pessoa.nome_pessoa}</strong>
+        <span>${pessoa.ministerio}</span>
+        <span>${pessoa.tipo || ""} ${pessoa.instrumento ? "- " + pessoa.instrumento : ""}</span>
+      `;
+
+      lista.appendChild(item);
+    });
+
+    divGrupo.appendChild(titulo);
+    divGrupo.appendChild(lista);
+    container.appendChild(divGrupo);
+  });
+}

@@ -151,7 +151,7 @@ textarea {
   align-items: center;
   justify-content: flex-start; /* 🔥 CENTRALIZA TUDO */
   gap: 12px;
-
+  width: 100%;
 }
 .linha-compromisso span {
   flex: 1; /* 🔥 ocupa espaço disponível */

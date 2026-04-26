@@ -75,7 +75,6 @@ input {
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
-
   width: 100%;
   max-width: 320px;
   display: block;
@@ -94,67 +93,12 @@ textarea {
   margin-bottom: 10px;
 }
 
-/* RADIO */
-.radio-item {
-  display: block;
-  margin: 10px 0;
-  cursor: pointer;
-}
-
-.radio-item input {
-  display: none;
-}
-
-.radio-item span {
-  display: block;
-  padding: 12px;
-  border-radius: 10px;
-  background: #eee;
-  text-align: center;
-}
-
-.radio-item input:checked + span {
-  background: #1b4580;
-  color: white;
-}
-
-/* ===== DISPONIBILIDADES ===== */
-
-.botoes {
-  display: grid;
-  grid-template-columns: repeat(2, 220px);
-  justify-content: center;
-  gap: 12px;
-}
-
-.btn-disponibilidade {
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #1b4580;
-  background: #f5f7fa;
-  color: #1b4580;
-  text-align: center;
-  font-size: 13px;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.btn-disponibilidade:hover {
-  background: #eaeaea;
-}
-
-.btn-disponibilidade.ativo {
-  background: #1b4580;
-  color: white;
-}
-
-/* ===== COMPROMISSOS (UX MELHORADO) ===== */
+/* ===== COMPROMISSOS (FIX DEFINITIVO) ===== */
 
 .compromissos-page .grupo {
   margin-top: 30px;
 }
 
-/* título mais forte */
 .compromissos-page .grupo h3 {
   text-align: center;
   margin-bottom: 18px;
@@ -162,7 +106,6 @@ textarea {
   letter-spacing: 0.5px;
 }
 
-/* lista */
 .compromissos-page .lista-itens {
   display: flex;
   flex-direction: column;
@@ -170,11 +113,9 @@ textarea {
   align-items: center;
 }
 
-/* card */
 .compromissos-page .item-compromisso {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* garante alinhamento à esquerda */
   gap: 12px;
 
   width: 100%;
@@ -184,129 +125,25 @@ textarea {
   background: #f8f9fb;
   padding: 14px 18px;
   border-radius: 12px;
-
-  transition: 0.2s;
 }
 
-/* efeito hover */
-.compromissos-page .item-compromisso:hover {
-  transform: scale(1.01);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-}
-
-/* checkbox */
+/* 🔥 CHECKBOX */
 .compromissos-page .item-compromisso input {
-  transform: scale(1.3);
   margin: 0;
-  cursor: pointer;
+  transform: scale(1.2);
+  flex-shrink: 0;
 }
 
-/* texto */
+/* 🔥 TEXTO (AQUI ESTAVA O BUG) */
 .compromissos-page .item-compromisso span {
+  display: block; /* ESSENCIAL */
+  width: 100%;
   font-size: 14px;
-  text-align: left;
   font-weight: 500;
 }
 
-/* ===== FILTROS ===== */
-
-#filtros {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 15px;
-}
-
-#filtros select,
-#filtros input {
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-.busca-box {
-  display: flex;
-  gap: 5px;
-}
-
-/* ===== RESPOSTAS ===== */
-
-.item-resposta {
-  background: #f5f5f5;
-  padding: 12px;
-  border-radius: 10px;
-  margin-top: 10px;
-}
-
-/* ===== EVENTOS ===== */
-
-.grupo-evento {
-  margin-top: 25px;
-}
-
-.grupo-evento h3 {
-  background: #1b4580;
-  color: white;
-  padding: 8px;
-  border-radius: 8px;
-  font-size: 14px;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.lista-pessoas {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
-}
-
-.item-pessoa {
-  background: #f5f5f5;
-  padding: 10px;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 13px;
-}
-
-.item-pessoa strong {
-  display: block;
-  font-size: 14px;
-}
-
-.item-pessoa span {
-  font-size: 12px;
-  color: #666;
-}
-
-/* ===== OUTROS ===== */
-
-.titulo-grupo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.titulo-grupo button {
-  background: #1b4580;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 4px 8px;
-  cursor: pointer;
-}
-
-.item-compromisso {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.item-compromisso input {
-  flex-shrink: 0; /* impede o checkbox de deformar */
-  margin: 0;
-}
-
-.item-compromisso span {
-  display: flex;
-  align-items: center; /* alinha verticalmente com checkbox */
+/* HOVER */
+.compromissos-page .item-compromisso:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
 }

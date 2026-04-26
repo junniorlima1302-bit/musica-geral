@@ -174,7 +174,8 @@ textarea {
 .compromissos-page .item-compromisso {
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: flex-start; /* garante alinhamento à esquerda */
+  gap: 12px;
 
   width: 100%;
   max-width: 480px;
@@ -299,4 +300,13 @@ textarea {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.item-compromisso input {
+  flex-shrink: 0; /* impede o checkbox de deformar */
+  margin: 0;
+}
+
+.item-compromisso span {
+  display: flex;
+  align-items: center; /* alinha verticalmente com checkbox */
 }

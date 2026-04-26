@@ -248,10 +248,14 @@ textarea {
 #filtros {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 20px;
+  gap: 10px;
+  flex-wrap: nowrap; /* 🔥 impede quebra */
+}
+#filtros select,
+#filtros input,
+.busca-box button {
+  height: 36px;
 }
 
 /* selects e input */
@@ -269,6 +273,10 @@ textarea {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+.busca-box {
+  display: flex;
+  align-items: center;
 }
 
 /* input busca */

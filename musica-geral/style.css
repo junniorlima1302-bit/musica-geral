@@ -151,7 +151,7 @@ textarea {
   align-items: center;
   justify-content: center; /* 🔥 CENTRALIZA TUDO */
   gap: 10px;
-  width: 100%;
+
 }
 .linha-compromisso span {
   display: inline-block;

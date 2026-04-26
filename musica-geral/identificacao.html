@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 </head>
 
-<body>
+<body class="identificacao-page"> <!-- 🔥 ESSENCIAL -->
 
   <div class="container">
     <h2>Identificação</h2>
@@ -21,17 +21,20 @@
 
     <h3>Selecione seu ministério:</h3>
 
-    <label class="radio-item">
-      <input type="radio" name="ministerio" value="Música Geral">
-      <span>Música Geral</span>
-    </label>
+    <!-- 🔥 AGRUPA AQUI -->
+    <div class="radio-group">
 
-    <label class="radio-item">
-      <input type="radio" name="ministerio" value="Geral Eventos">
-      <span>Geral Eventos</span>
-    </label>
+      <label class="radio-item">
+        <input type="radio" name="ministerio" value="Música Geral">
+        <span>Música Geral</span>
+      </label>
 
-    <br>
+      <label class="radio-item">
+        <input type="radio" name="ministerio" value="Geral Eventos">
+        <span>Geral Eventos</span>
+      </label>
+
+    </div>
 
     <button onclick="continuar()">Continuar</button>
   </div>

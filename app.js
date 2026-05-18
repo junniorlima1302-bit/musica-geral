@@ -157,19 +157,12 @@ async function carregarDisponibilidades() {
 
     const container = document.createElement("div");
     container.className = "botoes";
-    // Se grupo tem só 1 item, ocupa 2 colunas
-    if (grupos[nome].length === 1) {
-      container.style.gridTemplateColumns = "1fr";
-    }
 
     grupos[nome].forEach(turno => {
 
       const btn = document.createElement("button");
-      btn.innerHTML = turno; // innerHTML para suportar formatação HTML
+      btn.innerText = turno;
       btn.className = "btn-disponibilidade";
-      if (grupos[nome].length === 1) {
-        btn.style.gridColumn = "1 / -1";
-      }
 
       btn.dataset.valor = `${nome} | ${turno}`;
 
@@ -1078,8 +1071,8 @@ async function renderizarRespostas(respostasFiltradas) {
       const chave = `${comp.nome}|||${comp.turno}`;
 
       const marcou = dadosPessoa.find(r =>
-        r.evento === comp.nome &&
-        r.turno === comp.turno
+        r.evento?.trim() === comp.nome?.trim() &&
+        r.turno?.trim() === comp.turno?.trim()
       );
 
       if (ministerio === "Música Geral") {

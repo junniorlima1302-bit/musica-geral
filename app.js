@@ -414,6 +414,13 @@ async function editarGrupo(nomeAtual) {
     .eq("nome", nomeAtual);
 
   if (error) { alert("Erro ao renomear grupo."); return; }
+
+  // Atualiza também as disponibilidades que usam este nome de evento
+  await supabase
+    .from("disponibilidades")
+    .update({ evento: novoNome.trim() })
+    .eq("evento", nomeAtual);
+
   carregarCompromissos();
 }
 
@@ -561,6 +568,13 @@ async function editarCompromisso(id, textoAtual) {
   const novoTexto = prompt("Editar compromisso:", textoAtual);
   if (!novoTexto || novoTexto.trim() === textoAtual.trim()) return;
 
+  // Busca o nome do grupo deste item para atualizar disponibilidades
+  const { data: compAtual } = await supabase
+    .from("compromissos")
+    .select("nome")
+    .eq("id", id)
+    .single();
+
   const { error } = await supabase
     .from("compromissos")
     .update({ turno: novoTexto.trim() })
@@ -570,6 +584,15 @@ async function editarCompromisso(id, textoAtual) {
     console.error(error);
     alert("Erro ao editar.");
     return;
+  }
+
+  // Atualiza disponibilidades com o turno antigo
+  if (compAtual) {
+    await supabase
+      .from("disponibilidades")
+      .update({ turno: novoTexto.trim() })
+      .eq("evento", compAtual.nome)
+      .eq("turno", textoAtual.trim());
   }
 
   carregarCompromissos();
@@ -822,7 +845,7 @@ async function cadastrarTudo(mesRef) {
     if (linha.startsWith("#")) {
       grupoAtual = linha.replace("#", "").trim().toUpperCase();
     } else {
-      dados.push({ nome: grupoAtual.trim(), turno: linha.trim(), mes_ref: mesRef });
+      dados.push({ nome: grupoAtual, turno: linha, mes_ref: mesRef });
     }
   });
 
@@ -1071,8 +1094,8 @@ async function renderizarRespostas(respostasFiltradas) {
       const chave = `${comp.nome}|||${comp.turno}`;
 
       const marcou = dadosPessoa.find(r =>
-        normalizar(r.evento) === normalizar(comp.nome) &&
-        normalizar(r.turno) === normalizar(comp.turno)
+        r.evento === comp.nome &&
+        r.turno === comp.turno
       );
 
       if (ministerio === "Música Geral") {

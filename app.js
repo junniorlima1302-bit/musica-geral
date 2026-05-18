@@ -141,17 +141,13 @@ async function carregarDisponibilidades() {
   lista.innerHTML = "";
 
   let grupos = {};
-  let ordemDisp = [];
 
   data.forEach(item => {
-    if (!grupos[item.nome]) {
-      grupos[item.nome] = [];
-      ordemDisp.push(item.nome);
-    }
-    grupos[item.nome].push({ id: item.id, turno: item.turno });
+    if (!grupos[item.nome]) grupos[item.nome] = [];
+    grupos[item.nome].push(item.turno);
   });
 
-  ordemDisp.forEach(nome => {
+  Object.keys(grupos).forEach(nome => {
 
     const divGrupo = document.createElement("div");
     divGrupo.className = "grupo";
@@ -161,21 +157,14 @@ async function carregarDisponibilidades() {
 
     const container = document.createElement("div");
     container.className = "botoes";
-    if (grupos[nome].length === 1) {
-      container.style.gridTemplateColumns = "1fr";
-    }
 
-    grupos[nome].forEach(item => {
+    grupos[nome].forEach(turno => {
 
       const btn = document.createElement("button");
-      btn.innerHTML = item.turno;
+      btn.innerText = turno;
       btn.className = "btn-disponibilidade";
-      if (grupos[nome].length === 1) {
-        btn.style.gridColumn = "1 / -1";
-      }
 
-      btn.dataset.valor = `${nome} | ${item.turno}`;
-      btn.dataset.compromissoId = item.id;
+      btn.dataset.valor = `${nome} | ${turno}`;
 
       btn.onclick = () => btn.classList.toggle("ativo");
 
@@ -272,7 +261,6 @@ if (ministerio === "Música Geral") {
       ministerio: ministerio,
       evento: partes[0].trim(),
       turno: partes[1].trim(),
-      compromisso_id: btn.dataset.compromissoId || null,
       tipo: tipo,
       instrumento: instrumento,
       justificativa: justificativas ? justificativas[index] : null,
@@ -1083,30 +1071,34 @@ async function renderizarRespostas(respostasFiltradas) {
       const chave = `${comp.nome}|||${comp.turno}`;
 
       const marcou = dadosPessoa.find(r =>
-        // Compara por ID se disponível (novo), senão por nome/turno (legado)
-        (r.compromisso_id && r.compromisso_id === comp.id) ||
-        (!r.compromisso_id && normalizar(r.evento) === normalizar(comp.nome) && normalizar(r.turno) === normalizar(comp.turno))
+        r.evento === comp.nome &&
+        r.turno === comp.turno
       );
 
       if (ministerio === "Música Geral") {
-        // 👉 marcou = NÃO pode
+        // 👉 marcou = NÃO pode → aparece quem NÃO marcou
         if (!marcou) {
+          // Coleta IDs de todas as respostas desta pessoa neste evento/turno para exclusão precisa
+          const idsResposta = dadosPessoa.map(r => r.id).filter(Boolean);
           agrupado[chave].push({
-  nome: pessoa,
-  ministerio: dadosPessoa[0]?.ministerio,
-  tipo: dadosPessoa[0]?.tipo,
-  instrumento: dadosPessoa[0]?.instrumento
-});
+            nome: pessoa,
+            ministerio: dadosPessoa[0]?.ministerio,
+            tipo: dadosPessoa[0]?.tipo,
+            instrumento: dadosPessoa[0]?.instrumento,
+            ids: idsResposta
+          });
         }
       } else {
         // 👉 marcou = PODE
         if (marcou) {
+          const idsResposta = dadosPessoa.map(r => r.id).filter(Boolean);
           agrupado[chave].push({
-  nome: pessoa,
-  ministerio: dadosPessoa[0]?.ministerio,
-  tipo: dadosPessoa[0]?.tipo,
-  instrumento: dadosPessoa[0]?.instrumento
-});
+            nome: pessoa,
+            ministerio: dadosPessoa[0]?.ministerio,
+            tipo: dadosPessoa[0]?.tipo,
+            instrumento: dadosPessoa[0]?.instrumento,
+            ids: idsResposta
+          });
         }
       }
 
@@ -1134,6 +1126,7 @@ async function renderizarRespostas(respostasFiltradas) {
       item.className = "item-pessoa";
       item.dataset.nome = pessoa.nome;
       item.dataset.ministerio = pessoa.ministerio;
+      item.dataset.ids = JSON.stringify(pessoa.ids || []);
 
       item.innerHTML = `
         <span class="badge-excluir">✕</span>
@@ -1164,15 +1157,29 @@ async function excluirSelecionadosDisp() {
     return;
   }
 
-  const nomes = [...new Set(Array.from(selecionados).map(el => el.dataset.nome))];
-  const confirmar = confirm(`Excluir respostas de ${nomes.length} pessoa(s)?\n\n${nomes.join(", ")}`);
+  // Coleta nome e evento/turno de cada item selecionado
+  const itens = Array.from(selecionados).map(el => ({
+    nome: el.dataset.nome,
+    grupo: el.closest(".grupo-evento")?.querySelector("h3")?.innerText || ""
+  }));
+
+  const descricao = [...new Set(itens.map(i => `${i.nome} — ${i.grupo}`))].join("\n");
+  const confirmar = confirm(`Excluir ${itens.length} resposta(s)?\n\n${descricao}`);
   if (!confirmar) return;
 
-  for (const nome of nomes) {
-    await supabase.from("disponibilidades").delete().eq("nome_pessoa", nome);
+  // Deleta cada resposta individualmente por nome_pessoa + evento + turno
+  for (const it of itens) {
+    const partes = it.grupo.split(" - ");
+    if (partes.length < 2) continue;
+    const evento = partes[0].trim();
+    const turno = partes.slice(1).join(" - ").trim();
+    await supabase.from("disponibilidades")
+      .delete()
+      .eq("nome_pessoa", it.nome)
+      .eq("evento", evento)
+      .eq("turno", turno);
   }
 
-  // Recarrega os dados e reseta o modal de status
   await carregarRespostas();
   if (typeof _statusCarregado !== 'undefined') _statusCarregado = false;
 }

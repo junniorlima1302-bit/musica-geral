@@ -404,7 +404,9 @@
       <button onclick="abrirPopupNotif()" style="width:auto; padding:0 14px; height:36px; margin-top:0; background:#e67e22; font-size:13px;">📣 Notificar</button>
     </div>
 
-    <textarea id="entrada" placeholder="Digite os compromissos...
+    <!-- EDITOR COM FORMATAÇÃO -->
+    <div style="border:1.5px solid #a0b8d0;border-radius:10px;overflow:hidden;margin-bottom:12px;background:white;">
+      <textarea id="entrada" placeholder="Digite os compromissos...
 
 Use ENTER para separar
 Use # para criar grupos
@@ -412,7 +414,18 @@ Use # para criar grupos
 Exemplo:
 # MISSAS DOMINICAIS
 DIA 3 - MISSA
-DIA 10 - MISSA"></textarea>
+DIA 10 - MISSA" style="border:none;border-radius:0;margin:0;width:100%;resize:vertical;min-height:140px;padding:12px 14px;font-size:14px;outline:none;font-family:inherit;box-sizing:border-box;"></textarea>
+      <!-- Barra discreta embaixo -->
+      <div style="display:flex;align-items:center;gap:4px;padding:5px 10px;background:#f8fafd;border-top:1px solid #e0eaf4;">
+        <button onclick="formatarTexto('bold')" title="Negrito" style="width:28px;height:26px;padding:0;margin:0;font-size:13px;font-weight:700;background:none;border:none;border-radius:4px;cursor:pointer;color:#5a7a9a;"><b>B</b></button>
+        <button onclick="formatarTexto('italic')" title="Itálico" style="width:28px;height:26px;padding:0;margin:0;font-size:13px;background:none;border:none;border-radius:4px;cursor:pointer;color:#5a7a9a;"><i>I</i></button>
+        <button onclick="formatarTexto('underline')" title="Sublinhado" style="width:28px;height:26px;padding:0;margin:0;font-size:13px;background:none;border:none;border-radius:4px;cursor:pointer;color:#5a7a9a;"><u>U</u></button>
+        <div style="width:1px;height:16px;background:#c4d4e8;margin:0 4px;"></div>
+        <button onclick="formatarTexto('uppercase')" title="MAIÚSCULAS" style="width:32px;height:26px;padding:0;margin:0;font-size:10px;font-weight:700;background:none;border:none;border-radius:4px;cursor:pointer;color:#5a7a9a;letter-spacing:0.5px;">AA</button>
+        <div style="width:1px;height:16px;background:#c4d4e8;margin:0 4px;"></div>
+        <button onclick="formatarTexto('clear')" title="Limpar formatação" style="width:28px;height:26px;padding:0;margin:0;font-size:14px;background:none;border:none;border-radius:4px;cursor:pointer;color:#5a7a9a;">✕</button>
+      </div>
+    </div>
 
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
       <button onclick="abrirPopupMes()" style="flex:1;min-width:0;margin:0;padding:10px 8px;font-size:13px;">Cadastrar</button>
@@ -665,6 +678,25 @@ DIA 10 - MISSA"></textarea>
 
     // Inicializa drag após carregarCompromissos
     const _origIniciarComp = window.iniciarCompromissos;
+
+    function formatarTexto(tipo) {
+      const ta = document.getElementById('entrada');
+      const start = ta.selectionStart;
+      const end = ta.selectionEnd;
+      const selecionado = ta.value.substring(start, end);
+      if (!selecionado) return;
+
+      let resultado = selecionado;
+      if (tipo === 'bold')      resultado = `<b>${selecionado}</b>`;
+      if (tipo === 'italic')    resultado = `<i>${selecionado}</i>`;
+      if (tipo === 'underline') resultado = `<u>${selecionado}</u>`;
+      if (tipo === 'uppercase') resultado = selecionado.toUpperCase();
+      if (tipo === 'clear')     resultado = selecionado.replace(/<\/?[^>]+(>|$)/g, '');
+
+      ta.value = ta.value.substring(0, start) + resultado + ta.value.substring(end);
+      ta.focus();
+      ta.setSelectionRange(start, start + resultado.length);
+    }
 
     let _membrosDestino = [];
 

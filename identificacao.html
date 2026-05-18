@@ -251,6 +251,40 @@
 
   <div class="rodape">
     <button class="btn-inicio" onclick="window.location.href='index.html'">🏠 Início</button>
+    <button class="btn-inicio" onclick="abrirCadastro()" style="margin-top:10px;background:rgba(27,69,128,0.12);">➕ Sou novo, quero me cadastrar</button>
+  </div>
+
+  <!-- POPUP CADASTRO -->
+  <div id="popup-cadastro" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:white;border-radius:20px;padding:28px 24px;width:100%;max-width:400px;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+      <h3 style="font-size:17px;font-weight:800;color:#1a2e4a;margin-bottom:20px;text-align:center;">➕ Novo Cadastro</h3>
+
+      <label style="font-size:11px;font-weight:700;color:#5a7a9a;text-transform:uppercase;letter-spacing:0.8px;display:block;margin-bottom:6px;">Nome completo</label>
+      <input type="text" id="cad-nome" placeholder="Seu nome" style="width:100%;padding:12px 14px;border:1.5px solid #a0b8d0;border-radius:10px;font-size:14px;font-family:inherit;color:#1a2e4a;margin-bottom:14px;outline:none;box-sizing:border-box;">
+
+      <label style="font-size:11px;font-weight:700;color:#5a7a9a;text-transform:uppercase;letter-spacing:0.8px;display:block;margin-bottom:6px;">Ministério</label>
+      <select id="cad-ministerio" style="width:100%;padding:12px 14px;border:1.5px solid #a0b8d0;border-radius:10px;font-size:14px;font-family:inherit;color:#1a2e4a;margin-bottom:14px;outline:none;box-sizing:border-box;background:white;">
+        <option value="Música Geral">Música Geral</option>
+        <option value="Geral Eventos">Geral Eventos</option>
+      </select>
+
+      <label style="font-size:11px;font-weight:700;color:#5a7a9a;text-transform:uppercase;letter-spacing:0.8px;display:block;margin-bottom:6px;">Você canta ou toca?</label>
+      <select id="cad-tipo" onchange="toggleCadInstrumento()" style="width:100%;padding:12px 14px;border:1.5px solid #a0b8d0;border-radius:10px;font-size:14px;font-family:inherit;color:#1a2e4a;margin-bottom:14px;outline:none;box-sizing:border-box;background:white;">
+        <option value="canta">Canta</option>
+        <option value="toca">Toca</option>
+        <option value="toca_canta">Toca e Canta</option>
+      </select>
+
+      <div id="cad-instrumento-wrap" style="display:none;">
+        <label style="font-size:11px;font-weight:700;color:#5a7a9a;text-transform:uppercase;letter-spacing:0.8px;display:block;margin-bottom:6px;">Instrumento</label>
+        <input type="text" id="cad-instrumento" placeholder="Ex: Violão, Teclado..." style="width:100%;padding:12px 14px;border:1.5px solid #a0b8d0;border-radius:10px;font-size:14px;font-family:inherit;color:#1a2e4a;margin-bottom:14px;outline:none;box-sizing:border-box;">
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button onclick="fecharCadastro()" style="flex:1;padding:12px;background:#e0e0e0;color:#333;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Cancelar</button>
+        <button onclick="enviarCadastro()" style="flex:1;padding:12px;background:#1b4580;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Enviar pedido</button>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
@@ -267,6 +301,7 @@
         .from("membros")
         .select("*")
         .eq("ativo", true)
+        .eq("pendente", false)
         .order("nome");
 
       document.getElementById("loading-nomes").style.display = "none";
@@ -372,6 +407,72 @@
     });
 
     carregarNomes();
+
+    function abrirCadastro() {
+      document.getElementById('popup-cadastro').style.display = 'flex';
+    }
+
+    function fecharCadastro() {
+      document.getElementById('popup-cadastro').style.display = 'none';
+      document.getElementById('cad-nome').value = '';
+      document.getElementById('cad-instrumento').value = '';
+      document.getElementById('cad-tipo').value = 'canta';
+      toggleCadInstrumento();
+    }
+
+    function toggleCadInstrumento() {
+      const tipo = document.getElementById('cad-tipo').value;
+      const wrap = document.getElementById('cad-instrumento-wrap');
+      wrap.style.display = (tipo === 'toca' || tipo === 'toca_canta') ? 'block' : 'none';
+    }
+
+    async function enviarCadastro() {
+      const nome = document.getElementById('cad-nome').value.trim();
+      const ministerio = document.getElementById('cad-ministerio').value;
+      const tipo = document.getElementById('cad-tipo').value;
+      const instrumento = document.getElementById('cad-instrumento').value.trim();
+
+      if (!nome) { alert('Preencha seu nome.'); return; }
+      if ((tipo === 'toca' || tipo === 'toca_canta') && !instrumento) {
+        alert('Informe o instrumento.');
+        return;
+      }
+
+      const { error } = await supabase.from('membros').insert({
+        nome,
+        ministerio,
+        tipo,
+        instrumento: instrumento || null,
+        ativo: true,
+        pendente: true
+      });
+
+      if (error) {
+        alert('Erro ao enviar cadastro. Tente novamente.');
+        console.error(error);
+        return;
+      }
+
+      fecharCadastro();
+
+      // Salva identificação na sessão e redireciona
+      localStorage.setItem("nome", nome);
+      localStorage.setItem("ministerio", ministerio);
+      localStorage.setItem("tipo", tipo);
+      localStorage.setItem("instrumento", instrumento || "");
+      // Busca o id do membro recém criado
+      const { data: novoMembro } = await supabase
+        .from('membros')
+        .select('id')
+        .eq('nome', nome)
+        .eq('pendente', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+      if (novoMembro) localStorage.setItem("membro_id", novoMembro.id);
+
+      window.location.href = "disponibilidade.html";
+    }
   </script>
 
 </body>

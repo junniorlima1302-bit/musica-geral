@@ -346,7 +346,8 @@
   <div class="abas">
     <button class="aba ativa" id="aba-lista" onclick="mudarAba('lista')">👥 Lista</button>
     <button class="aba" id="aba-cadastro" onclick="mudarAba('cadastro')">➕ Cadastrar</button>
-    <button class="aba" id="aba-faltando" onclick="mudarAba('faltando')">⚠️ Faltando Responder</button>
+    <button class="aba" id="aba-faltando" onclick="mudarAba('faltando')">⚠️ Faltando</button>
+    <button class="aba" id="aba-pendentes" onclick="mudarAba('pendentes')">🕐 Pendentes <span id="badge-pendentes" style="background:#e67e22;color:white;border-radius:20px;padding:1px 7px;font-size:10px;margin-left:4px;display:none;">0</span></button>
   </div>
 
   <!-- ABA LISTA -->
@@ -444,6 +445,13 @@
   </div>
 </div>
 
+  <!-- ABA PENDENTES -->
+  <div id="painel-pendentes" style="display:none;">
+    <div id="lista-pendentes">
+      <p style="text-align:center;color:#7a9ec4;padding:20px;">Carregando...</p>
+    </div>
+  </div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="supabase.js"></script>
 <script src="app.js"></script>
@@ -483,11 +491,12 @@
 
   // ── ABAS ──
   function mudarAba(aba) {
-    ["lista", "cadastro", "faltando"].forEach(a => {
+    ["lista", "cadastro", "faltando", "pendentes"].forEach(a => {
       document.getElementById(`aba-${a}`).classList.toggle("ativa", a === aba);
       document.getElementById(`painel-${a}`).style.display = a === aba ? "block" : "none";
     });
     if (aba === "faltando") carregarFaltando();
+    if (aba === "pendentes") carregarPendentes();
   }
 
   // ── FILTRO MINISTÉRIO ──

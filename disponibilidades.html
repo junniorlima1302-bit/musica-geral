@@ -336,13 +336,22 @@
         .order("ordem_item", { ascending: true, nullsFirst: true });
       if (mesParaUsar) compQuery = compQuery.eq("mes_ref", mesParaUsar);
 
+      // Busca membros pendentes para excluir das respostas
+      const { data: pendentes } = await supabase
+        .from('membros')
+        .select('nome')
+        .eq('pendente', true);
+      const nomesPendentes = (pendentes || []).map(p => p.nome);
+
       let dispQuery = supabase.from("disponibilidades").select("*");
       if (mesParaUsar) dispQuery = dispQuery.eq("mes_ref", mesParaUsar);
 
       try {
         const [resComps, resDisp] = await Promise.all([compQuery, dispQuery]);
         compromissosGlobais = resComps.data || [];
-        respostasGlobais = resDisp.data || [];
+        // Remove respostas de membros ainda pendentes
+        const todasRespostas = resDisp.data || [];
+        respostasGlobais = todasRespostas.filter(r => !nomesPendentes.includes(r.nome_pessoa));
       } catch (err) {
         console.error(err);
         return;

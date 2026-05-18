@@ -157,12 +157,19 @@ async function carregarDisponibilidades() {
 
     const container = document.createElement("div");
     container.className = "botoes";
+    // Se grupo tem só 1 item, ocupa 2 colunas
+    if (grupos[nome].length === 1) {
+      container.style.gridTemplateColumns = "1fr";
+    }
 
     grupos[nome].forEach(turno => {
 
       const btn = document.createElement("button");
-      btn.innerText = turno;
+      btn.innerHTML = turno; // innerHTML para suportar formatação HTML
       btn.className = "btn-disponibilidade";
+      if (grupos[nome].length === 1) {
+        btn.style.gridColumn = "1 / -1";
+      }
 
       btn.dataset.valor = `${nome} | ${turno}`;
 

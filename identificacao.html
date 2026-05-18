@@ -351,9 +351,9 @@
       localStorage.setItem("instrumento", membroSelecionado.instrumento || "");
       localStorage.setItem("membro_id", membroSelecionado.id);
 
-      // Vincula o token push ao membro (aguarda antes de navegar)
-      if (Notification.permission === 'granted') {
-        await registrarPush(membroSelecionado.id).catch(() => {});
+      // Vincula o token push ao membro — sem await para não bloquear navegação
+      if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+        registrarPush(membroSelecionado.id).catch(() => {});
       }
 
       let historico = JSON.parse(localStorage.getItem("historico")) || [];

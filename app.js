@@ -1127,6 +1127,8 @@ async function renderizarRespostas(respostasFiltradas) {
       item.dataset.nome = pessoa.nome;
       item.dataset.ministerio = pessoa.ministerio;
       item.dataset.ids = JSON.stringify(pessoa.ids || []);
+      item.dataset.evento = evento;
+      item.dataset.turno = turno;
 
       item.innerHTML = `
         <span class="badge-excluir">✕</span>
@@ -1157,27 +1159,24 @@ async function excluirSelecionadosDisp() {
     return;
   }
 
-  // Coleta nome e evento/turno de cada item selecionado
+  // Coleta nome, evento e turno direto do dataset de cada item
   const itens = Array.from(selecionados).map(el => ({
     nome: el.dataset.nome,
-    grupo: el.closest(".grupo-evento")?.querySelector("h3")?.innerText || ""
+    evento: el.dataset.evento,
+    turno: el.dataset.turno
   }));
 
-  const descricao = [...new Set(itens.map(i => `${i.nome} — ${i.grupo}`))].join("\n");
+  const descricao = itens.map(i => `${i.nome} — ${i.evento} - ${i.turno}`).join("\n");
   const confirmar = confirm(`Excluir ${itens.length} resposta(s)?\n\n${descricao}`);
   if (!confirmar) return;
 
   // Deleta cada resposta individualmente por nome_pessoa + evento + turno
   for (const it of itens) {
-    const partes = it.grupo.split(" - ");
-    if (partes.length < 2) continue;
-    const evento = partes[0].trim();
-    const turno = partes.slice(1).join(" - ").trim();
     await supabase.from("disponibilidades")
       .delete()
       .eq("nome_pessoa", it.nome)
-      .eq("evento", evento)
-      .eq("turno", turno);
+      .eq("evento", it.evento)
+      .eq("turno", it.turno);
   }
 
   await carregarRespostas();

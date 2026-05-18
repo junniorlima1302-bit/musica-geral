@@ -347,7 +347,7 @@
     <button class="aba ativa" id="aba-lista" onclick="mudarAba('lista')">👥 Lista</button>
     <button class="aba" id="aba-cadastro" onclick="mudarAba('cadastro')">➕ Cadastrar</button>
     <button class="aba" id="aba-faltando" onclick="mudarAba('faltando')">⚠️ Faltando</button>
-    <button class="aba" id="aba-pendentes" onclick="mudarAba('pendentes')">🕐 Pendentes <span id="badge-pendentes" style="background:#e67e22;color:white;border-radius:20px;padding:1px 7px;font-size:10px;margin-left:4px;display:none;">0</span></button>
+
   </div>
 
   <!-- ABA LISTA -->
@@ -445,12 +445,32 @@
   </div>
 </div>
 
-  <!-- ABA PENDENTES -->
-  <div id="painel-pendentes" style="display:none;">
-    <div id="lista-pendentes">
+
+
+<!-- BOTÃO FLUTUANTE PENDENTES -->
+<div id="btn-float-pendentes" onclick="abrirPopupPendentes()" style="
+  display:none;position:fixed;bottom:24px;right:24px;
+  background:#e67e22;color:white;border-radius:30px;
+  padding:12px 20px;font-size:14px;font-weight:700;
+  cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.2);
+  z-index:888;font-family:'Nunito',sans-serif;
+  display:flex;align-items:center;gap:8px;
+">
+  🕐 Pendentes <span id="badge-pendentes" style="background:white;color:#e67e22;border-radius:20px;padding:1px 8px;font-size:12px;font-weight:800;">0</span>
+</div>
+
+<!-- POPUP PENDENTES -->
+<div id="popup-pendentes" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:white;border-radius:20px;padding:0;width:100%;max-width:460px;max-height:80vh;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.2);display:flex;flex-direction:column;">
+    <div style="padding:18px 20px;border-bottom:1px solid #eaf0f8;display:flex;align-items:center;justify-content:space-between;">
+      <h3 style="font-size:16px;font-weight:800;color:#1a2e4a;margin:0;">🕐 Cadastros Pendentes</h3>
+      <button onclick="fecharPopupPendentes()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#7a9ec4;padding:0;margin:0;width:auto;min-height:0;">×</button>
+    </div>
+    <div id="lista-pendentes" style="overflow-y:auto;padding:16px;flex:1;">
       <p style="text-align:center;color:#7a9ec4;padding:20px;">Carregando...</p>
     </div>
   </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="supabase.js"></script>
@@ -491,12 +511,11 @@
 
   // ── ABAS ──
   function mudarAba(aba) {
-    ["lista", "cadastro", "faltando", "pendentes"].forEach(a => {
+    ["lista", "cadastro", "faltando"].forEach(a => {
       document.getElementById(`aba-${a}`).classList.toggle("ativa", a === aba);
       document.getElementById(`painel-${a}`).style.display = a === aba ? "block" : "none";
     });
     if (aba === "faltando") carregarFaltando();
-    if (aba === "pendentes") carregarPendentes();
   }
 
   // ── FILTRO MINISTÉRIO ──
@@ -735,6 +754,69 @@
   });
 
   iniciar();
+
+  // ── PENDENTES ──
+  function abrirPopupPendentes() {
+    document.getElementById('popup-pendentes').style.display = 'flex';
+    carregarPendentes();
+  }
+
+  function fecharPopupPendentes() {
+    document.getElementById('popup-pendentes').style.display = 'none';
+  }
+
+  async function carregarPendentes() {
+    const { data, error } = await supabase
+      .from('membros').select('*').eq('pendente', true).order('nome');
+    const lista = document.getElementById('lista-pendentes');
+    if (error || !data) {
+      lista.innerHTML = '<p style="text-align:center;color:#c0392b;padding:20px;">Erro ao carregar.</p>';
+      return;
+    }
+    if (data.length === 0) {
+      lista.innerHTML = '<p style="text-align:center;color:#7a9ec4;padding:20px;">Nenhum cadastro pendente.</p>';
+      atualizarBadge(0);
+      return;
+    }
+    atualizarBadge(data.length);
+    lista.innerHTML = data.map(m => `
+      <div style="background:#f4f7fb;border-radius:12px;padding:14px 16px;margin-bottom:10px;border:1px solid #dce8f4;">
+        <strong style="font-size:14px;color:#1a2e4a;display:block;margin-bottom:4px;">${m.nome}</strong>
+        <small style="color:#3a5272;">${m.ministerio} · ${m.tipo === 'toca' ? '🎸 ' + (m.instrumento || '') : m.tipo === 'toca_canta' ? '🎸🎤 ' + (m.instrumento || '') : '🎤 Canta'}</small>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button onclick="aprovarMembro('${m.id}')" style="flex:1;padding:9px;background:#2e7d52;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin:0;">✅ Aprovar</button>
+          <button onclick="rejeitarMembro('${m.id}', '${m.nome.replace(/'/g, "\'")}')" style="flex:1;padding:9px;background:#c0392b;color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin:0;">❌ Rejeitar</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async function aprovarMembro(id) {
+    const { error } = await supabase.from('membros').update({ pendente: false }).eq('id', id);
+    if (error) { alert('Erro ao aprovar.'); return; }
+    await carregarPendentes();
+  }
+
+  async function rejeitarMembro(id, nome) {
+    if (!confirm(`Rejeitar e excluir o cadastro de "${nome}"?`)) return;
+    const { error } = await supabase.from('membros').delete().eq('id', id);
+    if (error) { alert('Erro ao rejeitar.'); return; }
+    await carregarPendentes();
+  }
+
+  function atualizarBadge(n) {
+    const badge = document.getElementById('badge-pendentes');
+    const btn = document.getElementById('btn-float-pendentes');
+    if (badge) badge.textContent = n;
+    if (btn) btn.style.display = n > 0 ? 'flex' : 'none';
+  }
+
+  // Verifica pendentes ao carregar
+  (async () => {
+    const { data } = await supabase.from('membros').select('id').eq('pendente', true);
+    atualizarBadge(data?.length || 0);
+  })();
+
 </script>
 
 </body>

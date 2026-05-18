@@ -822,7 +822,7 @@ async function cadastrarTudo(mesRef) {
     if (linha.startsWith("#")) {
       grupoAtual = linha.replace("#", "").trim().toUpperCase();
     } else {
-      dados.push({ nome: grupoAtual, turno: linha, mes_ref: mesRef });
+      dados.push({ nome: grupoAtual.trim(), turno: linha.trim(), mes_ref: mesRef });
     }
   });
 
@@ -1071,8 +1071,8 @@ async function renderizarRespostas(respostasFiltradas) {
       const chave = `${comp.nome}|||${comp.turno}`;
 
       const marcou = dadosPessoa.find(r =>
-        r.evento?.trim() === comp.nome?.trim() &&
-        r.turno?.trim() === comp.turno?.trim()
+        normalizar(r.evento) === normalizar(comp.nome) &&
+        normalizar(r.turno) === normalizar(comp.turno)
       );
 
       if (ministerio === "Música Geral") {

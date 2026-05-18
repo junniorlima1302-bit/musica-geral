@@ -141,13 +141,17 @@ async function carregarDisponibilidades() {
   lista.innerHTML = "";
 
   let grupos = {};
+  let ordemDisp = [];
 
   data.forEach(item => {
-    if (!grupos[item.nome]) grupos[item.nome] = [];
-    grupos[item.nome].push(item.turno);
+    if (!grupos[item.nome]) {
+      grupos[item.nome] = [];
+      ordemDisp.push(item.nome);
+    }
+    grupos[item.nome].push({ id: item.id, turno: item.turno });
   });
 
-  Object.keys(grupos).forEach(nome => {
+  ordemDisp.forEach(nome => {
 
     const divGrupo = document.createElement("div");
     divGrupo.className = "grupo";
@@ -157,14 +161,21 @@ async function carregarDisponibilidades() {
 
     const container = document.createElement("div");
     container.className = "botoes";
+    if (grupos[nome].length === 1) {
+      container.style.gridTemplateColumns = "1fr";
+    }
 
-    grupos[nome].forEach(turno => {
+    grupos[nome].forEach(item => {
 
       const btn = document.createElement("button");
-      btn.innerText = turno;
+      btn.innerHTML = item.turno;
       btn.className = "btn-disponibilidade";
+      if (grupos[nome].length === 1) {
+        btn.style.gridColumn = "1 / -1";
+      }
 
-      btn.dataset.valor = `${nome} | ${turno}`;
+      btn.dataset.valor = `${nome} | ${item.turno}`;
+      btn.dataset.compromissoId = item.id;
 
       btn.onclick = () => btn.classList.toggle("ativo");
 
@@ -261,6 +272,7 @@ if (ministerio === "Música Geral") {
       ministerio: ministerio,
       evento: partes[0].trim(),
       turno: partes[1].trim(),
+      compromisso_id: btn.dataset.compromissoId || null,
       tipo: tipo,
       instrumento: instrumento,
       justificativa: justificativas ? justificativas[index] : null,
@@ -414,13 +426,6 @@ async function editarGrupo(nomeAtual) {
     .eq("nome", nomeAtual);
 
   if (error) { alert("Erro ao renomear grupo."); return; }
-
-  // Atualiza também as disponibilidades que usam este nome de evento
-  await supabase
-    .from("disponibilidades")
-    .update({ evento: novoNome.trim() })
-    .eq("evento", nomeAtual);
-
   carregarCompromissos();
 }
 
@@ -568,13 +573,6 @@ async function editarCompromisso(id, textoAtual) {
   const novoTexto = prompt("Editar compromisso:", textoAtual);
   if (!novoTexto || novoTexto.trim() === textoAtual.trim()) return;
 
-  // Busca o nome do grupo deste item para atualizar disponibilidades
-  const { data: compAtual } = await supabase
-    .from("compromissos")
-    .select("nome")
-    .eq("id", id)
-    .single();
-
   const { error } = await supabase
     .from("compromissos")
     .update({ turno: novoTexto.trim() })
@@ -584,15 +582,6 @@ async function editarCompromisso(id, textoAtual) {
     console.error(error);
     alert("Erro ao editar.");
     return;
-  }
-
-  // Atualiza disponibilidades com o turno antigo
-  if (compAtual) {
-    await supabase
-      .from("disponibilidades")
-      .update({ turno: novoTexto.trim() })
-      .eq("evento", compAtual.nome)
-      .eq("turno", textoAtual.trim());
   }
 
   carregarCompromissos();
@@ -1094,8 +1083,9 @@ async function renderizarRespostas(respostasFiltradas) {
       const chave = `${comp.nome}|||${comp.turno}`;
 
       const marcou = dadosPessoa.find(r =>
-        r.evento === comp.nome &&
-        r.turno === comp.turno
+        // Compara por ID se disponível (novo), senão por nome/turno (legado)
+        (r.compromisso_id && r.compromisso_id === comp.id) ||
+        (!r.compromisso_id && normalizar(r.evento) === normalizar(comp.nome) && normalizar(r.turno) === normalizar(comp.turno))
       );
 
       if (ministerio === "Música Geral") {

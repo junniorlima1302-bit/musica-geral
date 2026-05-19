@@ -142,12 +142,16 @@ async function carregarDisponibilidades() {
 
   let grupos = {};
 
+  let ordemDisp = [];
   data.forEach(item => {
-    if (!grupos[item.nome]) grupos[item.nome] = [];
-    grupos[item.nome].push(item.turno);
+    if (!grupos[item.nome]) {
+      grupos[item.nome] = [];
+      ordemDisp.push(item.nome);
+    }
+    grupos[item.nome].push({ id: item.id, turno: item.turno });
   });
 
-  Object.keys(grupos).forEach(nome => {
+  ordemDisp.forEach(nome => {
 
     const divGrupo = document.createElement("div");
     divGrupo.className = "grupo";
@@ -157,14 +161,22 @@ async function carregarDisponibilidades() {
 
     const container = document.createElement("div");
     container.className = "botoes";
+    // Grupo com 1 único evento ocupa linha inteira
+    if (grupos[nome].length === 1) {
+      container.style.gridTemplateColumns = "1fr";
+    }
 
-    grupos[nome].forEach(turno => {
+    grupos[nome].forEach(item => {
 
       const btn = document.createElement("button");
-      btn.innerText = turno;
+      btn.innerHTML = item.turno;
       btn.className = "btn-disponibilidade";
+      if (grupos[nome].length === 1) {
+        btn.style.gridColumn = "1 / -1";
+      }
 
-      btn.dataset.valor = `${nome} | ${turno}`;
+      btn.dataset.valor = `${nome} | ${item.turno}`;
+      btn.dataset.compromissoId = item.id;
 
       btn.onclick = () => btn.classList.toggle("ativo");
 

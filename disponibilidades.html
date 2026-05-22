@@ -274,7 +274,7 @@
     function popularFiltroEventosPorMes(compromissos) {
       const select = document.getElementById("filtroEvento");
       if (!select) return;
-      // Mantém a ordem de cadastro (ordem_grupo), sem sort()
+      const valorAtual = select.value;
       const vistos = new Set();
       const eventos = [];
       (compromissos || []).forEach(c => {
@@ -290,7 +290,27 @@
         opt.textContent = e;
         select.appendChild(opt);
       });
+      // Restaura seleção se ainda existe
+      if (valorAtual && eventos.includes(valorAtual)) {
+        select.value = valorAtual;
+      }
     }
+
+    // Sobrescreve aplicarBusca para não chamar popularFiltroEventos do app.js
+    window.aplicarBusca = function() {
+      const nomeBusca = normalizar(document.getElementById("buscaNome")?.value || "");
+      const filtroMin = document.getElementById("filtroMinisterio")?.value || "todos";
+      const filtroEvt = document.getElementById("filtroEvento")?.value || "todos";
+
+      const filtrado = respostasGlobais.filter(p => {
+        const nomeOk = !nomeBusca || normalizar(p.nome_pessoa).includes(nomeBusca);
+        const minOk = filtroMin === "todos" || p.ministerio === filtroMin;
+        const evtOk = filtroEvt === "todos" || p.evento === filtroEvt;
+        return nomeOk && minOk && evtOk;
+      });
+
+      renderizarRespostas(filtrado);
+    };
 
     async function iniciarDisponibilidades() {
       const { data } = await supabase

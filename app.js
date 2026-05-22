@@ -1304,7 +1304,7 @@ async function atualizarBotaoRespostas() {
   const { data, error } = await supabase
     .from('configuracoes')
     .select('respostas_ativas')
-    .eq('id', 1)
+    .eq('id', 2)
     .single();
 
   if (error) {
@@ -1331,7 +1331,7 @@ async function toggleRespostas() {
   const { data, error } = await supabase
     .from('configuracoes')
     .select('respostas_ativas')
-    .eq('id', 1)
+    .eq('id', 2)
     .single();
 
   if (error) {
@@ -1346,7 +1346,7 @@ async function toggleRespostas() {
     .update({
       respostas_ativas: novoValor
     })
-    .eq('id', 1);
+    .eq('id', 2);
 
   if (updateError) {
     console.error(updateError);
@@ -1361,7 +1361,7 @@ async function verificarStatusRespostas() {
   const { data, error } = await supabase
     .from('configuracoes')
     .select('respostas_ativas')
-    .eq('id', 1)
+    .eq('id', 2)
     .single();
 
   if (error) {

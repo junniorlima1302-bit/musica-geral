@@ -161,12 +161,21 @@
     body.has-sidebar { padding-left: 220px !important; }
     body.has-sidebar .admin-box { max-width: calc(100% - 20px); }
 
-    /* Celular: sidebar fechada, abre com as barrinhas */
+    /* Celular: sem sidebar, conteúdo ocupa tudo */
     @media (max-width: 768px) {
       .sidebar-admin { transform: translateX(-100%) !important; }
       .sidebar-admin.aberta { transform: translateX(0) !important; }
       .sidebar-topbar { display: flex !important; }
-      body.has-sidebar { padding-left: 0 !important; padding-top: 52px !important; }
+      body.has-sidebar {
+        padding-left: 0 !important;
+        padding-top: 52px !important;
+      }
+      body.has-sidebar .admin-box {
+        max-width: 100% !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        padding: 16px !important;
+      }
     }
   `;
 

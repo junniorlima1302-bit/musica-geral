@@ -285,15 +285,19 @@
       .sidebar-overlay.ativo { display: block; }
       .topbar { display: flex; }
       .main {
-        position: static;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 52px;
+        bottom: 0;
         margin-left: 0;
         width: 100%;
-        padding: 80px 16px 30px;
-        min-height: 100vh;
-        overflow: auto;
+        padding: 20px 16px;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
       }
       .quick-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -376,7 +380,7 @@
   <main class="main">
     <div class="main-boas-vindas">
       <h1>Olá, <span id="nome-usuario">...</span>! 👋</h1>
-
+      <p>O que vamos fazer hoje?</p>
     </div>
 
     <div class="quick-grid" id="quick-grid">

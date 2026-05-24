@@ -121,26 +121,21 @@ textarea {
 
 .botoes {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 }
 
 .btn-disponibilidade {
-  padding: 10px 4px;
+  padding: 12px;
   border-radius: 10px;
   border: 2px solid #d0d7e2;
   background: #f5f7fa;
   color: #1b4580;
   text-align: center;
-  font-size: 11px;
+  font-size: 13px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
   transition: 0.2s;
-  line-height: 1.3;
-  min-height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .btn-disponibilidade:hover {
@@ -380,7 +375,7 @@ textarea {
   background: #cfd8e8;
   padding: 12px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* ✅ era 180px — cabe melhor em celular */
+  grid-template-columns: repeat(6, 1fr);
   gap: 10px;
 }
 
@@ -923,7 +918,7 @@ body.iframe-page {
 
   /* Pessoas em grid de 2 colunas mínimas */
   .lista-pessoas {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     padding: 10px;
     gap: 8px;
   }

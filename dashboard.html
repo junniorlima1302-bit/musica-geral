@@ -7,51 +7,196 @@
   <link rel="stylesheet" href="style.css">
   <meta name="theme-color" content="#1b4580">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       min-height: 100vh;
       background: linear-gradient(135deg, #e8f0fa 0%, #c5d8f0 100%);
+      font-family: 'Nunito', sans-serif;
+      display: flex;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 240px;
+      min-height: 100vh;
+      background: #1a2e4a;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      z-index: 100;
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .sidebar-header h2 {
+      color: white;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      line-height: 1.4;
+    }
+
+    .sidebar-user {
+      color: #a0b8d0;
+      font-size: 11px;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    .sidebar-nav { padding: 12px 0; flex: 1; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 20px;
+      color: #c4d4e8;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: rgba(255,255,255,0.07);
+      color: white;
+    }
+
+    .nav-item.ativo {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border-left-color: #7a9ec4;
+    }
+
+    .nav-item .nav-icon { font-size: 16px; flex-shrink: 0; width: 20px; text-align: center; }
+
+    .nav-group-label {
+      padding: 16px 20px 6px;
+      color: #5a7a9a;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+    }
+
+    .nav-sub {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px 9px 36px;
+      color: #a0b8d0;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-sub:hover { background: rgba(255,255,255,0.05); color: white; }
+    .nav-sub.ativo { color: white; border-left-color: #7a9ec4; }
+
+    .nav-group-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 20px;
+      color: #c4d4e8;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
+      justify-content: space-between;
+    }
+
+    .nav-group-toggle:hover { background: rgba(255,255,255,0.07); color: white; }
+    .nav-group-toggle .left { display: flex; align-items: center; gap: 10px; }
+    .nav-group-toggle .arrow { font-size: 10px; transition: transform 0.2s; color: #5a7a9a; }
+    .nav-group-toggle.aberto .arrow { transform: rotate(90deg); }
+
+    .nav-sub-group { display: none; }
+    .nav-sub-group.aberto { display: block; }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-sair-sidebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #7a9ec4;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: 'Nunito', sans-serif;
+      padding: 0;
+      transition: color 0.2s;
+      width: 100%;
+    }
+
+    .btn-sair-sidebar:hover { color: #ff6b6b; background: none; }
+
+    /* ── MAIN ── */
+    .main {
+      position: fixed;
+      left: 220px;
+      right: 0;
+      top: 0;
+      bottom: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 30px 20px;
-      font-family: 'Nunito', sans-serif;
+      padding: 40px 30px;
+      overflow: hidden;
     }
 
-    .topo {
+    .main-boas-vindas {
       text-align: center;
-      margin-bottom: 36px;
     }
 
-    .topo h1 {
-      font-size: 26px;
+    .main-boas-vindas h1 {
+      font-size: 28px;
       font-weight: 800;
       color: #1a2e4a;
-      letter-spacing: 1px;
+      margin-bottom: 8px;
     }
 
-    .topo p {
-      font-size: 13px;
-      color: #3a5272;
-      margin-top: 6px;
+    .main-boas-vindas p {
+      color: #5a7a9a;
+      font-size: 14px;
       font-weight: 600;
     }
 
-    .grade {
+    .quick-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 14px;
+      margin-top: 36px;
       width: 100%;
-      max-width: 760px;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .bloco {
+    .quick-card {
       background: white;
       border: 1.5px solid #a0b8d0;
       border-radius: 16px;
@@ -59,123 +204,201 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       cursor: pointer;
       transition: all 0.2s ease;
-      text-decoration: none;
       box-shadow: 0 2px 8px rgba(27,69,128,0.08);
     }
 
-    .bloco:hover {
+    .quick-card:hover {
       background: #eaf0f8;
       border-color: #1b4580;
-      transform: translateY(-3px);
+      transform: translateY(-2px);
       box-shadow: 0 6px 18px rgba(27,69,128,0.15);
     }
 
-    .bloco:active { transform: translateY(0px); }
+    .quick-card .icone { font-size: 32px; }
+    .quick-card .label { font-size: 12px; font-weight: 800; color: #1a2e4a; text-align: center; }
 
-    .bloco .icone { font-size: 36px; line-height: 1; }
-
-    .bloco .label {
-      font-size: 13px;
-      font-weight: 800;
-      color: #1a2e4a;
-      text-align: center;
-      line-height: 1.3;
+    /* ── OVERLAY MOBILE ── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 99;
     }
 
-    .bloco .desc {
-      font-size: 11px;
-      color: #3a5272;
-      text-align: center;
-      line-height: 1.4;
-      font-weight: 600;
-    }
-
-    .rodape {
-      margin-top: 28px;
-      display: flex;
-      flex-direction: column;
+    /* ── TOPBAR MOBILE ── */
+    .topbar {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 56px;
+      background: #1a2e4a;
       align-items: center;
-      gap: 10px;
+      padding: 0 16px;
+      z-index: 98;
+      gap: 12px;
     }
 
-    .btn-rodape {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 12px 28px;
-      background: white;
-      border: 1.5px solid #a0b8d0;
-      border-radius: 30px;
-      color: #1a2e4a;
+    .topbar h2 {
+      color: white;
       font-size: 14px;
-      font-weight: 700;
-      font-family: 'Nunito', sans-serif;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      box-shadow: 0 2px 8px rgba(27,69,128,0.08);
+      font-weight: 800;
+      flex: 1;
+      letter-spacing: 0.5px;
     }
 
-    .btn-rodape:hover {
-      background: #eaf0f8;
-      border-color: #1b4580;
-      color: #1b4580;
-    }
-
-    .btn-sair {
+    .btn-menu {
       background: none;
       border: none;
-      color: #7a9ec4;
-      font-size: 14px;
-      font-family: 'Nunito', sans-serif;
       cursor: pointer;
-      padding: 4px 12px;
-      transition: 0.2s;
+      padding: 6px;
+      color: white;
+      font-size: 20px;
+      line-height: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: auto;
+      margin: 0;
+      min-height: 0;
     }
 
-    .btn-sair:hover { color: #c0392b; background: none; }
+    .btn-menu span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: white;
+      border-radius: 2px;
+      transition: 0.3s;
+    }
 
-    @media (max-width: 600px) {
-      body { padding: 40px 16px; }
-      .topo h1 { font-size: 22px; }
-      .topo { margin-bottom: 28px; }
-      .grade { gap: 12px; max-width: 100%; }
-      .bloco { padding: 20px 10px 16px; border-radius: 14px; gap: 8px; }
-      .bloco .icone { font-size: 34px; }
-      .bloco .label { font-size: 13px; }
-      .bloco .desc { font-size: 11px; }
-      .btn-rodape { font-size: 14px; padding: 12px 24px; }
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.aberta {
+        transform: translateX(0);
+      }
+      .sidebar-overlay.ativo { display: block; }
+      .topbar { display: flex; }
+      .main {
+        margin-left: 0;
+        padding: 80px 16px 30px;
+      }
+      .quick-grid {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 100%;
+      }
+      .main-boas-vindas h1 { font-size: 22px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="topo">
-    <h1>MÚSICA GERAL FORTALEZA</h1>
-    <p id="info-usuario">Carregando...</p>
+  <!-- OVERLAY MOBILE -->
+  <div class="sidebar-overlay" id="overlay" onclick="fecharSidebar()"></div>
+
+  <!-- TOPBAR MOBILE -->
+  <div class="topbar">
+    <button class="btn-menu" onclick="toggleSidebar()">
+      <span></span><span></span><span></span>
+    </button>
+    <h2>MÚSICA GERAL FORTALEZA</h2>
   </div>
 
-  <div id="area-botoes" style="display:none; width:100%; max-width:760px;">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>MÚSICA GERAL<br>FORTALEZA</h2>
+      <div class="sidebar-user" id="sidebar-user">Carregando...</div>
+    </div>
 
-    <div class="grade" id="grade-botoes">
-      <a class="bloco" onclick="irPara('disponibilidades.html')">
-        <div class="icone">📋</div>
-        <div class="label">Ver Disponibilidades</div>
-        <div class="desc">Respostas dos ministros</div>
+    <nav class="sidebar-nav">
+      <div class="nav-group-label">MINISTÉRIO</div>
+
+      <a class="nav-item" onclick="irPara('disponibilidades.html')">
+        <span class="nav-icon">📋</span> Ver Disponibilidades
       </a>
-      <div id="area-admin" style="display:contents;"></div>
+
+      <a class="nav-item" onclick="irPara('justificativas.html')">
+        <span class="nav-icon">📝</span> Ver Justificativas
+      </a>
+
+      <a class="nav-item" onclick="irPara('compromissos.html')">
+        <span class="nav-icon">📅</span> Compromissos
+      </a>
+
+      <div class="nav-group-label">CONFIGURAÇÕES</div>
+
+      <!-- GERENCIAR (com subpastas) -->
+      <div class="nav-group-toggle" id="toggle-gerenciar" onclick="toggleGrupo('gerenciar')">
+        <div class="left"><span class="nav-icon">⚙️</span> Gerenciar</div>
+        <span class="arrow">▶</span>
+      </div>
+      <div class="nav-sub-group" id="grupo-gerenciar">
+        <a class="nav-sub" onclick="irPara('usuarios-lista.html')">👥 Usuários</a>
+        <a class="nav-sub" onclick="irPara('membros.html')">🎵 Membros</a>
+        <a class="nav-sub" onclick="irPara('usuarios-cadastro.html')">➕ Cadastrar Usuário</a>
+        <a class="nav-sub" onclick="irPara('minha-conta.html')">🔑 Minha Conta</a>
+      </div>
+
+      <a class="nav-item" onclick="irPara('visibilidade.html')">
+        <span class="nav-icon">🎛️</span> Visibilidade
+      </a>
+
+      <a class="nav-item" onclick="irPara('notificacoes.html')">
+        <span class="nav-icon">🔔</span> Notificações
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a class="nav-item" onclick="irPara('index.html')" style="padding:0;margin-bottom:12px;">
+        <span class="nav-icon">🏠</span> <span style="color:#a0b8d0;font-size:12px;">Início</span>
+      </a>
+      <button class="btn-sair-sidebar" onclick="fazerLogout()">
+        <span>→</span> Sair
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="main-boas-vindas">
+      <h1>Olá, <span id="nome-usuario">...</span>! 👋</h1>
     </div>
 
-    <div class="rodape">
-      <a class="btn-rodape" onclick="window.location.href='index.html'">🏠 Voltar ao Início</a>
-      <button class="btn-sair" onclick="fazerLogout()">Sair</button>
+    <div class="quick-grid" id="quick-grid">
+      <div class="quick-card" onclick="irPara('disponibilidades.html')">
+        <div class="icone">📋</div>
+        <div class="label">Disponibilidades</div>
+      </div>
+      <div class="quick-card" onclick="irPara('justificativas.html')">
+        <div class="icone">📝</div>
+        <div class="label">Justificativas</div>
+      </div>
+      <div class="quick-card" onclick="irPara('compromissos.html')">
+        <div class="icone">📅</div>
+        <div class="label">Compromissos</div>
+      </div>
+      <div class="quick-card" onclick="irPara('membros.html')">
+        <div class="icone">🎵</div>
+        <div class="label">Membros</div>
+      </div>
+      <div class="quick-card" onclick="irPara('visibilidade.html')">
+        <div class="icone">🎛️</div>
+        <div class="label">Visibilidade</div>
+      </div>
+      <div class="quick-card" onclick="irPara('notificacoes.html')">
+        <div class="icone">🔔</div>
+        <div class="label">Notificações</div>
+      </div>
     </div>
+  </main>
 
-  </div>
-
+  <script src="sidebar.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="supabase.js"></script>
   <script src="app.js"></script>
@@ -186,60 +409,43 @@
 
       if (!sessao.session) {
         const { data: refreshed } = await supabase.auth.refreshSession();
-        if (!refreshed.session) {
-          window.location.href = "login.html";
-          return;
-        }
+        if (!refreshed.session) { window.location.href = "login.html"; return; }
       }
 
-      const userId = sessao.session?.user?.id || (await supabase.auth.getSession()).data.session?.user?.id;
+      const userId = sessao.session?.user?.id;
+      const { data: usuario } = await supabase
+        .from("usuarios").select("*").eq("id", userId).single();
 
-      const { data: usuario, error } = await supabase
-        .from("usuarios")
-        .select("*")
-        .eq("id", userId)
-        .single();
-
-      if (error || !usuario) {
-        alert("Usuário não encontrado. Contate o administrador.");
+      if (!usuario) {
         await supabase.auth.signOut();
         window.location.href = "login.html";
         return;
       }
 
-      document.getElementById("info-usuario").innerText = `Olá, ${usuario.nome}`;
+      document.getElementById("nome-usuario").textContent = usuario.nome.split(" ")[0];
+      document.getElementById("sidebar-user").textContent = usuario.nome;
 
-      if (usuario.papel === "admin") {
-        document.getElementById("area-admin").innerHTML = `
-          <a class="bloco" onclick="irPara('justificativas.html')">
-            <div class="icone">📝</div>
-            <div class="label">Ver Justificativas</div>
-            <div class="desc">Motivos das ausências</div>
-          </a>
-          <a class="bloco" onclick="irPara('compromissos.html')">
-            <div class="icone">📅</div>
-            <div class="label">Compromissos do Mês</div>
-            <div class="desc">Gerencie os eventos</div>
-          </a>
-          <a class="bloco" onclick="irPara('usuarios.html')">
-            <div class="icone">⚙️</div>
-            <div class="label">Gerenciar</div>
-            <div class="desc">Usuários e ministros</div>
-          </a>
-          <a class="bloco" onclick="irPara('visibilidade.html')">
-            <div class="icone">🎛️</div>
-            <div class="label">Visibilidade</div>
-            <div class="desc">Escalas e Repertórios</div>
-          </a>
-          <a class="bloco" onclick="irPara('notificacoes.html')">
-            <div class="icone">🔔</div>
-            <div class="label">Notificações</div>
-            <div class="desc">Enviar para membros</div>
-          </a>
-        `;
+      // Se não for admin, esconde itens restritos
+      if (usuario.papel !== "admin") {
+        document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
       }
+    }
 
-      document.getElementById("area-botoes").style.display = "block";
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("aberta");
+      document.getElementById("overlay").classList.toggle("ativo");
+    }
+
+    function fecharSidebar() {
+      document.getElementById("sidebar").classList.remove("aberta");
+      document.getElementById("overlay").classList.remove("ativo");
+    }
+
+    function toggleGrupo(id) {
+      const grupo = document.getElementById("grupo-" + id);
+      const toggle = document.getElementById("toggle-" + id);
+      grupo.classList.toggle("aberto");
+      toggle.classList.toggle("aberto");
     }
 
     iniciarDashboard();

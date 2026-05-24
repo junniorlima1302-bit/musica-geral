@@ -163,9 +163,9 @@
 
     /* Celular: sidebar fechada, abre com as barrinhas */
     @media (max-width: 768px) {
-      .sidebar-admin { transform: translateX(-100%); }
-      .sidebar-admin.aberta { transform: translateX(0); }
-      .sidebar-topbar { display: flex; }
+      .sidebar-admin { transform: translateX(-100%) !important; }
+      .sidebar-admin.aberta { transform: translateX(0) !important; }
+      .sidebar-topbar { display: flex !important; }
       body.has-sidebar { padding-left: 0 !important; padding-top: 52px !important; }
     }
   `;

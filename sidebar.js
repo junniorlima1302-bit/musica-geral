@@ -164,6 +164,24 @@
     @media (max-width: 768px) {
       .sidebar-admin { transform: translateX(-100%); }
       .sidebar-admin.aberta { transform: translateX(0); }
+
+      /* body É o admin-page */
+      body.sidebar-mobile.admin-page {
+        padding: 12px !important;
+        padding-top: calc(52px + 12px) !important;
+        justify-content: flex-start !important;
+        align-items: flex-start !important;
+        display: flex !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      /* admin-box ocupa 100% da largura */
+      body.sidebar-mobile .admin-box,
+      body.sidebar-mobile.admin-page .admin-box {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
     }
   `;
 
@@ -235,7 +253,6 @@
     div.innerHTML = html;
     document.body.insertBefore(div, document.body.firstChild);
 
-    // Aplica padding via JS inline — máxima prioridade
     ajustarLayout();
     window.addEventListener('resize', ajustarLayout);
   }
@@ -243,11 +260,19 @@
   function ajustarLayout() {
     const mobile = window.innerWidth <= 768;
     if (mobile) {
-      document.body.style.setProperty('padding-left', '0px', 'important');
-      document.body.style.setProperty('padding-top', '52px', 'important');
+      // Mobile: remove todos os paddings inline, o CSS cuida via classe
+      document.body.style.removeProperty('padding-left');
+      document.body.style.removeProperty('padding-right');
+      document.body.style.removeProperty('padding-top');
+      document.body.style.removeProperty('padding-bottom');
+      document.body.classList.add('sidebar-mobile');
+      document.body.classList.remove('sidebar-desktop');
     } else {
+      // Desktop: empurra conteúdo para direita da sidebar
       document.body.style.setProperty('padding-left', '220px', 'important');
       document.body.style.removeProperty('padding-top');
+      document.body.classList.add('sidebar-desktop');
+      document.body.classList.remove('sidebar-mobile');
     }
   }
 

@@ -936,3 +936,49 @@ body.iframe-page {
     font-size: 16px; /* evita zoom no iOS */
   }
 }
+/* ========================= */
+/* ===== SIDEBAR MOBILE ===== */
+/* ========================= */
+
+/* Quando sidebar.js adiciona classe sidebar-mobile ao body */
+@media (max-width: 768px) {
+  /* body que É o admin-page com sidebar ativo */
+  body.sidebar-mobile.admin-page {
+    padding: 12px !important;
+    padding-top: calc(52px + 12px) !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    display: flex !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* admin-box ocupa toda a largura disponível no mobile */
+  body.sidebar-mobile .admin-box,
+  body.sidebar-mobile.admin-page .admin-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 12px !important;
+  }
+}
+
+/* ========================= */
+/* === SIDEBAR DESKTOP ====== */
+/* ========================= */
+
+/* Em desktop, quando o body É o admin-page, 
+   o padding-left do sidebar.js já empurra o conteúdo.
+   Mas o admin-page tem padding:20px próprio — precisamos
+   garantir que o admin-box use o espaço todo corretamente. */
+body.sidebar-desktop.admin-page {
+  padding-right: 20px !important;
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+  /* padding-left já vem de sidebar.js como 220px */
+  justify-content: flex-start !important;
+}
+
+body.sidebar-desktop.admin-page .admin-box {
+  max-width: 100% !important;
+  width: 100% !important;
+}

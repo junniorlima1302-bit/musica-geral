@@ -857,9 +857,11 @@ body.iframe-page {
     padding: 12px;
   }
 
-  /* Com sidebar: sem padding lateral, só topo */
+  /* Com sidebar no celular: ocupa tudo sem deslocamento */
   body.has-sidebar {
-    padding: 52px 0 0 0 !important;
+    padding: 52px 12px 12px 12px !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
   }
 
   /* Admin box sem bordas arredondadas ocupando mais espaço */

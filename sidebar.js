@@ -254,11 +254,10 @@
     document.getElementById('sb-overlay').classList.toggle('ativo');
   };
 
-  // Remove padding no celular
+  // Ajusta layout por tamanho de tela
   function ajustarLayout() {
     if (window.innerWidth <= 768) {
-      document.body.style.paddingLeft = '0';
-      document.body.style.paddingTop = '52px';
+      document.body.style.removeProperty('padding-left');
     } else {
       document.body.style.paddingLeft = '220px';
       document.body.style.paddingTop = '';

@@ -1097,7 +1097,9 @@ async function renderizarRespostas(respostasFiltradas) {
             ministerio: dadosPessoa[0]?.ministerio,
             tipo: dadosPessoa[0]?.tipo,
             instrumento: dadosPessoa[0]?.instrumento,
-            ids: idsResposta
+            ids: idsResposta,
+            mesRef: dadosPessoa[0]?.mes_ref || null,
+            compromissoId: comp.id || null
           });
         }
       } else {
@@ -1109,7 +1111,9 @@ async function renderizarRespostas(respostasFiltradas) {
             ministerio: dadosPessoa[0]?.ministerio,
             tipo: dadosPessoa[0]?.tipo,
             instrumento: dadosPessoa[0]?.instrumento,
-            ids: idsResposta
+            ids: idsResposta,
+            mesRef: dadosPessoa[0]?.mes_ref || null,
+            compromissoId: comp.id || null
           });
         }
       }
@@ -1141,6 +1145,10 @@ async function renderizarRespostas(respostasFiltradas) {
       item.dataset.ids = JSON.stringify(pessoa.ids || []);
       item.dataset.evento = evento;
       item.dataset.turno = turno;
+      item.dataset.tipo = pessoa.tipo || "";
+      item.dataset.instrumento = pessoa.instrumento || "";
+      item.dataset.mesRef = pessoa.mesRef || "";
+      item.dataset.compromissoId = pessoa.compromissoId || "";
 
       item.innerHTML = `
         <span class="badge-excluir">✕</span>
@@ -1174,24 +1182,49 @@ async function excluirSelecionadosDisp() {
   // Coleta nome, evento e turno direto do dataset de cada item
   const itens = Array.from(selecionados).map(el => ({
     nome: el.dataset.nome,
+    ministerio: el.dataset.ministerio,
     evento: el.dataset.evento,
-    turno: el.dataset.turno
+    turno: el.dataset.turno,
+    tipo: el.dataset.tipo || null,
+    instrumento: el.dataset.instrumento || null,
+    mesRef: el.dataset.mesRef || null,
+    compromissoId: el.dataset.compromissoId || null
   }));
 
   const descricao = itens.map(i => `${i.nome} — ${i.evento} - ${i.turno}`).join("\n");
   const confirmar = confirm(`Excluir ${itens.length} resposta(s)?\n\n${descricao}`);
   if (!confirmar) return;
 
-  // Deleta cada resposta individualmente por nome_pessoa + evento + turno
+  // Para cada item, verifica o ministério
   for (const it of itens) {
-    await supabase.from("disponibilidades")
-      .delete()
-      .eq("nome_pessoa", it.nome)
-      .eq("evento", it.evento)
-      .eq("turno", it.turno);
+    if (it.ministerio === "Música Geral") {
+      // Música Geral: aparece quem NÃO marcou → inserir marcação para remover do card
+      await supabase.from("disponibilidades").insert({
+        nome_pessoa: it.nome,
+        ministerio: it.ministerio,
+        evento: it.evento,
+        turno: it.turno,
+        tipo: it.tipo || null,
+        instrumento: it.instrumento || null,
+        mes_ref: it.mesRef || null,
+        compromisso_id: it.compromissoId || null
+      });
+    } else {
+      // Geral Eventos: aparece quem MARCOU → deletar a marcação
+      await supabase.from("disponibilidades")
+        .delete()
+        .eq("nome_pessoa", it.nome)
+        .eq("evento", it.evento)
+        .eq("turno", it.turno);
+    }
   }
 
-  await carregarRespostas();
+  // Usa carregarRespostasComMes se disponível (página disponibilidades.html), senão carregarRespostas
+  if (typeof carregarRespostasComMes === 'function') {
+    await carregarRespostasComMes();
+  } else {
+    await carregarRespostas();
+  }
   if (typeof _statusCarregado !== 'undefined') _statusCarregado = false;
 }
 

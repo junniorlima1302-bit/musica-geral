@@ -254,6 +254,20 @@
     document.getElementById('sb-overlay').classList.toggle('ativo');
   };
 
+  // Remove padding no celular
+  function ajustarLayout() {
+    if (window.innerWidth <= 768) {
+      document.body.style.paddingLeft = '0';
+      document.body.style.paddingTop = '52px';
+    } else {
+      document.body.style.paddingLeft = '220px';
+      document.body.style.paddingTop = '';
+    }
+  }
+
+  window.addEventListener('resize', ajustarLayout);
+  ajustarLayout();
+
   window.sidebarFechar = function() {
     document.getElementById('sidebar-admin').classList.remove('aberta');
     document.getElementById('sb-overlay').classList.remove('ativo');

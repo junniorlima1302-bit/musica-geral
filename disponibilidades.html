@@ -200,7 +200,6 @@
     </div>
   </div>
 </div>
-  <script src="sidebar.js"></script>
 </head>
 
 <body class="admin-page" onload="iniciarDisponibilidades()">
@@ -275,7 +274,7 @@
     function popularFiltroEventosPorMes(compromissos) {
       const select = document.getElementById("filtroEvento");
       if (!select) return;
-      const valorAtual = select.value;
+      // Mantém a ordem de cadastro (ordem_grupo), sem sort()
       const vistos = new Set();
       const eventos = [];
       (compromissos || []).forEach(c => {
@@ -291,39 +290,7 @@
         opt.textContent = e;
         select.appendChild(opt);
       });
-      // Restaura seleção se ainda existe
-      if (valorAtual && eventos.includes(valorAtual)) {
-        select.value = valorAtual;
-      }
     }
-
-    // Sobrescreve aplicarBusca para não chamar popularFiltroEventos do app.js
-    window.aplicarBusca = function() {
-      const nomeBusca = normalizar(document.getElementById("buscaNome")?.value || "");
-      const filtroMin = document.getElementById("filtroMinisterio")?.value || "todos";
-      const filtroEvt = document.getElementById("filtroEvento")?.value || "todos";
-
-      // Para Música Geral a lógica é invertida (mostra quem NÃO marcou)
-      // Então não podemos filtrar respostasGlobais por evento — precisamos passar
-      // o filtro de evento para o renderizarRespostas via compromissosGlobais filtrados
-      let compsFiltrados = compromissosGlobais;
-      if (filtroEvt !== "todos") {
-        compsFiltrados = compromissosGlobais.filter(c => c.nome === filtroEvt);
-      }
-
-      // Filtra respostas por nome e ministério apenas
-      const filtrado = respostasGlobais.filter(p => {
-        const nomeOk = !nomeBusca || normalizar(p.nome_pessoa).includes(nomeBusca);
-        const minOk = filtroMin === "todos" || p.ministerio === filtroMin;
-        return nomeOk && minOk;
-      });
-
-      // Temporariamente substitui compromissosGlobais para renderizar só o evento filtrado
-      const compsBkp = compromissosGlobais;
-      compromissosGlobais = compsFiltrados;
-      renderizarRespostas(filtrado);
-      compromissosGlobais = compsBkp;
-    };
 
     async function iniciarDisponibilidades() {
       const { data } = await supabase
@@ -352,14 +319,14 @@
       await carregarRespostasComMes();
     }
 
-    window.trocarMesDisp = async function trocarMesDisp() {
+    async function trocarMesDisp() {
       _mesDispAtivo = document.getElementById("filtroMesDisp").value;
       _statusCarregado = false;
       document.getElementById("filtroEvento").value = "todos";
       await carregarRespostasComMes();
     }
 
-    window.carregarRespostasComMes = async function carregarRespostasComMes() {
+    async function carregarRespostasComMes() {
       const mesParaUsar = (_mesDispAtivo && _mesDispAtivo !== "todos") ? _mesDispAtivo : null;
       const container = document.getElementById("lista-respostas");
       if (container) mostrarLoading("lista-respostas", "Carregando disponibilidades...");
@@ -553,5 +520,6 @@
     }
   </script>
 
+  <script src="sidebar.js"></script>
 </body>
 </html>

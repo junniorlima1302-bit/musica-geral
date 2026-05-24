@@ -68,7 +68,6 @@
     }
     .btn-limpar-filtro:hover { background: #6a8eb4; }
   </style>
-  <script src="sidebar.js"></script>
 </head>
 <body class="admin-page">
 
@@ -82,15 +81,11 @@
     </div>
 
     <div class="filtros-just">
-      <select id="filtro-mes-just" onchange="onMudarMesJust()">
-        <option value="todos">Todos os meses</option>
-      </select>
       <select id="filtro-nome-just" onchange="renderizar()">
         <option value="todos">Todas as pessoas</option>
       </select>
       <button class="btn-limpar-filtro" onclick="limparFiltro()">✕ Limpar</button>
     </div>
-
 
     <div id="conteudo-justificativas"></div>
   </div>
@@ -131,36 +126,9 @@
       if (error) { console.error(error); return; }
 
       dadosJustificativas = data;
-      popularFiltroMeses(data);
       popularFiltroNomes(data);
       renderizar();
     }
-
-    function popularFiltroMeses(data) {
-      const select = document.getElementById("filtro-mes-just");
-      const meses = [...new Set(data.map(d => d.mes_ref).filter(Boolean))].sort().reverse();
-      select.innerHTML = `<option value="todos">Todos os meses</option>`;
-      meses.forEach(m => {
-        const opt = document.createElement("option");
-        opt.value = m;
-        opt.textContent = m;
-        select.appendChild(opt);
-      });
-      // Seleciona o mais recente
-      if (meses.length > 0) select.value = meses[0];
-    }
-
-    function onMudarMesJust() {
-      const mes = document.getElementById("filtro-mes-just").value;
-      // Filtra nomes por mês selecionado
-      const dadosMes = mes === "todos"
-        ? dadosJustificativas
-        : dadosJustificativas.filter(d => d.mes_ref === mes);
-      popularFiltroNomes(dadosMes);
-      renderizar();
-    }
-
-
 
     function popularFiltroNomes(data) {
       const select = document.getElementById("filtro-nome-just");
@@ -176,19 +144,12 @@
 
     function getDadosFiltrados() {
       const nomeSelecionado = document.getElementById("filtro-nome-just")?.value || "todos";
-      const mesSelecionado = document.getElementById("filtro-mes-just")?.value || "todos";
-
-      return dadosJustificativas.filter(d => {
-        const nomeOk = nomeSelecionado === "todos" || d.nome_pessoa === nomeSelecionado;
-        const mesOk = mesSelecionado === "todos" || d.mes_ref === mesSelecionado;
-        return nomeOk && mesOk;
-      });
+      if (nomeSelecionado === "todos") return dadosJustificativas;
+      return dadosJustificativas.filter(d => d.nome_pessoa === nomeSelecionado);
     }
 
     function limparFiltro() {
       document.getElementById("filtro-nome-just").value = "todos";
-      document.getElementById("filtro-mes-just").value = "todos";
-      popularFiltroNomes(dadosJustificativas);
       renderizar();
     }
 
@@ -286,5 +247,6 @@
     iniciar();
   </script>
 
+  <script src="sidebar.js"></script>
 </body>
 </html>

@@ -217,7 +217,7 @@
     }
   </style>
 </head>
-<body onload="verificarStatusRespostas()">
+<body onload="verificarStatusRespostasSeguro()">
 
   <div class="topo">
     <h1>MÚSICA GERAL FORTALEZA</h1>
@@ -405,6 +405,35 @@
         fecharDropdown();
       }
     });
+
+    // Versão segura — não substitui o body, só bloqueia o botão
+    async function verificarStatusRespostasSeguro() {
+      try {
+        const { data } = await supabase
+          .from('configuracoes')
+          .select('respostas_ativas')
+          .eq('id', 2)
+          .single();
+
+        if (data && data.respostas_ativas === false) {
+          // Só mostra aviso, não substitui o body
+          const card = document.querySelector('.card');
+          if (card) {
+            card.innerHTML = `
+              <div style="text-align:center;padding:20px;">
+                <div style="font-size:48px;margin-bottom:16px;">🔒</div>
+                <h3 style="color:#1a2e4a;font-size:18px;font-weight:800;margin:0 0 10px;">Período Encerrado</h3>
+                <p style="color:#5a7a9a;font-size:14px;line-height:1.6;">O prazo para envio de disponibilidades foi encerrado pela coordenação.</p>
+              </div>`;
+          }
+          return;
+        }
+      } catch(e) {
+        // Silencia erros — não bloqueia a página
+        console.warn('verificarStatus:', e);
+      }
+      carregarNomes();
+    }
 
     carregarNomes();
 

@@ -157,9 +157,11 @@
       background: white;
       border-radius: 2px;
     }
-    /* Ajuste do body quando sidebar está ativa */
+    /* Desktop: sidebar fixa e aberta */
     body.has-sidebar { padding-left: 220px !important; }
     body.has-sidebar .admin-box { max-width: calc(100% - 20px); }
+
+    /* Celular: sidebar fechada, abre com as barrinhas */
     @media (max-width: 768px) {
       .sidebar-admin { transform: translateX(-100%); }
       .sidebar-admin.aberta { transform: translateX(0); }

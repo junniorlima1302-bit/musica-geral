@@ -121,7 +121,7 @@
     }
     .sidebar-overlay.ativo { display: block; }
     .sidebar-topbar {
-      display: flex;
+      display: none;
       position: fixed;
       top: 0; left: 0; right: 0;
       height: 52px;
@@ -157,16 +157,40 @@
       background: white;
       border-radius: 2px;
     }
+
+    /* ── DESKTOP ── */
     @media (min-width: 769px) {
-      .sidebar-topbar { display: none; }
+      .sidebar-topbar { display: none !important; }
       .sidebar-admin { transform: none !important; }
     }
+
+    /* ── MOBILE ── */
     @media (max-width: 768px) {
+      .sidebar-topbar { display: flex; }
       .sidebar-admin { transform: translateX(-100%); }
       .sidebar-admin.aberta { transform: translateX(0); }
 
-      /* body É o admin-page */
-      body.sidebar-mobile.admin-page {
+      /*
+        CORREÇÃO PRINCIPAL:
+        O body pode ser display:flex (classe admin-page).
+        A sidebar é position:fixed, então não ocupa espaço no fluxo.
+        Mas o wrapper que a contém (div inserido como 1º filho) ocupa!
+        Zeramos esse wrapper para ele não interferir no layout flex.
+      */
+      .sb-wrapper {
+        position: fixed !important;
+        top: 0; left: 0;
+        width: 0 !important;
+        height: 0 !important;
+        overflow: visible;
+        padding: 0 !important;
+        margin: 0 !important;
+        flex: none !important;
+        display: block !important;
+      }
+
+      /* admin-page em mobile: ocupa tudo, com espaço para o topbar */
+      body.admin-page {
         padding: 12px !important;
         padding-top: calc(52px + 12px) !important;
         justify-content: flex-start !important;
@@ -176,9 +200,7 @@
         box-sizing: border-box !important;
       }
 
-      /* admin-box ocupa 100% da largura */
-      body.sidebar-mobile .admin-box,
-      body.sidebar-mobile.admin-page .admin-box {
+      body.admin-page .admin-box {
         width: 100% !important;
         max-width: 100% !important;
       }
@@ -249,9 +271,12 @@
       </aside>
     `;
 
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    document.body.insertBefore(div, document.body.firstChild);
+    // Usa um wrapper com classe sb-wrapper para que em mobile
+    // ele não ocupe espaço no layout flex do body/admin-page
+    const wrapper = document.createElement('div');
+    wrapper.className = 'sb-wrapper';
+    wrapper.innerHTML = html;
+    document.body.insertBefore(wrapper, document.body.firstChild);
 
     ajustarLayout();
     window.addEventListener('resize', ajustarLayout);
@@ -260,19 +285,12 @@
   function ajustarLayout() {
     const mobile = window.innerWidth <= 768;
     if (mobile) {
-      // Mobile: remove todos os paddings inline, o CSS cuida via classe
+      // Mobile: sidebar é fixed, wrapper tem w=0/h=0
+      // O body/admin-page gerencia seu próprio padding via CSS
       document.body.style.removeProperty('padding-left');
-      document.body.style.removeProperty('padding-right');
-      document.body.style.removeProperty('padding-top');
-      document.body.style.removeProperty('padding-bottom');
-      document.body.classList.add('sidebar-mobile');
-      document.body.classList.remove('sidebar-desktop');
     } else {
       // Desktop: empurra conteúdo para direita da sidebar
       document.body.style.setProperty('padding-left', '220px', 'important');
-      document.body.style.removeProperty('padding-top');
-      document.body.classList.add('sidebar-desktop');
-      document.body.classList.remove('sidebar-mobile');
     }
   }
 

@@ -285,12 +285,20 @@
       .sidebar-overlay.ativo { display: block; }
       .topbar { display: flex; }
       .main {
+        position: static;
         margin-left: 0;
+        width: 100%;
         padding: 80px 16px 30px;
+        min-height: 100vh;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       .quick-grid {
         grid-template-columns: repeat(2, 1fr);
         max-width: 100%;
+        width: 100%;
       }
       .main-boas-vindas h1 { font-size: 22px; }
     }
@@ -368,6 +376,7 @@
   <main class="main">
     <div class="main-boas-vindas">
       <h1>Olá, <span id="nome-usuario">...</span>! 👋</h1>
+
     </div>
 
     <div class="quick-grid" id="quick-grid">

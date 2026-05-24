@@ -121,7 +121,7 @@
     }
     .sidebar-overlay.ativo { display: block; }
     .sidebar-topbar {
-      display: none;
+      display: flex;
       position: fixed;
       top: 0; left: 0; right: 0;
       height: 52px;
@@ -157,6 +157,11 @@
       background: white;
       border-radius: 2px;
     }
+    /* Desktop: esconde topbar */
+    @media (min-width: 769px) {
+      .sidebar-topbar { display: none !important; }
+    }
+
     /* Celular: sem sidebar, conteúdo ocupa tudo */
     @media (max-width: 768px) {
       .sidebar-admin { transform: translateX(-100%) !important; }
@@ -257,19 +262,17 @@
   // Ajusta layout por tamanho de tela
   function ajustarLayout() {
     if (window.innerWidth <= 768) {
+      // Celular: remove tudo, só padding-top para a topbar
       document.body.classList.remove('has-sidebar');
-      document.body.style.removeProperty('padding-left');
-      document.body.style.removeProperty('padding-top');
-      // Só adiciona padding-top para não ficar atrás da topbar
-      document.body.style.paddingTop = '52px';
+      document.body.style.cssText += '; padding-left: 0 !important; padding-top: 52px !important;';
     } else {
+      // Desktop: sidebar fixa
       document.body.classList.add('has-sidebar');
       document.body.style.removeProperty('padding-top');
     }
   }
 
   window.addEventListener('resize', ajustarLayout);
-  ajustarLayout();
 
   window.sidebarFechar = function() {
     document.getElementById('sidebar-admin').classList.remove('aberta');
@@ -282,14 +285,16 @@
   };
 
   // Injeta quando DOM estiver pronto
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      injetarCSS();
-      criarSidebar();
-    });
-  } else {
+  function init() {
     injetarCSS();
     criarSidebar();
+    ajustarLayout();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 
 })();

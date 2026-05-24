@@ -257,10 +257,14 @@
   // Ajusta layout por tamanho de tela
   function ajustarLayout() {
     if (window.innerWidth <= 768) {
+      document.body.classList.remove('has-sidebar');
       document.body.style.removeProperty('padding-left');
+      document.body.style.removeProperty('padding-top');
+      // Só adiciona padding-top para não ficar atrás da topbar
+      document.body.style.paddingTop = '52px';
     } else {
-      document.body.style.paddingLeft = '220px';
-      document.body.style.paddingTop = '';
+      document.body.classList.add('has-sidebar');
+      document.body.style.removeProperty('padding-top');
     }
   }
 

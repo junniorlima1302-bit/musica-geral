@@ -857,6 +857,11 @@ body.iframe-page {
     padding: 12px;
   }
 
+  /* Com sidebar: sem padding lateral, só topo */
+  body.has-sidebar {
+    padding: 52px 0 0 0 !important;
+  }
+
   /* Admin box sem bordas arredondadas ocupando mais espaço */
   .admin-box {
     padding: 18px 12px;

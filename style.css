@@ -936,132 +936,52 @@ body.iframe-page {
     font-size: 16px; /* evita zoom no iOS */
   }
 }
-/* ======================================= */
-/* ===== PADRONIZAÇÃO DE FONTE =========== */
-/* ======================================= */
+/* ================================================ */
+/* ===== FIX DEFINITIVO - SCROLL MOBILE      ====== */
+/* ================================================ */
 
-/* Garante Nunito em todas as páginas admin, mesmo sem o link do Google Fonts */
-body, .admin-box, .admin-box * {
-  font-family: 'Nunito', Arial, sans-serif;
-}
-
-/* ======================================= */
-/* ===== SIDEBAR MOBILE - sb-mobile  ===== */
-/* ======================================= */
+/* 
+  RAIZ DO PROBLEMA: body com display:flex no mobile não
+  gera scroll correto no iOS/Android — o conteúdo vaza
+  para cima do topbar fixed.
+  
+  SOLUÇÃO: em mobile, body vira display:block com padding-top.
+  O admin-box é centralizado via margin:auto.
+*/
 
 body.sb-mobile.admin-page {
-  padding: 12px !important;
-  padding-top: 0 !important;
-  justify-content: flex-start !important;
-  align-items: flex-start !important;
-  display: flex !important;
-  flex-direction: column !important;
-  width: 100% !important;
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+}
+
+body.sb-mobile.admin-page .admin-box {
+  width: calc(100% - 24px) !important;
+  max-width: 100% !important;
+  margin: 0 auto 20px auto !important;
+  padding-top: 16px !important;
   box-sizing: border-box !important;
 }
 
-body.sb-mobile .admin-box,
-body.sb-mobile.admin-page .admin-box {
-  width: 100% !important;
-  max-width: 100% !important;
-}
+/* O spacer de 52px (altura do topbar) é inserido pelo JS
+   como primeiro filho do body — em display:block funciona
+   perfeitamente para empurrar o admin-box para baixo */
 
-/* Grid de 3 colunas em mobile (mantém o padrão) */
-body.sb-mobile .lista-pessoas {
-  grid-template-columns: repeat(3, 1fr) !important;
-  padding: 10px !important;
-  gap: 8px !important;
-}
-
-/* ======================================= */
-/* ===== CORREÇÕES FINAIS MOBILE  ======== */
-/* ======================================= */
-
-/* 1. Garante que o topbar do sidebar.js fique sempre acima de tudo */
-.sidebar-topbar {
-  z-index: 9990 !important;
-}
-.sidebar-admin {
-  z-index: 9995 !important;
-}
-.sidebar-overlay {
-  z-index: 9989 !important;
-}
-
-/* 2. Remove stacking context dos cards que sobem sobre o topbar */
-.grupo-evento {
-  position: relative;
-  z-index: 1;
-}
-
-/* 3. Filtros lado a lado em mobile (flexbox com wrap) */
-body.sb-mobile #filtros {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: wrap !important;
-  gap: 8px !important;
-  align-items: center !important;
-}
-
-body.sb-mobile #filtros select {
-  flex: 1 1 140px !important;
-  min-width: 120px !important;
-  width: auto !important;
-  max-width: 100% !important;
-  height: 36px !important;
-  font-size: 13px !important;
-}
-
-body.sb-mobile .busca-box {
-  flex: 1 1 140px !important;
-  min-width: 120px !important;
-  width: auto !important;
-}
-
-body.sb-mobile .busca-box input {
-  font-size: 13px !important;
-}
-
-/* 4. Botões da barra de ações menores e lado a lado */
-body.sb-mobile .barra-acoes-disp {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: wrap !important;
-  gap: 6px !important;
-  justify-content: stretch !important;
-}
-
-body.sb-mobile .barra-acoes-disp button {
-  flex: 1 1 auto !important;
-  width: auto !important;
-  max-width: none !important;
-  padding: 8px 6px !important;
-  font-size: 11px !important;
-  white-space: nowrap !important;
-}
-
-/* ======================================= */
-/* ===== FIX DEFINITIVO: STACKING    ===== */
-/* ======================================= */
-
-/* Remove overflow:hidden que cria stacking context
-   nos grupos — isso fazia os cards ficarem acima do topbar */
+/* Remove overflow:hidden dos grupos (cria stacking context) */
 .grupo-evento {
   overflow: visible !important;
-  isolation: auto !important;
-  transform: none !important;
 }
-
-/* Borda arredondada aplicada nos filhos diretos para manter o visual */
 .grupo-evento h3 {
   border-radius: 14px 14px 0 0 !important;
 }
-
 .lista-pessoas {
   border-radius: 0 0 14px 14px !important;
+  overflow: hidden !important;
 }
 
-/* Topbar SEMPRE acima de qualquer conteúdo */
+/* Topbar sempre no topo absoluto */
 .sidebar-topbar {
   z-index: 99999 !important;
 }
@@ -1070,4 +990,44 @@ body.sb-mobile .barra-acoes-disp button {
 }
 .sidebar-overlay {
   z-index: 99997 !important;
+}
+
+/* Filtros lado a lado em mobile */
+body.sb-mobile #filtros {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+body.sb-mobile #filtros select {
+  flex: 1 1 140px !important;
+  min-width: 120px !important;
+  width: auto !important;
+  height: 36px !important;
+  font-size: 13px !important;
+}
+body.sb-mobile .busca-box {
+  flex: 1 1 140px !important;
+  min-width: 120px !important;
+  width: auto !important;
+}
+body.sb-mobile .barra-acoes-disp {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+body.sb-mobile .barra-acoes-disp button {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  max-width: none !important;
+  padding: 8px 6px !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+}
+body.sb-mobile .lista-pessoas {
+  grid-template-columns: repeat(3, 1fr) !important;
+  padding: 10px !important;
+  gap: 8px !important;
 }

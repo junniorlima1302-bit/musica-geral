@@ -10,7 +10,7 @@
       flex-direction: column;
       position: fixed;
       left: 0; top: 0; bottom: 0;
-      z-index: 200;
+      z-index: 99998;
       transition: transform 0.3s ease;
       overflow-y: auto;
       scrollbar-width: none;
@@ -21,51 +21,30 @@
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
     .sidebar-admin-header h2 {
-      color: white;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      line-height: 1.4;
+      color: white; font-size: 12px; font-weight: 800;
+      letter-spacing: 1px; line-height: 1.4;
       font-family: 'Nunito', sans-serif;
     }
     .sidebar-admin-nav { padding: 8px 0; flex: 1; }
     .sidebar-group-label {
-      padding: 8px 16px 2px;
-      color: #5a7a9a;
-      font-size: 9px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
+      padding: 8px 16px 2px; color: #5a7a9a; font-size: 9px;
+      font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px;
       font-family: 'Nunito', sans-serif;
     }
     .sidebar-nav-item {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 8px 16px;
-      color: #c4d4e8;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-      text-decoration: none;
-      border-left: 3px solid transparent;
+      display: flex; align-items: center; gap: 9px;
+      padding: 8px 16px; color: #c4d4e8; font-size: 12px;
+      font-weight: 600; cursor: pointer; transition: all 0.15s;
+      text-decoration: none; border-left: 3px solid transparent;
       font-family: 'Nunito', sans-serif;
     }
     .sidebar-nav-item:hover { background: rgba(255,255,255,0.07); color: white; }
     .sidebar-nav-item.ativo { background: rgba(255,255,255,0.1); color: white; border-left-color: #7a9ec4; }
     .sidebar-nav-icon { font-size: 15px; flex-shrink: 0; width: 18px; text-align: center; }
     .sidebar-group-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 16px;
-      color: #c4d4e8;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-      border-left: 3px solid transparent;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 16px; color: #c4d4e8; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent;
       font-family: 'Nunito', sans-serif;
     }
     .sidebar-group-toggle:hover { background: rgba(255,255,255,0.07); color: white; }
@@ -75,17 +54,10 @@
     .sidebar-sub-group { display: none; }
     .sidebar-sub-group.aberto { display: block; }
     .sidebar-nav-sub {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 6px 16px 6px 32px;
-      color: #a0b8d0;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-      text-decoration: none;
-      border-left: 3px solid transparent;
+      display: flex; align-items: center; gap: 9px;
+      padding: 6px 16px 6px 32px; color: #a0b8d0; font-size: 11px;
+      font-weight: 600; cursor: pointer; transition: all 0.15s;
+      text-decoration: none; border-left: 3px solid transparent;
       font-family: 'Nunito', sans-serif;
     }
     .sidebar-nav-sub:hover { background: rgba(255,255,255,0.05); color: white; }
@@ -95,91 +67,53 @@
       border-top: 1px solid rgba(255,255,255,0.1);
     }
     .sidebar-btn-sair {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #7a9ec4;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-family: 'Nunito', sans-serif;
-      padding: 0;
-      width: 100%;
-      transition: color 0.2s;
-      min-height: 0;
-      margin: 0;
+      display: flex; align-items: center; gap: 8px; color: #7a9ec4;
+      font-size: 11px; font-weight: 600; cursor: pointer; background: none;
+      border: none; font-family: 'Nunito', sans-serif; padding: 0;
+      width: 100%; transition: color 0.2s; min-height: 0; margin: 0;
     }
     .sidebar-btn-sair:hover { color: #ff6b6b; background: none; }
     .sidebar-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 199;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 99997;
     }
     .sidebar-overlay.ativo { display: block; }
 
     .sidebar-topbar {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 52px;
-      background: #1a2e4a;
-      align-items: center;
-      padding: 0 14px;
-      z-index: 99999;
-      gap: 10px;
+      display: none; position: fixed;
+      top: 0; left: 0; right: 0; height: 52px;
+      background: #1a2e4a; align-items: center;
+      padding: 0 14px; z-index: 99999; gap: 10px;
     }
     .sidebar-topbar-title {
-      color: white;
-      font-size: 13px;
-      font-weight: 800;
-      flex: 1;
-      font-family: 'Nunito', sans-serif;
+      color: white; font-size: 13px; font-weight: 800;
+      flex: 1; font-family: 'Nunito', sans-serif;
     }
     .sidebar-btn-menu {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 6px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      width: auto;
-      margin: 0;
-      min-height: 0;
+      background: none; border: none; cursor: pointer; padding: 6px;
+      display: flex; flex-direction: column; gap: 4px;
+      width: auto; margin: 0; min-height: 0;
     }
     .sidebar-btn-menu span {
-      display: block;
-      width: 20px;
-      height: 2px;
-      background: white;
-      border-radius: 2px;
+      display: block; width: 20px; height: 2px;
+      background: white; border-radius: 2px;
     }
 
-    /* sb-wrapper: tamanho zero para não interferir no flex do body */
+    /* wrapper de tamanho zero — não interfere no layout */
     .sb-wrapper {
-      position: fixed !important;
-      top: 0; left: 0;
-      width: 0 !important;
-      height: 0 !important;
-      overflow: visible;
-      padding: 0 !important;
-      margin: 0 !important;
-      border: none !important;
-      background: none !important;
-      flex: none !important;
-      display: block !important;
+      position: fixed !important; top: 0; left: 0;
+      width: 0 !important; height: 0 !important;
+      overflow: visible; padding: 0 !important; margin: 0 !important;
+      border: none !important; background: none !important;
+      flex: none !important; display: block !important;
     }
 
-    /* Espaçador que empurra o conteúdo abaixo do topbar fixo */
+    /* Espaçador: 52px para compensar topbar fixed */
     .sb-spacer {
       display: none;
       height: 52px;
-      flex-shrink: 0;
       width: 100%;
+      flex-shrink: 0;
     }
 
     /* ── DESKTOP ── */
@@ -188,27 +122,10 @@
     body.sb-desktop .sb-spacer      { display: none !important; }
 
     /* ── MOBILE ── */
-    body.sb-mobile .sidebar-topbar           { display: flex; }
-    body.sb-mobile .sidebar-admin            { transform: translateX(-100%); }
-    body.sb-mobile .sidebar-admin.aberta     { transform: translateX(0); }
-    body.sb-mobile .sb-spacer               { display: block; }
-
-    /* admin-page em mobile: padding lateral normal, sem padding-top
-       (o sb-spacer cuida do espaço do topbar como primeiro filho do flex) */
-    body.sb-mobile.admin-page {
-      padding: 12px !important;
-      padding-top: 0 !important;
-      justify-content: flex-start !important;
-      align-items: flex-start !important;
-      display: flex !important;
-      flex-direction: column !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-    }
-    body.sb-mobile.admin-page .admin-box {
-      width: 100% !important;
-      max-width: 100% !important;
-    }
+    body.sb-mobile .sidebar-topbar       { display: flex; }
+    body.sb-mobile .sidebar-admin        { transform: translateX(-100%); }
+    body.sb-mobile .sidebar-admin.aberta { transform: translateX(0); }
+    body.sb-mobile .sb-spacer            { display: block; }
   `;
 
   function injetarCSS() {
@@ -280,17 +197,17 @@
       </aside>
     `;
 
-    // wrapper de tamanho zero — não interfere no layout
+    // wrapper zero — não interfere no layout do body
     const wrapper = document.createElement('div');
     wrapper.className = 'sb-wrapper';
     wrapper.innerHTML = html;
     document.body.insertBefore(wrapper, document.body.firstChild);
 
-    // Espaçador inserido como primeiro filho REAL do body (não dentro do wrapper)
-    // Em admin-page (display:flex), ele empurra o admin-box para baixo do topbar
+    // spacer inserido como primeiro filho visível do body
+    // funciona tanto em display:block quanto display:flex
     const spacer = document.createElement('div');
     spacer.className = 'sb-spacer';
-    document.body.insertBefore(spacer, document.body.children[1]);
+    document.body.insertBefore(spacer, wrapper.nextSibling);
 
     ajustarLayout();
     window.addEventListener('resize', ajustarLayout);

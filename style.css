@@ -937,18 +937,25 @@ body.iframe-page {
   }
 }
 /* ======================================= */
+/* ===== PADRONIZAÇÃO DE FONTE =========== */
+/* ======================================= */
+
+/* Garante Nunito em todas as páginas admin, mesmo sem o link do Google Fonts */
+body, .admin-box, .admin-box * {
+  font-family: 'Nunito', Arial, sans-serif;
+}
+
+/* ======================================= */
 /* ===== SIDEBAR MOBILE - sb-mobile  ===== */
 /* ======================================= */
 
-/* body que É o admin-page em mobile */
 body.sb-mobile.admin-page {
-  padding-top: calc(52px + 12px) !important;
-  padding-left: 12px !important;
-  padding-right: 12px !important;
-  padding-bottom: 12px !important;
+  padding: 12px !important;
+  padding-top: 0 !important;
   justify-content: flex-start !important;
   align-items: flex-start !important;
   display: flex !important;
+  flex-direction: column !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
@@ -959,22 +966,9 @@ body.sb-mobile.admin-page .admin-box {
   max-width: 100% !important;
 }
 
-/* Grid de 3 colunas em mobile (igual ao @media 480px existente) */
+/* Grid de 3 colunas em mobile (mantém o padrão) */
 body.sb-mobile .lista-pessoas {
   grid-template-columns: repeat(3, 1fr) !important;
   padding: 10px !important;
   gap: 8px !important;
-}
-
-/* Garante que admin-box não fique atrás do topbar fixo ao rolar */
-body.sb-mobile.admin-page .admin-box {
-  margin-top: 0 !important;
-}
-
-/* O padding-top no body já cria o espaço inicial.
-   Para evitar sobreposição ao rolar, o body precisa ser
-   scroll container — não o viewport */
-body.sb-mobile.admin-page {
-  min-height: 100vh !important;
-  overflow-y: auto !important;
 }

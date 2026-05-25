@@ -1039,3 +1039,35 @@ body.sb-mobile .barra-acoes-disp button {
   font-size: 11px !important;
   white-space: nowrap !important;
 }
+
+/* ======================================= */
+/* ===== FIX DEFINITIVO: STACKING    ===== */
+/* ======================================= */
+
+/* Remove overflow:hidden que cria stacking context
+   nos grupos — isso fazia os cards ficarem acima do topbar */
+.grupo-evento {
+  overflow: visible !important;
+  isolation: auto !important;
+  transform: none !important;
+}
+
+/* Borda arredondada aplicada nos filhos diretos para manter o visual */
+.grupo-evento h3 {
+  border-radius: 14px 14px 0 0 !important;
+}
+
+.lista-pessoas {
+  border-radius: 0 0 14px 14px !important;
+}
+
+/* Topbar SEMPRE acima de qualquer conteúdo */
+.sidebar-topbar {
+  z-index: 99999 !important;
+}
+.sidebar-admin {
+  z-index: 99998 !important;
+}
+.sidebar-overlay {
+  z-index: 99997 !important;
+}

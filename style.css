@@ -1031,3 +1031,36 @@ body.sb-mobile .lista-pessoas {
   padding: 10px !important;
   gap: 8px !important;
 }
+
+/* ================================================ */
+/* ===== FIX CARDS SOBRE SIDEBAR (DEFINITIVO) ===== */
+/* ================================================ */
+
+/*
+  item-pessoa tem position:relative — cria stacking context
+  que fica acima do sidebar quando o sidebar abre.
+  
+  Solução: z-index:0 explícito nos cards E isolation:isolate
+  no admin-box para conter todo o stacking context dentro dele.
+  O sidebar/overlay ficam FORA do admin-box, logo ficam acima.
+*/
+
+.item-pessoa {
+  z-index: 0 !important;
+  isolation: auto !important;
+}
+
+/* admin-box contém seu próprio contexto — nada dentro dele
+   vaza para fora em z-index */
+.admin-box {
+  isolation: isolate;
+  position: relative;
+  z-index: 1;
+}
+
+/* Sidebar e overlay ficam ACIMA do admin-box */
+.sidebar-admin,
+.sidebar-overlay,
+.sidebar-topbar {
+  isolation: isolate;
+}

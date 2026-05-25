@@ -120,6 +120,8 @@
       z-index: 199;
     }
     .sidebar-overlay.ativo { display: block; }
+
+    /* Topbar mobile — oculto por padrão, JS controla via classe no body */
     .sidebar-topbar {
       display: none;
       position: fixed;
@@ -158,52 +160,46 @@
       border-radius: 2px;
     }
 
-    /* ── DESKTOP ── */
-    @media (min-width: 769px) {
-      .sidebar-topbar { display: none !important; }
-      .sidebar-admin { transform: none !important; }
+    /* Wrapper que contém sidebar+topbar+overlay —
+       em mobile precisa ter width/height zero para não
+       interferir no layout flex do body.admin-page */
+    .sb-wrapper {
+      position: fixed;
+      top: 0; left: 0;
+      width: 0;
+      height: 0;
+      overflow: visible;
+      padding: 0 !important;
+      margin: 0 !important;
+      border: none !important;
+      background: none !important;
+      flex: none !important;
+      display: block !important;
+      z-index: 0;
     }
 
-    /* ── MOBILE ── */
-    @media (max-width: 768px) {
-      .sidebar-topbar { display: flex; }
-      .sidebar-admin { transform: translateX(-100%); }
-      .sidebar-admin.aberta { transform: translateX(0); }
+    /* ── MODO DESKTOP (classe adicionada pelo JS) ── */
+    body.sb-desktop .sidebar-topbar { display: none !important; }
+    body.sb-desktop .sidebar-admin  { transform: none !important; }
 
-      /*
-        CORREÇÃO PRINCIPAL:
-        O body pode ser display:flex (classe admin-page).
-        A sidebar é position:fixed, então não ocupa espaço no fluxo.
-        Mas o wrapper que a contém (div inserido como 1º filho) ocupa!
-        Zeramos esse wrapper para ele não interferir no layout flex.
-      */
-      .sb-wrapper {
-        position: fixed !important;
-        top: 0; left: 0;
-        width: 0 !important;
-        height: 0 !important;
-        overflow: visible;
-        padding: 0 !important;
-        margin: 0 !important;
-        flex: none !important;
-        display: block !important;
-      }
+    /* ── MODO MOBILE (classe adicionada pelo JS) ── */
+    body.sb-mobile .sidebar-topbar  { display: flex; }
+    body.sb-mobile .sidebar-admin   { transform: translateX(-100%); }
+    body.sb-mobile .sidebar-admin.aberta { transform: translateX(0); }
 
-      /* admin-page em mobile: ocupa tudo, com espaço para o topbar */
-      body.admin-page {
-        padding: 12px !important;
-        padding-top: calc(52px + 12px) !important;
-        justify-content: flex-start !important;
-        align-items: flex-start !important;
-        display: flex !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-      }
-
-      body.admin-page .admin-box {
-        width: 100% !important;
-        max-width: 100% !important;
-      }
+    /* Layout do conteúdo em mobile quando body é admin-page */
+    body.sb-mobile.admin-page {
+      padding: 12px !important;
+      padding-top: calc(52px + 12px) !important;
+      justify-content: flex-start !important;
+      align-items: flex-start !important;
+      display: flex !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    body.sb-mobile.admin-page .admin-box {
+      width: 100% !important;
+      max-width: 100% !important;
     }
   `;
 
@@ -215,6 +211,14 @@
 
   function paginaAtual() {
     return window.location.pathname.split('/').pop() || 'dashboard.html';
+  }
+
+  // Detecta se é dispositivo móvel (touch) — não depende só de largura
+  function isMobile() {
+    const ua = navigator.userAgent || '';
+    const ehTouchDevice = /Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(ua);
+    const larguraSmall = window.innerWidth < 1024;
+    return ehTouchDevice || larguraSmall;
   }
 
   function navItem(icon, label, href, sub) {
@@ -271,8 +275,7 @@
       </aside>
     `;
 
-    // Usa um wrapper com classe sb-wrapper para que em mobile
-    // ele não ocupe espaço no layout flex do body/admin-page
+    // sb-wrapper com width/height 0 → não interfere no flex do body
     const wrapper = document.createElement('div');
     wrapper.className = 'sb-wrapper';
     wrapper.innerHTML = html;
@@ -280,16 +283,20 @@
 
     ajustarLayout();
     window.addEventListener('resize', ajustarLayout);
+    window.addEventListener('orientationchange', function() {
+      setTimeout(ajustarLayout, 100); // aguarda o browser recalcular dimensões
+    });
   }
 
   function ajustarLayout() {
-    const mobile = window.innerWidth <= 768;
+    const mobile = isMobile();
     if (mobile) {
-      // Mobile: sidebar é fixed, wrapper tem w=0/h=0
-      // O body/admin-page gerencia seu próprio padding via CSS
+      document.body.classList.add('sb-mobile');
+      document.body.classList.remove('sb-desktop');
       document.body.style.removeProperty('padding-left');
     } else {
-      // Desktop: empurra conteúdo para direita da sidebar
+      document.body.classList.add('sb-desktop');
+      document.body.classList.remove('sb-mobile');
       document.body.style.setProperty('padding-left', '220px', 'important');
     }
   }

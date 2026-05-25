@@ -936,14 +936,15 @@ body.iframe-page {
     font-size: 16px; /* evita zoom no iOS */
   }
 }
-/* ========================= */
-/* ===== SIDEBAR MOBILE ===== */
-/* ========================= */
+/* ======================================= */
+/* ===== SIDEBAR MOBILE - sb-mobile  ===== */
+/* ======================================= */
 
-/* Quando sidebar.js adiciona classe sidebar-mobile ao body */
-@media (max-width: 768px) {
-  /* body que É o admin-page com sidebar ativo */
-  body.sidebar-mobile.admin-page {
+/* Quando o JS adiciona sb-mobile ao body */
+@media (max-width: 1023px) {
+
+  /* body que É o admin-page */
+  body.sb-mobile.admin-page {
     padding: 12px !important;
     padding-top: calc(52px + 12px) !important;
     justify-content: flex-start !important;
@@ -953,32 +954,97 @@ body.iframe-page {
     box-sizing: border-box !important;
   }
 
-  /* admin-box ocupa toda a largura disponível no mobile */
-  body.sidebar-mobile .admin-box,
-  body.sidebar-mobile.admin-page .admin-box {
+  body.sb-mobile .admin-box,
+  body.sb-mobile.admin-page .admin-box {
     width: 100% !important;
     max-width: 100% !important;
     border-radius: 12px !important;
   }
+
+  /* ── DISPONIBILIDADES: grid responsivo ── */
+
+  /* Portrait: 2 colunas */
+  .lista-pessoas {
+    grid-template-columns: repeat(2, 1fr) !important;
+    padding: 10px !important;
+    gap: 8px !important;
+  }
+
+  .item-pessoa {
+    padding: 10px 8px !important;
+  }
+
+  .item-pessoa strong {
+    font-size: 13px !important;
+  }
+
+  .item-pessoa span {
+    font-size: 11px !important;
+  }
+
+  .grupo-evento h3 {
+    font-size: 13px !important;
+    padding: 10px 12px !important;
+  }
+
+  /* Filtros em coluna */
+  #filtros {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+
+  #filtros select,
+  .busca-box {
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Barra de ações em coluna */
+  .barra-acoes-disp {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .barra-acoes-disp button {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* ── JUSTIFICATIVAS ── */
+  .card-pessoa h3,
+  .card-evento h3 {
+    font-size: 13px !important;
+  }
+
+  .justificativa-linha,
+  .pessoa-evento-item {
+    padding: 10px 12px !important;
+  }
+
+  .evento-nome {
+    font-size: 11px !important;
+  }
+
+  .motivo {
+    font-size: 12px !important;
+  }
+
+  /* Filtros de justificativas */
+  .filtros-just {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .filtros-just select {
+    width: 100% !important;
+  }
 }
 
-/* ========================= */
-/* === SIDEBAR DESKTOP ====== */
-/* ========================= */
-
-/* Em desktop, quando o body É o admin-page, 
-   o padding-left do sidebar.js já empurra o conteúdo.
-   Mas o admin-page tem padding:20px próprio — precisamos
-   garantir que o admin-box use o espaço todo corretamente. */
-body.sidebar-desktop.admin-page {
-  padding-right: 20px !important;
-  padding-top: 20px !important;
-  padding-bottom: 20px !important;
-  /* padding-left já vem de sidebar.js como 220px */
-  justify-content: flex-start !important;
-}
-
-body.sidebar-desktop.admin-page .admin-box {
-  max-width: 100% !important;
-  width: 100% !important;
+/* Landscape mobile: 3 colunas */
+@media (max-width: 1023px) and (orientation: landscape) {
+  .lista-pessoas {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
 }

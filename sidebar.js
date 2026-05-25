@@ -121,7 +121,6 @@
     }
     .sidebar-overlay.ativo { display: block; }
 
-    /* Topbar mobile — oculto por padrão, JS controla via classe no body */
     .sidebar-topbar {
       display: none;
       position: fixed;
@@ -160,14 +159,12 @@
       border-radius: 2px;
     }
 
-    /* Wrapper que contém sidebar+topbar+overlay —
-       em mobile precisa ter width/height zero para não
-       interferir no layout flex do body.admin-page */
+    /* sb-wrapper: tamanho zero para não interferir no flex do body */
     .sb-wrapper {
-      position: fixed;
+      position: fixed !important;
       top: 0; left: 0;
-      width: 0;
-      height: 0;
+      width: 0 !important;
+      height: 0 !important;
       overflow: visible;
       padding: 0 !important;
       margin: 0 !important;
@@ -175,22 +172,23 @@
       background: none !important;
       flex: none !important;
       display: block !important;
-      z-index: 0;
     }
 
-    /* ── MODO DESKTOP (classe adicionada pelo JS) ── */
+    /* ── DESKTOP ── */
     body.sb-desktop .sidebar-topbar { display: none !important; }
     body.sb-desktop .sidebar-admin  { transform: none !important; }
 
-    /* ── MODO MOBILE (classe adicionada pelo JS) ── */
-    body.sb-mobile .sidebar-topbar  { display: flex; }
-    body.sb-mobile .sidebar-admin   { transform: translateX(-100%); }
-    body.sb-mobile .sidebar-admin.aberta { transform: translateX(0); }
+    /* ── MOBILE ── */
+    body.sb-mobile .sidebar-topbar               { display: flex; }
+    body.sb-mobile .sidebar-admin                { transform: translateX(-100%); }
+    body.sb-mobile .sidebar-admin.aberta         { transform: translateX(0); }
 
-    /* Layout do conteúdo em mobile quando body é admin-page */
+    /* Compensa o topbar fixo (52px) no topo do conteúdo */
     body.sb-mobile.admin-page {
-      padding: 12px !important;
       padding-top: calc(52px + 12px) !important;
+      padding-left: 12px !important;
+      padding-right: 12px !important;
+      padding-bottom: 12px !important;
       justify-content: flex-start !important;
       align-items: flex-start !important;
       display: flex !important;
@@ -213,12 +211,10 @@
     return window.location.pathname.split('/').pop() || 'dashboard.html';
   }
 
-  // Detecta se é dispositivo móvel (touch) — não depende só de largura
+  // Mobile = touch device OU largura < 1024px
   function isMobile() {
-    const ua = navigator.userAgent || '';
-    const ehTouchDevice = /Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(ua);
-    const larguraSmall = window.innerWidth < 1024;
-    return ehTouchDevice || larguraSmall;
+    const ehTouch = /Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(navigator.userAgent || '');
+    return ehTouch || window.innerWidth < 1024;
   }
 
   function navItem(icon, label, href, sub) {
@@ -275,7 +271,6 @@
       </aside>
     `;
 
-    // sb-wrapper com width/height 0 → não interfere no flex do body
     const wrapper = document.createElement('div');
     wrapper.className = 'sb-wrapper';
     wrapper.innerHTML = html;
@@ -284,7 +279,7 @@
     ajustarLayout();
     window.addEventListener('resize', ajustarLayout);
     window.addEventListener('orientationchange', function() {
-      setTimeout(ajustarLayout, 100); // aguarda o browser recalcular dimensões
+      setTimeout(ajustarLayout, 150);
     });
   }
 

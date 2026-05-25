@@ -129,7 +129,7 @@
       background: #1a2e4a;
       align-items: center;
       padding: 0 14px;
-      z-index: 198;
+      z-index: 9990;
       gap: 10px;
     }
     .sidebar-topbar-title {

@@ -972,3 +972,70 @@ body.sb-mobile .lista-pessoas {
   padding: 10px !important;
   gap: 8px !important;
 }
+
+/* ======================================= */
+/* ===== CORREÇÕES FINAIS MOBILE  ======== */
+/* ======================================= */
+
+/* 1. Garante que o topbar do sidebar.js fique sempre acima de tudo */
+.sidebar-topbar {
+  z-index: 9990 !important;
+}
+.sidebar-admin {
+  z-index: 9995 !important;
+}
+.sidebar-overlay {
+  z-index: 9989 !important;
+}
+
+/* 2. Remove stacking context dos cards que sobem sobre o topbar */
+.grupo-evento {
+  position: relative;
+  z-index: 1;
+}
+
+/* 3. Filtros lado a lado em mobile (flexbox com wrap) */
+body.sb-mobile #filtros {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+
+body.sb-mobile #filtros select {
+  flex: 1 1 140px !important;
+  min-width: 120px !important;
+  width: auto !important;
+  max-width: 100% !important;
+  height: 36px !important;
+  font-size: 13px !important;
+}
+
+body.sb-mobile .busca-box {
+  flex: 1 1 140px !important;
+  min-width: 120px !important;
+  width: auto !important;
+}
+
+body.sb-mobile .busca-box input {
+  font-size: 13px !important;
+}
+
+/* 4. Botões da barra de ações menores e lado a lado */
+body.sb-mobile .barra-acoes-disp {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  justify-content: stretch !important;
+}
+
+body.sb-mobile .barra-acoes-disp button {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  max-width: none !important;
+  padding: 8px 6px !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+}

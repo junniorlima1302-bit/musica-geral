@@ -983,13 +983,13 @@ body.sb-mobile.admin-page .admin-box {
 
 /* Topbar sempre no topo absoluto */
 .sidebar-topbar {
-  z-index: 99999 !important;
+  z-index: 999999 !important;
 }
 .sidebar-admin {
-  z-index: 99998 !important;
+  z-index: 999999 !important;
 }
 .sidebar-overlay {
-  z-index: 99997 !important;
+  z-index: 999998 !important;
 }
 
 /* Filtros lado a lado em mobile */
@@ -1033,34 +1033,61 @@ body.sb-mobile .lista-pessoas {
 }
 
 /* ================================================ */
-/* ===== FIX CARDS SOBRE SIDEBAR (DEFINITIVO) ===== */
+/* ===== FIX DEFINITIVO SIDEBAR MOBILE ============ */
 /* ================================================ */
 
 /*
-  item-pessoa tem position:relative — cria stacking context
-  que fica acima do sidebar quando o sidebar abre.
-  
-  Solução: z-index:0 explícito nos cards E isolation:isolate
-  no admin-box para conter todo o stacking context dentro dele.
-  O sidebar/overlay ficam FORA do admin-box, logo ficam acima.
+  Safari/iOS cria bugs com:
+  - isolation
+  - overflow hidden
+  - transform
+  - fixed
+
+  Solução:
+  remover stacking contexts
+  e promover sidebar para layer própria GPU.
 */
 
+/* Cards */
 .item-pessoa {
+  position: relative;
   z-index: 0 !important;
-  isolation: auto !important;
 }
 
-/* admin-box contém seu próprio contexto — nada dentro dele
-   vaza para fora em z-index */
+/* Admin box */
 .admin-box {
-  isolation: isolate;
   position: relative;
   z-index: 1;
 }
 
-/* Sidebar e overlay ficam ACIMA do admin-box */
+/* Remove clipping */
+.grupo-evento {
+  overflow: visible !important;
+}
+
+.lista-pessoas {
+  border-radius: 0 0 14px 14px !important;
+  overflow: visible !important;
+}
+
+/* Sidebar */
 .sidebar-admin,
 .sidebar-overlay,
 .sidebar-topbar {
-  isolation: isolate;
+  position: fixed !important;
+  isolation: auto !important;
+
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Overlay abaixo do menu */
+.sidebar-overlay {
+  z-index: 999998 !important;
+}
+
+/* Sidebar acima de tudo */
+.sidebar-admin,
+.sidebar-topbar {
+  z-index: 999999 !important;
 }

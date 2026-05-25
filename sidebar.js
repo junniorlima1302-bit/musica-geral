@@ -174,24 +174,34 @@
       display: block !important;
     }
 
+    /* Espaçador que empurra o conteúdo abaixo do topbar fixo */
+    .sb-spacer {
+      display: none;
+      height: 52px;
+      flex-shrink: 0;
+      width: 100%;
+    }
+
     /* ── DESKTOP ── */
     body.sb-desktop .sidebar-topbar { display: none !important; }
     body.sb-desktop .sidebar-admin  { transform: none !important; }
+    body.sb-desktop .sb-spacer      { display: none !important; }
 
     /* ── MOBILE ── */
-    body.sb-mobile .sidebar-topbar               { display: flex; }
-    body.sb-mobile .sidebar-admin                { transform: translateX(-100%); }
-    body.sb-mobile .sidebar-admin.aberta         { transform: translateX(0); }
+    body.sb-mobile .sidebar-topbar           { display: flex; }
+    body.sb-mobile .sidebar-admin            { transform: translateX(-100%); }
+    body.sb-mobile .sidebar-admin.aberta     { transform: translateX(0); }
+    body.sb-mobile .sb-spacer               { display: block; }
 
-    /* Compensa o topbar fixo (52px) no topo do conteúdo */
+    /* admin-page em mobile: padding lateral normal, sem padding-top
+       (o sb-spacer cuida do espaço do topbar como primeiro filho do flex) */
     body.sb-mobile.admin-page {
-      padding-top: calc(52px + 12px) !important;
-      padding-left: 12px !important;
-      padding-right: 12px !important;
-      padding-bottom: 12px !important;
+      padding: 12px !important;
+      padding-top: 0 !important;
       justify-content: flex-start !important;
       align-items: flex-start !important;
       display: flex !important;
+      flex-direction: column !important;
       width: 100% !important;
       box-sizing: border-box !important;
     }
@@ -211,7 +221,6 @@
     return window.location.pathname.split('/').pop() || 'dashboard.html';
   }
 
-  // Mobile = touch device OU largura < 1024px
   function isMobile() {
     const ehTouch = /Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(navigator.userAgent || '');
     return ehTouch || window.innerWidth < 1024;
@@ -271,10 +280,17 @@
       </aside>
     `;
 
+    // wrapper de tamanho zero — não interfere no layout
     const wrapper = document.createElement('div');
     wrapper.className = 'sb-wrapper';
     wrapper.innerHTML = html;
     document.body.insertBefore(wrapper, document.body.firstChild);
+
+    // Espaçador inserido como primeiro filho REAL do body (não dentro do wrapper)
+    // Em admin-page (display:flex), ele empurra o admin-box para baixo do topbar
+    const spacer = document.createElement('div');
+    spacer.className = 'sb-spacer';
+    document.body.insertBefore(spacer, document.body.children[1]);
 
     ajustarLayout();
     window.addEventListener('resize', ajustarLayout);

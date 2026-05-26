@@ -42,28 +42,27 @@
 
     .sb-spacer { display: none; height: 52px; width: 100%; flex-shrink: 0; }
 
-    /* DESKTOP */
-    body.sb-desktop .sidebar-topbar { display: none !important; }
-    body.sb-desktop .sidebar-admin  { transform: none !important; }
-    body.sb-desktop .sb-spacer      { display: none !important; }
+    /* Controlado por classes diretas nos elementos, não no body */
 
-    /* MOBILE */
-    body.sb-mobile .sidebar-topbar       { display: flex; }
-    body.sb-mobile .sidebar-admin        { transform: translateX(-100%); }
-    body.sb-mobile .sidebar-admin.aberta { transform: translateX(0); }
-    body.sb-mobile .sb-spacer            { display: block; }
+    /* DESKTOP: sidebar visível, topbar escondido */
+    .sidebar-admin.sb-desktop-mode { transform: none !important; }
+    .sidebar-topbar.sb-desktop-mode { display: none !important; }
+    .sb-spacer.sb-desktop-mode { display: none !important; }
 
-    /* Quando sidebar está aberta: bloqueia tudo no body */
-    body.sb-aberta * { pointer-events: none !important; }
+    /* MOBILE: sidebar escondido, topbar visível */
+    .sidebar-admin.sb-mobile-mode { transform: translateX(-100%); }
+    .sidebar-admin.sb-mobile-mode.aberta { transform: translateX(0); }
+    .sidebar-topbar.sb-mobile-mode { display: flex; }
+    .sb-spacer.sb-mobile-mode { display: block; }
 
-    /* Mas sidebar, overlay e topbar continuam clicáveis */
-    body.sb-aberta .sidebar-admin,
-    body.sb-aberta .sidebar-admin *,
-    body.sb-aberta .sidebar-overlay,
-    body.sb-aberta .sidebar-topbar,
-    body.sb-aberta .sidebar-topbar * { pointer-events: auto !important; }
+    /* Quando sidebar aberta: bloqueia cliques no body inteiro */
+    body.sb-aberta > * { pointer-events: none !important; }
+    /* Mas sidebar, overlay e topbar continuam funcionando */
+    .sidebar-admin { pointer-events: auto !important; }
+    .sidebar-overlay { pointer-events: auto !important; }
+    .sidebar-topbar { pointer-events: auto !important; }
 
-    /* MOBILE: body em display:block para scroll correto */
+    /* MOBILE: body display:block para scroll nativo correto */
     body.sb-mobile.admin-page {
       display: block !important;
       padding: 0 !important;
@@ -104,50 +103,62 @@
     const gerenciarPags = ['usuarios-lista.html','membros.html','usuarios-cadastro.html','minha-conta.html','usuarios.html'];
     const gerenciarAberto = gerenciarPags.includes(pg) ? ' aberto' : '';
 
-    const html = `
-      <div class="sidebar-overlay" id="sb-overlay" onclick="sidebarFechar()"></div>
-      <div class="sidebar-topbar">
-        <button class="sidebar-btn-menu" onclick="sidebarToggle()"><span></span><span></span><span></span></button>
-        <span class="sidebar-topbar-title">MÚSICA GERAL</span>
-      </div>
-      <aside class="sidebar-admin" id="sidebar-admin">
-        <div class="sidebar-admin-header"><h2>MÚSICA GERAL<br>FORTALEZA</h2></div>
-        <nav class="sidebar-admin-nav">
-          <div class="sidebar-group-label">MINISTÉRIO</div>
-          ${navItem('📋','Disponibilidades','disponibilidades.html')}
-          ${navItem('📝','Justificativas','justificativas.html')}
-          ${navItem('📅','Compromissos','compromissos.html')}
-          <div class="sidebar-group-label">CONFIGURAÇÕES</div>
-          <div class="sidebar-group-toggle${gerenciarAberto}" id="sb-toggle-ger" onclick="sidebarToggleGrupo('ger')">
-            <div class="sg-left"><span class="sidebar-nav-icon">⚙️</span> Gerenciar</div>
-            <span class="sg-arrow">▶</span>
-          </div>
-          <div class="sidebar-sub-group${gerenciarAberto}" id="sb-grupo-ger">
-            ${navItem('👥','Usuários','usuarios-lista.html',true)}
-            ${navItem('🎵','Membros','membros.html',true)}
-            ${navItem('➕','Cadastrar Usuário','usuarios-cadastro.html',true)}
-            ${navItem('🔑','Minha Conta','minha-conta.html',true)}
-          </div>
-          ${navItem('🎛️','Visibilidade','visibilidade.html')}
-          ${navItem('🔔','Notificações','notificacoes.html')}
-        </nav>
-        <div class="sidebar-admin-footer">
-          ${navItem('🏠','Início','index.html')}
-          <button class="sidebar-btn-sair" onclick="fazerLogout()">→ Sair</button>
-        </div>
-      </aside>
+    // Cria cada elemento separadamente e anexa ao <html>
+    // Assim ficam completamente fora do body e de qualquer stacking context
+
+    const overlayEl = document.createElement('div');
+    overlayEl.className = 'sidebar-overlay';
+    overlayEl.id = 'sb-overlay';
+    overlayEl.addEventListener('click', () => sidebarFechar());
+
+    const topbarEl = document.createElement('div');
+    topbarEl.className = 'sidebar-topbar';
+    topbarEl.innerHTML = `
+      <button class="sidebar-btn-menu" onclick="sidebarToggle()">
+        <span></span><span></span><span></span>
+      </button>
+      <span class="sidebar-topbar-title">MÚSICA GERAL</span>
     `;
 
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = html;
-    // Anexa ao <html>, completamente fora do body e de qualquer stacking context
-    document.documentElement.appendChild(wrapper.children[0]); // overlay
-    document.documentElement.appendChild(wrapper.children[0]); // topbar
-    document.documentElement.appendChild(wrapper.children[0]); // sidebar
+    const sidebarEl = document.createElement('aside');
+    sidebarEl.className = 'sidebar-admin';
+    sidebarEl.id = 'sidebar-admin';
+    sidebarEl.innerHTML = `
+      <div class="sidebar-admin-header"><h2>MÚSICA GERAL<br>FORTALEZA</h2></div>
+      <nav class="sidebar-admin-nav">
+        <div class="sidebar-group-label">MINISTÉRIO</div>
+        ${navItem('📋','Disponibilidades','disponibilidades.html')}
+        ${navItem('📝','Justificativas','justificativas.html')}
+        ${navItem('📅','Compromissos','compromissos.html')}
+        <div class="sidebar-group-label">CONFIGURAÇÕES</div>
+        <div class="sidebar-group-toggle${gerenciarAberto}" id="sb-toggle-ger" onclick="sidebarToggleGrupo('ger')">
+          <div class="sg-left"><span class="sidebar-nav-icon">⚙️</span> Gerenciar</div>
+          <span class="sg-arrow">▶</span>
+        </div>
+        <div class="sidebar-sub-group${gerenciarAberto}" id="sb-grupo-ger">
+          ${navItem('👥','Usuários','usuarios-lista.html',true)}
+          ${navItem('🎵','Membros','membros.html',true)}
+          ${navItem('➕','Cadastrar Usuário','usuarios-cadastro.html',true)}
+          ${navItem('🔑','Minha Conta','minha-conta.html',true)}
+        </div>
+        ${navItem('🎛️','Visibilidade','visibilidade.html')}
+        ${navItem('🔔','Notificações','notificacoes.html')}
+      </nav>
+      <div class="sidebar-admin-footer">
+        ${navItem('🏠','Início','index.html')}
+        <button class="sidebar-btn-sair" onclick="fazerLogout()">→ Sair</button>
+      </div>
+    `;
 
-    // Spacer no body para empurrar conteúdo abaixo do topbar
+    // Anexa ao <html> — fora do body, fora de qualquer stacking context
+    document.documentElement.appendChild(overlayEl);
+    document.documentElement.appendChild(topbarEl);
+    document.documentElement.appendChild(sidebarEl);
+
+    // Spacer fica no body para empurrar conteúdo abaixo do topbar
     const spacer = document.createElement('div');
     spacer.className = 'sb-spacer';
+    spacer.id = 'sb-spacer';
     document.body.insertBefore(spacer, document.body.firstChild);
 
     ajustarLayout();
@@ -157,20 +168,44 @@
 
   function ajustarLayout() {
     const mobile = isMobile();
+    const sidebar = document.getElementById('sidebar-admin');
+    const topbar = document.querySelector('.sidebar-topbar');
+    const spacer = document.getElementById('sb-spacer');
+    const overlay = document.getElementById('sb-overlay');
+
     if (mobile) {
+      // Mobile: classes diretas nos elementos (não dependem do body)
+      sidebar.classList.add('sb-mobile-mode');
+      sidebar.classList.remove('sb-desktop-mode');
+      topbar.classList.add('sb-mobile-mode');
+      topbar.classList.remove('sb-desktop-mode');
+      spacer.classList.add('sb-mobile-mode');
+      spacer.classList.remove('sb-desktop-mode');
+
       document.body.classList.add('sb-mobile');
       document.body.classList.remove('sb-desktop');
       document.body.style.removeProperty('padding-left');
     } else {
+      // Desktop
+      sidebar.classList.add('sb-desktop-mode');
+      sidebar.classList.remove('sb-mobile-mode', 'aberta');
+      topbar.classList.add('sb-desktop-mode');
+      topbar.classList.remove('sb-mobile-mode');
+      spacer.classList.add('sb-desktop-mode');
+      spacer.classList.remove('sb-mobile-mode');
+      overlay.classList.remove('ativo');
+
       document.body.classList.add('sb-desktop');
-      document.body.classList.remove('sb-mobile');
+      document.body.classList.remove('sb-mobile', 'sb-aberta');
       document.body.style.setProperty('padding-left', '220px', 'important');
     }
   }
 
   window.sidebarToggle = function() {
-    const aberta = document.getElementById('sidebar-admin').classList.toggle('aberta');
-    document.getElementById('sb-overlay').classList.toggle('ativo', aberta);
+    const sidebar = document.getElementById('sidebar-admin');
+    const overlay = document.getElementById('sb-overlay');
+    const aberta = sidebar.classList.toggle('aberta');
+    overlay.classList.toggle('ativo', aberta);
     document.body.classList.toggle('sb-aberta', aberta);
   };
 

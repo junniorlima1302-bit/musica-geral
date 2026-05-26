@@ -35,8 +35,8 @@
     .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99997; }
     .sidebar-overlay.ativo { display: block; }
 
-    .sidebar-topbar { display: none; position: fixed; top: 0; left: 0; right: 0; height: 52px; background: #1a2e4a; align-items: center; padding: 0 14px; z-index: 99999; gap: 10px; }
-    .sidebar-topbar-title { color: white; font-size: 13px; font-weight: 800; flex: 1; font-family: 'Nunito', sans-serif; }
+    .sidebar-topbar { display: none; position: fixed; top: 0; left: 0; right: 0; height: 52px; background: #1a2e4a; align-items: center; justify-content: space-between; padding: 0 14px; z-index: 99999; gap: 10px; }
+    .sidebar-topbar-title { color: white; font-size: 13px; font-weight: 800; flex: 1; font-family: 'Nunito', sans-serif; text-align: center; }
     .sidebar-btn-menu { background: none; border: none; cursor: pointer; padding: 6px; display: flex; flex-direction: column; gap: 4px; width: auto; margin: 0; min-height: 0; }
     .sidebar-btn-menu span { display: block; width: 20px; height: 2px; background: white; border-radius: 2px; }
 
@@ -117,7 +117,8 @@
       <button class="sidebar-btn-menu" onclick="sidebarToggle()">
         <span></span><span></span><span></span>
       </button>
-      <span class="sidebar-topbar-title">MÚSICA GERAL</span>
+      <span class="sidebar-topbar-title">MÚSICA GERAL FORTALEZA</span>
+      <div style="width:32px;flex-shrink:0;"></div>
     `;
 
     const sidebarEl = document.createElement('aside');

@@ -937,24 +937,60 @@ body.iframe-page {
   }
 }
 /* ================================================ */
-/* ===== FIX DEFINITIVO - SCROLL MOBILE      ====== */
+/* ===== CORREÇÕES FINAIS v7                  ====== */
 /* ================================================ */
 
-/* 
-  RAIZ DO PROBLEMA: body com display:flex no mobile não
-  gera scroll correto no iOS/Android — o conteúdo vaza
-  para cima do topbar fixed.
-  
-  SOLUÇÃO: em mobile, body vira display:block com padding-top.
-  O admin-box é centralizado via margin:auto.
-*/
+/* 1. SIDEBAR SEMPRE CLICÁVEL
+   Quando sidebar está aberta, bloqueia cliques em todo o body */
+body.sb-sidebar-aberta > *:not(.sb-spacer) {
+  pointer-events: none !important;
+}
 
+/* 2. Garante que overlay e sidebar sejam sempre clicáveis */
+#sb-overlay,
+#sidebar-admin,
+.sidebar-topbar,
+.sidebar-admin,
+.sidebar-overlay {
+  pointer-events: auto !important;
+}
+
+/* 3. CARDS: altura uniforme e fonte centralizada */
+body.sb-mobile .lista-pessoas {
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 8px !important;
+  padding: 10px !important;
+}
+
+body.sb-mobile .item-pessoa {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 80px !important;
+  padding: 10px 6px !important;
+  font-size: 12px !important;
+}
+
+body.sb-mobile .item-pessoa strong {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  margin-bottom: 4px !important;
+  text-align: center !important;
+  word-break: break-word !important;
+}
+
+body.sb-mobile .item-pessoa span {
+  font-size: 11px !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
+}
+
+/* 4. BODY em mobile: display block para scroll correto */
 body.sb-mobile.admin-page {
   display: block !important;
   padding: 0 !important;
-  margin: 0 !important;
-  min-height: 100vh !important;
-  overflow-x: hidden !important;
 }
 
 body.sb-mobile.admin-page .admin-box {
@@ -965,52 +1001,22 @@ body.sb-mobile.admin-page .admin-box {
   box-sizing: border-box !important;
 }
 
-/* O spacer de 52px (altura do topbar) é inserido pelo JS
-   como primeiro filho do body — em display:block funciona
-   perfeitamente para empurrar o admin-box para baixo */
-
-/* Remove overflow:hidden dos grupos (cria stacking context) */
-.grupo-evento {
-  overflow: visible !important;
-}
-.grupo-evento h3 {
-  border-radius: 14px 14px 0 0 !important;
-}
-.lista-pessoas {
-  border-radius: 0 0 14px 14px !important;
-  overflow: hidden !important;
-}
-
-/* Topbar sempre no topo absoluto */
-.sidebar-topbar {
-  z-index: 99999 !important;
-}
-.sidebar-admin {
-  z-index: 99998 !important;
-}
-.sidebar-overlay {
-  z-index: 99997 !important;
-}
-
-/* Filtros lado a lado em mobile */
+/* 5. Filtros lado a lado */
 body.sb-mobile #filtros {
   display: flex !important;
   flex-direction: row !important;
   flex-wrap: wrap !important;
   gap: 8px !important;
-  align-items: center !important;
 }
 body.sb-mobile #filtros select {
   flex: 1 1 140px !important;
-  min-width: 120px !important;
-  width: auto !important;
   height: 36px !important;
   font-size: 13px !important;
+  min-width: 0 !important;
 }
 body.sb-mobile .busca-box {
   flex: 1 1 140px !important;
-  min-width: 120px !important;
-  width: auto !important;
+  min-width: 0 !important;
 }
 body.sb-mobile .barra-acoes-disp {
   display: flex !important;
@@ -1021,46 +1027,7 @@ body.sb-mobile .barra-acoes-disp {
 body.sb-mobile .barra-acoes-disp button {
   flex: 1 1 auto !important;
   width: auto !important;
-  max-width: none !important;
   padding: 8px 6px !important;
   font-size: 11px !important;
   white-space: nowrap !important;
-}
-body.sb-mobile .lista-pessoas {
-  grid-template-columns: repeat(3, 1fr) !important;
-  padding: 10px !important;
-  gap: 8px !important;
-}
-
-/* ================================================ */
-/* ===== FIX CARDS SOBRE SIDEBAR (DEFINITIVO) ===== */
-/* ================================================ */
-
-/*
-  item-pessoa tem position:relative — cria stacking context
-  que fica acima do sidebar quando o sidebar abre.
-  
-  Solução: z-index:0 explícito nos cards E isolation:isolate
-  no admin-box para conter todo o stacking context dentro dele.
-  O sidebar/overlay ficam FORA do admin-box, logo ficam acima.
-*/
-
-.item-pessoa {
-  z-index: 0 !important;
-  isolation: auto !important;
-}
-
-/* admin-box contém seu próprio contexto — nada dentro dele
-   vaza para fora em z-index */
-.admin-box {
-  isolation: isolate;
-  position: relative;
-  z-index: 1;
-}
-
-/* Sidebar e overlay ficam ACIMA do admin-box */
-.sidebar-admin,
-.sidebar-overlay,
-.sidebar-topbar {
-  isolation: isolate;
 }

@@ -1058,7 +1058,14 @@ async function renderizarRespostas(respostasFiltradas) {
   }
 
   // 🔥 lista de pessoas únicas
-  const pessoas = [...new Set(respostas.map(r => r.nome_pessoa))];
+  // Para Música Geral: inclui membros ativos que não marcaram nada (podem em tudo)
+  const pessoasComResposta = [...new Set(respostas.map(r => r.nome_pessoa))];
+  const membrosMusica = window._membrosMusica || [];
+  const nomesComResposta = new Set(pessoasComResposta.map(n => n.trim().toLowerCase()));
+  const pessoasSemResposta = membrosMusica
+    .filter(m => !nomesComResposta.has(m.nome.trim().toLowerCase()))
+    .map(m => m.nome);
+  const pessoas = [...pessoasComResposta, ...pessoasSemResposta];
 
   let agrupado = {};
 
@@ -1076,7 +1083,11 @@ async function renderizarRespostas(respostasFiltradas) {
   pessoas.forEach(pessoa => {
 
     const dadosPessoa = respostas.filter(r => r.nome_pessoa === pessoa);
-    const ministerio = dadosPessoa[0]?.ministerio;
+    // Se não tem resposta, busca dados nos membros carregados
+    const membroBase = (window._membrosMusica || []).find(m => m.nome.trim().toLowerCase() === pessoa.trim().toLowerCase());
+    const ministerio = dadosPessoa[0]?.ministerio || membroBase?.ministerio;
+    const tipoBase = dadosPessoa[0]?.tipo || membroBase?.tipo;
+    const instrBase = dadosPessoa[0]?.instrumento || membroBase?.instrumento;
 
     compromissosFiltrados.forEach(comp => {
 
@@ -1088,15 +1099,15 @@ async function renderizarRespostas(respostasFiltradas) {
       );
 
       if (ministerio === "Música Geral") {
-        // 👉 marcou = NÃO pode → aparece quem NÃO marcou
+        // 👉 marcou = NÃO pode → aparece quem NÃO marcou (inclui quem não tem nenhuma resposta)
         if (!marcou) {
           // Coleta IDs de todas as respostas desta pessoa neste evento/turno para exclusão precisa
           const idsResposta = dadosPessoa.map(r => r.id).filter(Boolean);
           agrupado[chave].push({
             nome: pessoa,
-            ministerio: dadosPessoa[0]?.ministerio,
-            tipo: dadosPessoa[0]?.tipo,
-            instrumento: dadosPessoa[0]?.instrumento,
+            ministerio: ministerio,
+            tipo: tipoBase,
+            instrumento: instrBase,
             ids: idsResposta,
             mesRef: dadosPessoa[0]?.mes_ref || null,
             compromissoId: comp.id || null

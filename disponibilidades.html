@@ -2,10 +2,8 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Disponibilidades</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     /* ── BOTÃO RESPOSTAS ── */
@@ -348,9 +346,13 @@
       let dispQuery = supabase.from("disponibilidades").select("*");
       if (mesParaUsar) dispQuery = dispQuery.eq("mes_ref", mesParaUsar);
 
+      // Busca membros ativos de Música Geral para cruzar com respostas
+      const membrosQuery = supabase.from("membros").select("*").eq("ativo", true).eq("ministerio", "Música Geral");
+
       try {
-        const [resComps, resDisp] = await Promise.all([compQuery, dispQuery]);
+        const [resComps, resDisp, resMembros] = await Promise.all([compQuery, dispQuery, membrosQuery]);
         compromissosGlobais = resComps.data || [];
+        window._membrosMusica = (resMembros.data || []).filter(m => !nomesPendentes.includes(m.nome));
         // Remove respostas de membros ainda pendentes
         const todasRespostas = resDisp.data || [];
         respostasGlobais = todasRespostas.filter(r => !nomesPendentes.includes(r.nome_pessoa));

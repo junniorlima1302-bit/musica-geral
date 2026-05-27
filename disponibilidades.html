@@ -388,12 +388,14 @@
       // Usa o mês atualmente selecionado no filtro
       const mesAtivo = _mesDispAtivo || document.getElementById("filtroMesDisp")?.value || null;
 
+      // Busca também mes_ref para debug
       let dispQuery = supabase
         .from("disponibilidades")
-        .select("nome_pessoa");
+        .select("nome_pessoa, mes_ref");
       if (mesAtivo && mesAtivo !== "todos") {
         dispQuery = dispQuery.eq("mes_ref", mesAtivo);
       }
+      console.log("🔍 Buscando disponibilidades com mes_ref =", mesAtivo);
 
       const [{ data: membros }, { data: respostas }] = await Promise.all([
         supabase.from("membros").select("*").eq("ativo", true).order("nome"),
@@ -405,24 +407,22 @@
         return;
       }
 
-      // Nomes únicos de quem respondeu (sem duplicatas por evento)
+      // Normaliza removendo acentos, espaços duplos e caixa
+      function norm(n) {
+        return (n || "").trim().toLowerCase()
+          .normalize("NFD").replace(/[̀-ͯ]/g, "")
+          .replace(/\s+/g, " ");
+      }
+
+      console.log("🔍 Respostas retornadas:", (respostas || []).length, "| mes_ref únicos:", [...new Set((respostas||[]).map(r=>r.mes_ref))]);
+      // Nomes únicos de quem respondeu — normalizados
       const responderam = new Set(
-        (respostas || []).map(r => (r.nome_pessoa || "").trim().toLowerCase())
+        (respostas || []).map(r => norm(r.nome_pessoa))
       );
 
-      _statusPendentes = membros.filter(m => !responderam.has((m.nome || "").trim().toLowerCase()));
-      _statusOk        = membros.filter(m =>  responderam.has((m.nome || "").trim().toLowerCase()));
+      _statusPendentes = membros.filter(m => !responderam.has(norm(m.nome)));
+      _statusOk        = membros.filter(m =>  responderam.has(norm(m.nome)));
       _statusFiltro    = "todos";
-
-      // 🔍 DEBUG: mostra no console os nomes que não batem
-      console.group("=== DEBUG STATUS ===");
-      console.log("Nomes em disponibilidades:", [...responderam].sort());
-      console.log("Pendentes (não encontrados):", _statusPendentes.map(m => m.nome));
-      const semMatch = [...responderam].filter(nd =>
-        !membros.some(m => (m.nome || "").trim().toLowerCase() === nd)
-      );
-      console.log("Em disponibilidades mas não em membros:", semMatch);
-      console.groupEnd();
 
       renderizarStatus();
       const btnR = document.getElementById("btn-refresh-status");

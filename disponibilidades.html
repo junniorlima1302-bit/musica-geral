@@ -388,38 +388,38 @@
       // Usa o mês atualmente selecionado no filtro
       const mesAtivo = _mesDispAtivo || document.getElementById("filtroMesDisp")?.value || null;
 
-      const { data: membros } = await supabase
-        .from("membros")
-        .select("*")
-        .eq("ativo", true)
-        .order("nome");
-
-      // Filtra respostas pelo mês selecionado — não pega tudo
-      let dispQuery = supabase.from("disponibilidades").select("nome_pessoa");
+      // Busca membros e respostas em paralelo
+      // Respostas: busca membro_id E nome_pessoa (fallback para registros antigos sem membro_id)
+      let dispQuery = supabase
+        .from("disponibilidades")
+        .select("membro_id, nome_pessoa");
       if (mesAtivo && mesAtivo !== "todos") {
         dispQuery = dispQuery.eq("mes_ref", mesAtivo);
       }
-      const { data: respostas } = await dispQuery;
+
+      const [{ data: membros }, { data: respostas }] = await Promise.all([
+        supabase.from("membros").select("*").eq("ativo", true).order("nome"),
+        dispQuery
+      ]);
 
       if (!membros) {
         document.getElementById("conteudo-status").innerHTML = `<div class="sem-status">Erro ao carregar dados.</div>`;
         return;
       }
 
-      // Normaliza nomes removendo espaços duplos e acentos para comparação robusta
-      function normNome(n) {
-        return (n || "").trim().toLowerCase()
-          .normalize("NFD").replace(/[̀-ͯ]/g, "")
-          .replace(/\s+/g, " ");
+      // Conjuntos de quem respondeu — por ID (confiável) e por nome (fallback)
+      const respondegramPorId   = new Set((respostas || []).map(r => r.membro_id).filter(Boolean));
+      const respondegramPorNome = new Set((respostas || []).map(r => (r.nome_pessoa || "").trim().toLowerCase()));
+
+      function respondeu(m) {
+        // Prioriza comparação por ID; fallback por nome para registros antigos
+        if (m.id && respondegramPorId.has(m.id)) return true;
+        return respondegramPorNome.has((m.nome || "").trim().toLowerCase());
       }
 
-      const responderam = new Set((respostas || []).map(r => normNome(r.nome_pessoa)));
-
-      _statusPendentes = membros.filter(m => !responderam.has(normNome(m.nome)));
-      _statusOk        = membros.filter(m =>  responderam.has(normNome(m.nome)));
+      _statusPendentes = membros.filter(m => !respondeu(m));
+      _statusOk        = membros.filter(m =>  respondeu(m));
       _statusFiltro    = "todos";
-      // Não marca como carregado permanentemente — sempre recarrega ao abrir
-      // para refletir novas respostas sem precisar recarregar a página
 
       renderizarStatus();
       const btnR = document.getElementById("btn-refresh-status");

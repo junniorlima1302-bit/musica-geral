@@ -414,6 +414,16 @@
       _statusOk        = membros.filter(m =>  responderam.has((m.nome || "").trim().toLowerCase()));
       _statusFiltro    = "todos";
 
+      // 🔍 DEBUG: mostra no console os nomes que não batem
+      console.group("=== DEBUG STATUS ===");
+      console.log("Nomes em disponibilidades:", [...responderam].sort());
+      console.log("Pendentes (não encontrados):", _statusPendentes.map(m => m.nome));
+      const semMatch = [...responderam].filter(nd =>
+        !membros.some(m => (m.nome || "").trim().toLowerCase() === nd)
+      );
+      console.log("Em disponibilidades mas não em membros:", semMatch);
+      console.groupEnd();
+
       renderizarStatus();
       const btnR = document.getElementById("btn-refresh-status");
       if (btnR) { btnR.textContent = "🔄"; btnR.disabled = false; }

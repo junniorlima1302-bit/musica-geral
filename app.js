@@ -1022,20 +1022,36 @@ function aplicarBusca() {
   const filtroMinisterio = document.getElementById("filtroMinisterio")?.value;
   const filtroEvento = document.getElementById("filtroEvento")?.value;
 
+  // Filtra respostas normalmente
   let filtrado = respostasGlobais.filter(pessoa => {
-
     const nomeOk = normalizar(pessoa.nome_pessoa).includes(nomeBusca);
-
-    const ministerioOk =
-      filtroMinisterio === "todos" ||
-      pessoa.ministerio === filtroMinisterio;
-
-    const eventoOk =
-      filtroEvento === "todos" ||
-      pessoa.evento === filtroEvento;
-
+    const ministerioOk = filtroMinisterio === "todos" || pessoa.ministerio === filtroMinisterio;
+    const eventoOk = filtroEvento === "todos" || pessoa.evento === filtroEvento;
     return nomeOk && ministerioOk && eventoOk;
   });
+
+  // Para Música Geral: membros sem nenhuma resposta também precisam aparecer
+  // Filtra window._membrosMusica pelo nome buscado e reconstrói respostasGlobais temporário
+  if (filtroMinisterio === "todos" || filtroMinisterio === "Música Geral") {
+    const membrosExtra = (window._membrosMusica || []).filter(m => {
+      const temResposta = respostasGlobais.some(r =>
+        r.nome_pessoa.trim().toLowerCase() === m.nome.trim().toLowerCase()
+      );
+      // Só inclui quem NÃO tem nenhuma resposta (pode em tudo)
+      return !temResposta && normalizar(m.nome).includes(nomeBusca);
+    });
+
+    // Cria registros sintéticos para que renderizarRespostas os processe
+    membrosExtra.forEach(m => {
+      filtrado.push({
+        nome_pessoa: m.nome,
+        ministerio: "Música Geral",
+        tipo: m.tipo,
+        instrumento: m.instrumento,
+        _semResposta: true
+      });
+    });
+  }
 
   renderizarRespostas(filtrado);
 }

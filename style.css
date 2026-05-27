@@ -958,8 +958,8 @@ body.sb-sidebar-aberta > *:not(.sb-spacer) {
 /* 3. CARDS: altura uniforme e fonte centralizada */
 body.sb-mobile .lista-pessoas {
   grid-template-columns: repeat(3, 1fr) !important;
-  gap: 8px !important;
-  padding: 10px !important;
+  gap: 6px !important;
+  padding: 8px !important;
 }
 
 body.sb-mobile .item-pessoa {
@@ -967,24 +967,32 @@ body.sb-mobile .item-pessoa {
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  min-height: 80px !important;
-  padding: 10px 6px !important;
-  font-size: 12px !important;
+  min-height: 0 !important;
+  padding: 8px 4px !important;
+  font-size: 11px !important;
+  border-radius: 6px !important;
 }
 
 body.sb-mobile .item-pessoa strong {
-  font-size: 12px !important;
+  font-size: 11px !important;
   font-weight: 700 !important;
-  line-height: 1.3 !important;
-  margin-bottom: 4px !important;
+  line-height: 1.2 !important;
+  margin-bottom: 2px !important;
   text-align: center !important;
   word-break: break-word !important;
 }
 
-body.sb-mobile .item-pessoa span {
-  font-size: 11px !important;
-  line-height: 1.3 !important;
+body.sb-mobile .item-pessoa span,
+body.sb-mobile .item-pessoa small {
+  font-size: 10px !important;
+  line-height: 1.2 !important;
   text-align: center !important;
+  color: #5a7a9a !important;
+}
+
+body.sb-mobile .grupo-evento h3 {
+  font-size: 12px !important;
+  padding: 8px 10px !important;
 }
 
 /* 4. BODY em mobile: display block para scroll correto */

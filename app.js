@@ -1019,29 +1019,28 @@ function popularFiltroEventos(compromissos) {
 function aplicarBusca() {
 
   const nomeBusca = normalizar(document.getElementById("buscaNome")?.value || "");
-  const filtroMinisterio = document.getElementById("filtroMinisterio")?.value;
-  const filtroEvento = document.getElementById("filtroEvento")?.value;
+  const filtroMinisterio = document.getElementById("filtroMinisterio")?.value || "todos";
+  const filtroEvento = document.getElementById("filtroEvento")?.value || "todos";
 
-  // Filtra respostas normalmente
-  let filtrado = respostasGlobais.filter(pessoa => {
-    const nomeOk = normalizar(pessoa.nome_pessoa).includes(nomeBusca);
-    const ministerioOk = filtroMinisterio === "todos" || pessoa.ministerio === filtroMinisterio;
-    const eventoOk = filtroEvento === "todos" || pessoa.evento === filtroEvento;
-    return nomeOk && ministerioOk && eventoOk;
+  // 1. Filtra respostas normais (Geral Eventos e Música Geral com indisponibilidade)
+  let filtrado = respostasGlobais.filter(r => {
+    const nomeOk = !nomeBusca || normalizar(r.nome_pessoa).includes(nomeBusca);
+    const ministerioOk = filtroMinisterio === "todos" || r.ministerio === filtroMinisterio;
+    // Para evento: Música Geral marca o que NÃO pode, então não filtramos por evento aqui
+    // O filtro de evento é aplicado no renderizarRespostas via compromissosFiltrados
+    return nomeOk && ministerioOk;
   });
 
-  // Para Música Geral: membros sem nenhuma resposta também precisam aparecer
-  // Filtra window._membrosMusica pelo nome buscado e reconstrói respostasGlobais temporário
+  // 2. Membros de Música Geral sem NENHUMA resposta (podem em todos os eventos)
+  //    Só adiciona se filtro de ministério permite Música Geral
   if (filtroMinisterio === "todos" || filtroMinisterio === "Música Geral") {
+    const nomesJaIncluidos = new Set(filtrado.map(r => r.nome_pessoa.trim().toLowerCase()));
     const membrosExtra = (window._membrosMusica || []).filter(m => {
-      const temResposta = respostasGlobais.some(r =>
-        r.nome_pessoa.trim().toLowerCase() === m.nome.trim().toLowerCase()
-      );
-      // Só inclui quem NÃO tem nenhuma resposta (pode em tudo)
-      return !temResposta && normalizar(m.nome).includes(nomeBusca);
+      const jaIncluso = nomesJaIncluidos.has(m.nome.trim().toLowerCase());
+      const nomeOk = !nomeBusca || normalizar(m.nome).includes(nomeBusca);
+      return !jaIncluso && nomeOk;
     });
 
-    // Cria registros sintéticos para que renderizarRespostas os processe
     membrosExtra.forEach(m => {
       filtrado.push({
         nome_pessoa: m.nome,
@@ -1074,14 +1073,8 @@ async function renderizarRespostas(respostasFiltradas) {
   }
 
   // 🔥 lista de pessoas únicas
-  // Para Música Geral: inclui membros ativos que não marcaram nada (podem em tudo)
-  const pessoasComResposta = [...new Set(respostas.map(r => r.nome_pessoa))];
-  const membrosMusica = window._membrosMusica || [];
-  const nomesComResposta = new Set(pessoasComResposta.map(n => n.trim().toLowerCase()));
-  const pessoasSemResposta = membrosMusica
-    .filter(m => !nomesComResposta.has(m.nome.trim().toLowerCase()))
-    .map(m => m.nome);
-  const pessoas = [...pessoasComResposta, ...pessoasSemResposta];
+  // pessoasSemResposta já vem incluída via aplicarBusca (registros sintéticos _semResposta)
+  const pessoas = [...new Set(respostas.map(r => r.nome_pessoa))];
 
   let agrupado = {};
 
@@ -1099,11 +1092,12 @@ async function renderizarRespostas(respostasFiltradas) {
   pessoas.forEach(pessoa => {
 
     const dadosPessoa = respostas.filter(r => r.nome_pessoa === pessoa);
-    // Se não tem resposta, busca dados nos membros carregados
-    const membroBase = (window._membrosMusica || []).find(m => m.nome.trim().toLowerCase() === pessoa.trim().toLowerCase());
-    const ministerio = dadosPessoa[0]?.ministerio || membroBase?.ministerio;
-    const tipoBase = dadosPessoa[0]?.tipo || membroBase?.tipo;
-    const instrBase = dadosPessoa[0]?.instrumento || membroBase?.instrumento;
+    // Registro sintético (_semResposta) ou dados reais
+    const sintetico = respostas.find(r => r.nome_pessoa === pessoa && r._semResposta);
+    const membroBase = sintetico || (window._membrosMusica || []).find(m => m.nome.trim().toLowerCase() === pessoa.trim().toLowerCase());
+    const ministerio = dadosPessoa.find(r => !r._semResposta)?.ministerio || membroBase?.ministerio;
+    const tipoBase = dadosPessoa.find(r => !r._semResposta)?.tipo || membroBase?.tipo;
+    const instrBase = dadosPessoa.find(r => !r._semResposta)?.instrumento || membroBase?.instrumento;
 
     compromissosFiltrados.forEach(comp => {
 

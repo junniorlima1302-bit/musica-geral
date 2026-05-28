@@ -1031,26 +1031,8 @@ function aplicarBusca() {
     return nomeOk && ministerioOk;
   });
 
-  // 2. Membros de Música Geral sem NENHUMA resposta (podem em todos os eventos)
-  //    Só adiciona se filtro de ministério permite Música Geral
-  if (filtroMinisterio === "todos" || filtroMinisterio === "Música Geral") {
-    const nomesJaIncluidos = new Set(filtrado.map(r => r.nome_pessoa.trim().toLowerCase()));
-    const membrosExtra = (window._membrosMusica || []).filter(m => {
-      const jaIncluso = nomesJaIncluidos.has(m.nome.trim().toLowerCase());
-      const nomeOk = !nomeBusca || normalizar(m.nome).includes(nomeBusca);
-      return !jaIncluso && nomeOk;
-    });
-
-    membrosExtra.forEach(m => {
-      filtrado.push({
-        nome_pessoa: m.nome,
-        ministerio: "Música Geral",
-        tipo: m.tipo,
-        instrumento: m.instrumento,
-        _semResposta: true
-      });
-    });
-  }
+  // Nota: membros de Música Geral sem NENHUMA resposta NÃO são incluídos.
+  // Se não responderam, não sabemos a disponibilidade deles.
 
   renderizarRespostas(filtrado);
 }
@@ -1073,8 +1055,13 @@ async function renderizarRespostas(respostasFiltradas) {
   }
 
   // 🔥 lista de pessoas únicas
-  // pessoasSemResposta já vem incluída via aplicarBusca (registros sintéticos _semResposta)
-  const pessoas = [...new Set(respostas.map(r => r.nome_pessoa))];
+  // Só inclui quem tem registro real — membros de Música Geral sem resposta
+  // NÃO aparecem (não responderam = não sabemos se podem ou não)
+  const pessoas = [...new Set(
+    respostas
+      .filter(r => !r._semResposta) // exclui registros sintéticos
+      .map(r => r.nome_pessoa)
+  )];
 
   let agrupado = {};
 

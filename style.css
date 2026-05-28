@@ -955,53 +955,53 @@ body.sb-sidebar-aberta > *:not(.sb-spacer) {
   pointer-events: auto !important;
 }
 
-/* 3. CARDS: grid 3 colunas adequado ao celular */
+/* 3. CARDS mobile: grid 3 colunas, só em telas pequenas */
+@media (max-width: 768px) {
+  /* Esconde o X vermelho no mobile */
+  .item-pessoa .badge-excluir {
+    display: none !important;
+  }
 
-/* Esconde o X vermelho no mobile */
-body.sb-mobile .item-pessoa .badge-excluir {
-  display: none !important;
-}
+  .grupo-evento h3 {
+    font-size: 13px !important;
+    padding: 10px 14px !important;
+    text-align: center !important;
+  }
 
-body.sb-mobile .grupo-evento h3 {
-  font-size: 13px !important;
-  padding: 10px 14px !important;
-  text-align: center !important;
-}
+  .lista-pessoas {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    padding: 10px !important;
+  }
 
-body.sb-mobile .lista-pessoas {
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 8px !important;
-  padding: 10px !important;
-}
+  .item-pessoa {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 80px !important;
+    padding: 10px 6px !important;
+    border-radius: 10px !important;
+    text-align: center !important;
+  }
 
-body.sb-mobile .item-pessoa {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-height: 80px !important;
-  padding: 10px 6px !important;
-  border-radius: 10px !important;
-  text-align: center !important;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important;
-}
+  .item-pessoa strong {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+    margin-bottom: 4px !important;
+    text-align: center !important;
+    word-break: break-word !important;
+    display: block !important;
+  }
 
-body.sb-mobile .item-pessoa strong {
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  line-height: 1.3 !important;
-  margin-bottom: 4px !important;
-  text-align: center !important;
-  word-break: break-word !important;
-  display: block !important;
-}
-
-body.sb-mobile .item-pessoa span,
-body.sb-mobile .item-pessoa small {
-  font-size: 11px !important;
-  line-height: 1.3 !important;
-  text-align: center !important;
-  display: block !important;
+  .item-pessoa span,
+  .item-pessoa small {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+    text-align: center !important;
+    display: block !important;
+  }
 }
 
 /* 4. BODY em mobile: display block para scroll correto */

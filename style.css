@@ -985,10 +985,10 @@ body.sb-sidebar-aberta > *:not(.sb-spacer) {
   }
 
   .item-pessoa strong {
-    font-size: 14px !important;
+    font-size: 12px !important;
     font-weight: 700 !important;
     line-height: 1.3 !important;
-    margin-bottom: 4px !important;
+    margin-bottom: 3px !important;
     text-align: center !important;
     word-break: break-word !important;
     display: block !important;
@@ -996,7 +996,7 @@ body.sb-sidebar-aberta > *:not(.sb-spacer) {
 
   .item-pessoa span,
   .item-pessoa small {
-    font-size: 12px !important;
+    font-size: 10px !important;
     line-height: 1.3 !important;
     text-align: center !important;
     display: block !important;

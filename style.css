@@ -1056,3 +1056,14 @@ body.sb-mobile .barra-acoes-disp button {
     display: block !important;
   }
 }
+
+/* Evita zoom no iOS ao focar inputs — font-size mínimo 16px */
+@media (max-width: 1023px) {
+  .busca-box input,
+  #filtros select,
+  input[type="text"],
+  input[type="search"],
+  select {
+    font-size: 16px !important;
+  }
+}

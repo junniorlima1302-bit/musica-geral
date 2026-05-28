@@ -65,8 +65,8 @@
         background: rgba(0,0,0,0.5) !important;
       }
       .modal-status-box {
-        max-height: 88vh !important;
-        height: 88vh !important;
+        max-height: 95vh !important;
+        height: 95vh !important;
         margin: 0 !important;
         border-radius: 20px 20px 0 0 !important;
         width: 100% !important;
@@ -401,12 +401,14 @@
 
     async function abrirModalStatus() {
       document.getElementById("modal-status").classList.add("aberto");
+      document.body.style.overflow = "hidden"; // trava scroll do fundo
       // Sempre recarrega do banco — garante dados em tempo real
       await carregarStatus();
     }
 
     function fecharModalStatus() {
       document.getElementById("modal-status").classList.remove("aberto");
+      document.body.style.overflow = ""; // libera scroll do fundo
     }
 
     function fecharModalStatusFora(e) {

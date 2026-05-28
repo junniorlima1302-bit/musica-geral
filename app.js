@@ -1158,11 +1158,16 @@ async function renderizarRespostas(respostasFiltradas) {
       item.dataset.mesRef = pessoa.mesRef || "";
       item.dataset.compromissoId = pessoa.compromissoId || "";
 
+      const tipoLabel = pessoa.tipo === "toca" ? "🎸 Toca"
+        : pessoa.tipo === "toca_canta" ? "🎸🎤 Toca e Canta"
+        : pessoa.tipo === "canta" ? "🎤 Canta" : "";
+      const instrLabel = pessoa.instrumento ? ` — ${pessoa.instrumento}` : "";
+
       item.innerHTML = `
         <span class="badge-excluir">✕</span>
-        <strong>${pessoa.nome}</strong><br>
-        <small>${pessoa.ministerio}</small><br>
-        <small>${pessoa.tipo === "toca" ? "Toca" : pessoa.tipo === "toca_canta" ? "Toca e Canta" : pessoa.tipo === "canta" ? "Canta" : ""} ${pessoa.instrumento ? "- " + pessoa.instrumento : ""}</small>
+        <strong>${pessoa.nome}</strong>
+        <small>${pessoa.ministerio}</small>
+        <small>${tipoLabel}${instrLabel}</small>
       `;
 
       item.onclick = () => item.classList.toggle("selecionado");

@@ -1158,9 +1158,9 @@ async function renderizarRespostas(respostasFiltradas) {
       item.dataset.mesRef = pessoa.mesRef || "";
       item.dataset.compromissoId = pessoa.compromissoId || "";
 
-      const tipoLabel = pessoa.tipo === "toca" ? "🎸 Toca"
-        : pessoa.tipo === "toca_canta" ? "🎸🎤 Toca e Canta"
-        : pessoa.tipo === "canta" ? "🎤 Canta" : "";
+      const tipoLabel = pessoa.tipo === "toca" ? "Toca"
+        : pessoa.tipo === "toca_canta" ? "Toca e Canta"
+        : pessoa.tipo === "canta" ? "Canta" : "";
       const instrLabel = pessoa.instrumento ? ` — ${pessoa.instrumento}` : "";
 
       item.innerHTML = `

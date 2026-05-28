@@ -955,13 +955,23 @@ body.sb-sidebar-aberta > *:not(.sb-spacer) {
   pointer-events: auto !important;
 }
 
-/* 3. CARDS: 3 colunas, texto centralizado, estilo app */
+/* 3. CARDS: grid 3 colunas adequado ao celular */
+
+/* Esconde o X vermelho no mobile */
+body.sb-mobile .item-pessoa .badge-excluir {
+  display: none !important;
+}
+
+body.sb-mobile .grupo-evento h3 {
+  font-size: 13px !important;
+  padding: 10px 14px !important;
+  text-align: center !important;
+}
+
 body.sb-mobile .lista-pessoas {
   grid-template-columns: repeat(3, 1fr) !important;
-  gap: 10px !important;
-  padding: 12px !important;
-  background: #dde5f0 !important;
-  border-radius: 0 0 14px 14px !important;
+  gap: 8px !important;
+  padding: 10px !important;
 }
 
 body.sb-mobile .item-pessoa {
@@ -969,45 +979,29 @@ body.sb-mobile .item-pessoa {
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  min-height: 90px !important;
-  padding: 12px 8px !important;
-  border-radius: 14px !important;
-  background: white !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
+  min-height: 80px !important;
+  padding: 10px 6px !important;
+  border-radius: 10px !important;
   text-align: center !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important;
 }
 
 body.sb-mobile .item-pessoa strong {
   font-size: 13px !important;
   font-weight: 700 !important;
   line-height: 1.3 !important;
-  margin-bottom: 6px !important;
+  margin-bottom: 4px !important;
   text-align: center !important;
   word-break: break-word !important;
-  color: #1a2e4a !important;
   display: block !important;
 }
 
 body.sb-mobile .item-pessoa span,
 body.sb-mobile .item-pessoa small {
   font-size: 11px !important;
-  line-height: 1.4 !important;
+  line-height: 1.3 !important;
   text-align: center !important;
-  color: #5a7a9a !important;
   display: block !important;
-}
-
-body.sb-mobile .grupo-evento {
-  margin-top: 20px !important;
-  border-radius: 14px !important;
-  overflow: visible !important;
-}
-
-body.sb-mobile .grupo-evento h3 {
-  font-size: 13px !important;
-  padding: 12px 14px !important;
-  border-radius: 14px 14px 0 0 !important;
-  text-align: center !important;
 }
 
 /* 4. BODY em mobile: display block para scroll correto */

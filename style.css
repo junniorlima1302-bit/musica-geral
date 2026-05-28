@@ -1052,8 +1052,9 @@ body.sb-mobile .barra-acoes-disp button {
   .lista-pessoas {
     grid-template-columns: repeat(6, 1fr) !important;
   }
-  .item-pessoa .badge-excluir {
-    display: block !important;
+  /* No desktop o badge só aparece quando selecionado — igual ao CSS original */
+  .item-pessoa.selecionado .badge-excluir {
+    display: flex !important;
   }
 }
 

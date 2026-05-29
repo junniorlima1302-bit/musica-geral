@@ -10,7 +10,7 @@ if (!window.supabaseClient) {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
-        detectSessionInUrl: false
+        detectSessionInUrl: true
       }
     }
   );

@@ -493,10 +493,12 @@
     const { data: eu } = await supabase
       .from("usuarios").select("papel").eq("id", sessao.session.user.id).single();
 
-    if (!eu || eu.papel !== "admin") {
-      alert("Acesso restrito ao administrador.");
-      window.location.href = "dashboard.html";
-      return;
+    window._ehAdmin = eu?.papel === "admin";
+
+    if (!window._ehAdmin) {
+      // Agente pode ver membros mas não editar
+      document.getElementById("aba-cadastro")?.style.setProperty("display","none","important");
+      document.getElementById("aba-faltando")?.style.setProperty("display","none","important");
     }
 
     await carregarMembros();
@@ -564,9 +566,9 @@
           ${!m.ativo ? '<span class="badge-min" style="background:#fdecea;color:#c0392b;margin-left:4px;">Inativo</span>' : ""}
         </div>
         <div class="membro-acoes">
-          <button class="btn-editar-min" onclick="abrirEdicao('${m.id}')">✏️ <span class="btn-txt">Editar</span></button>
+          ${window._ehAdmin ? `<button class="btn-editar-min" onclick="abrirEdicao('${m.id}')">✏️ <span class="btn-txt">Editar</span></button>` : ''}
           <button class="btn-toggle-min" onclick="toggleAtivo('${m.id}', ${m.ativo})">${m.ativo ? "⏸️ <span class=\"btn-txt\">Desativar</span>" : "▶️ <span class=\"btn-txt\">Ativar</span>"}</button>
-          <button class="btn-excluir-min" onclick="excluirMembro('${m.id}', '${m.nome.replace(/'/g, "\\'")}')">🗑️</button>
+          ${window._ehAdmin ? `<button class="btn-excluir-min" onclick="excluirMembro('${m.id}', '${m.nome.replace(/'/g, "\\'")}')">🗑️</button>` : ''}
         </div>
       `;
       wrap.appendChild(div);

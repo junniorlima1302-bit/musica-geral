@@ -445,9 +445,11 @@
         if (toggleGer) toggleGer.style.display = "none";
         const grupoGer = document.getElementById("grupo-gerenciar");
         if (grupoGer) grupoGer.style.display = "none";
-        // Esconde card Gerenciar nos quick cards
+        // Esconde cards de admin e mostra só o permitido para agentes
         document.querySelectorAll(".quick-card").forEach(card => {
-          if (card.textContent.includes("Gerenciar") || card.textContent.includes("Usuário")) {
+          const txt = card.textContent;
+          if (txt.includes("Gerenciar") || txt.includes("Disponibilidades") ||
+              txt.includes("Justificativas") || txt.includes("Notificações") || txt.includes("Visibilidade")) {
             card.style.display = "none";
           }
         });

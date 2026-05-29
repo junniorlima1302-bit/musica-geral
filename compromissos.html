@@ -377,7 +377,7 @@
   <div class="admin-box">
     <h2>Compromissos do Mês</h2>
 
-    <button class="btn-voltar" onclick="window.location.href='dashboard.html'">← Voltar</button>
+    <button class="btn-voltar" onclick="voltarPagina()">← Voltar</button>
     <button 
   id="btn-respostas"
   onclick="toggleRespostas()" 
@@ -439,6 +439,32 @@ DIA 10 - MISSA" style="border:none;border-radius:0;margin:0;width:100%;resize:ve
   <script src="sidebar.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="supabase.js"></script>
+  <script>
+    // Verifica papel ao carregar — agentes podem ver mas não editar
+    window.addEventListener("load", async function() {
+      const { data: sessao } = await supabase.auth.getSession();
+      if (!sessao?.session) { window.location.href = "login.html"; return; }
+      const { data: eu } = await supabase.from("usuarios").select("papel").eq("id", sessao.session.user.id).single();
+      window._ehAdmin = eu?.papel === "admin";
+      if (!window._ehAdmin) {
+        // Esconde botões de edição — e usa MutationObserver para os que aparecem depois
+        function esconderEdicao() {
+          document.querySelectorAll(
+            ".btn-editar-item, .btn-excluir-item, .btn-editar-grupo, .btn-excluir-grupo, .acoes-grupo"
+          ).forEach(el => el.style.display = "none");
+          // Esconde botões que contêm texto de edição
+          document.querySelectorAll("button").forEach(btn => {
+            const txt = btn.textContent.trim();
+            if (txt.includes("Excluir") || txt.includes("Salvar") || txt.includes("Novo evento") || txt.includes("Novo grupo")) {
+              btn.style.display = "none";
+            }
+          });
+        }
+        esconderEdicao();
+        new MutationObserver(esconderEdicao).observe(document.body, { childList: true, subtree: true });
+      }
+    });
+  </script>
   <script src="app.js?v=2"></script>
 
   <script>

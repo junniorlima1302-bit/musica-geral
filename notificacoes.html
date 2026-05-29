@@ -83,7 +83,7 @@
 <body class="admin-page">
 <div class="admin-box">
   <h2>🔔 Notificações</h2>
-  <button class="btn-voltar" onclick="voltarPagina()">← Voltar</button>
+  <button class="btn-voltar" onclick="window.location.href='dashboard.html'">← Voltar</button>
 
   <!-- MENSAGEM -->
   <div class="secao-wrap">
@@ -131,6 +131,13 @@
   async function iniciar() {
     const { data: sessao } = await supabase.auth.getSession();
     if (!sessao.session) { window.location.href = 'login.html'; return; }
+
+      const { data: euCheck } = await supabase.from("usuarios").select("papel").eq("id", sessao.session.user.id).single();
+      if (!euCheck || euCheck.papel !== "admin") {
+        alert("Acesso restrito ao administrador.");
+        window.location.href = "dashboard.html";
+        return;
+      }
 
     const { data: eu } = await supabase
       .from('usuarios').select('papel').eq('id', sessao.session.user.id).single();

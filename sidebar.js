@@ -165,6 +165,36 @@
     ajustarLayout();
     window.addEventListener('resize', ajustarLayout);
     window.addEventListener('orientationchange', () => setTimeout(ajustarLayout, 150));
+
+    // Esconde itens de admin para agentes
+    ocultarItensAdmin();
+  }
+
+  async function ocultarItensAdmin() {
+    // Aguarda supabase estar disponível
+    if (!window.supabase) return;
+    try {
+      const { data: sessao } = await window.supabase.auth.getSession();
+      if (!sessao?.session) return;
+      const { data: eu } = await window.supabase
+        .from("usuarios").select("papel").eq("id", sessao.session.user.id).single();
+      if (!eu || eu.papel === "admin") return;
+
+      // Agente: esconde Gerenciar, Disponibilidades, Justificativas, Notificações, Visibilidade
+      const toggleGer = document.getElementById("sb-toggle-ger");
+      const grupoGer  = document.getElementById("sb-grupo-ger");
+      if (toggleGer) toggleGer.style.display = "none";
+      if (grupoGer)  grupoGer.style.display  = "none";
+
+      // Esconde itens de nav que são só admin
+      document.querySelectorAll(".sidebar-nav-item, .sidebar-nav-sub").forEach(el => {
+        const href = el.getAttribute("onclick") || "";
+        const adminPages = ["disponibilidades.html","justificativas.html","notificacoes.html","visibilidade.html","usuarios"];
+        if (adminPages.some(p => href.includes(p))) {
+          el.style.display = "none";
+        }
+      });
+    } catch(e) {}
   }
 
   function ajustarLayout() {

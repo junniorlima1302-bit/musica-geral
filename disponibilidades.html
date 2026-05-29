@@ -243,7 +243,7 @@
   <div class="admin-box">
     <h2>Disponibilidades dos Membros</h2>
 
-    <button onclick="voltarPagina()" class="btn-voltar">← Voltar</button>
+    <button onclick="window.location.href='dashboard.html'" class="btn-voltar">← Voltar</button>
 
     <div id="filtros">
       <select id="filtroMesDisp" onchange="trocarMesDisp()" style="height:36px; padding:0 10px; border-radius:8px; border:1px solid #a0b8d0; font-size:13px; background:white; color:#1a2e4a;">
@@ -332,6 +332,16 @@
     }
 
     async function iniciarDisponibilidades() {
+      // Verifica sessão e papel
+      const { data: sessaoCheck } = await supabase.auth.getSession();
+      if (!sessaoCheck.session) { window.location.href = "login.html"; return; }
+      const { data: euCheck } = await supabase.from("usuarios").select("papel").eq("id", sessaoCheck.session.user.id).single();
+      if (!euCheck || euCheck.papel !== "admin") {
+        alert("Acesso restrito ao administrador.");
+        window.location.href = "dashboard.html";
+        return;
+      }
+
       const { data } = await supabase
         .from("disponibilidades")
         .select("mes_ref")

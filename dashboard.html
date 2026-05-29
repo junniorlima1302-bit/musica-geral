@@ -440,6 +440,17 @@
       // Se não for admin, esconde itens restritos
       if (usuario.papel !== "admin") {
         document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
+        // Esconde Gerenciar e Usuários do sidebar
+        const toggleGer = document.getElementById("toggle-gerenciar");
+        if (toggleGer) toggleGer.style.display = "none";
+        const grupoGer = document.getElementById("grupo-gerenciar");
+        if (grupoGer) grupoGer.style.display = "none";
+        // Esconde card Gerenciar nos quick cards
+        document.querySelectorAll(".quick-card").forEach(card => {
+          if (card.textContent.includes("Gerenciar") || card.textContent.includes("Usuário")) {
+            card.style.display = "none";
+          }
+        });
       }
     }
 

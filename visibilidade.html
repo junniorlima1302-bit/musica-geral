@@ -129,13 +129,6 @@
     const { data: sessao } = await supabase.auth.getSession();
     if (!sessao.session) { window.location.href = 'login.html'; return; }
 
-      const { data: euCheck } = await supabase.from("usuarios").select("papel").eq("id", sessao.session.user.id).single();
-      if (!euCheck || euCheck.papel !== "admin") {
-        alert("Acesso restrito ao administrador.");
-        window.location.href = "dashboard.html";
-        return;
-      }
-
     const { data: eu } = await supabase
       .from('usuarios').select('papel').eq('id', sessao.session.user.id).single();
     if (!eu || eu.papel !== 'admin') {

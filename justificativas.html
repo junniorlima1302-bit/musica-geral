@@ -75,7 +75,7 @@
 
   <div class="admin-box">
     <h2>Justificativas</h2>
-    <button class="btn-voltar" onclick="voltarPagina()">← Voltar</button>
+    <button class="btn-voltar" onclick="window.location.href='dashboard.html'">← Voltar</button>
 
     <div class="abas">
       <button class="aba ativa" id="aba-pessoa" onclick="alternarAba('pessoa')">Por Pessoa</button>
@@ -108,11 +108,7 @@
       const { data: eu } = await supabase
         .from("usuarios").select("papel").eq("id", userId).single();
 
-      if (!eu || eu.papel !== "admin") {
-        alert("Acesso restrito ao administrador.");
-        window.location.href = "dashboard.html";
-        return;
-      }
+      // Todos os usuários logados podem ver justificativas
 
       await carregarJustificativas();
     }

@@ -332,16 +332,6 @@
     }
 
     async function iniciarDisponibilidades() {
-      // Verifica sessão e papel
-      const { data: sessaoCheck } = await supabase.auth.getSession();
-      if (!sessaoCheck.session) { window.location.href = "login.html"; return; }
-      const { data: euCheck } = await supabase.from("usuarios").select("papel").eq("id", sessaoCheck.session.user.id).single();
-      if (!euCheck || euCheck.papel !== "admin") {
-        alert("Acesso restrito ao administrador.");
-        window.location.href = "dashboard.html";
-        return;
-      }
-
       const { data } = await supabase
         .from("disponibilidades")
         .select("mes_ref")

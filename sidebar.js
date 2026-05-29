@@ -180,30 +180,13 @@
         .from("usuarios").select("papel").eq("id", sessao.session.user.id).single();
       if (!eu || eu.papel === "admin") return;
 
-      // Agente: esconde Gerenciar, Disponibilidades, Justificativas, Notificações, Visibilidade
-      const toggleGer = document.getElementById("sb-toggle-ger");
-      const grupoGer  = document.getElementById("sb-grupo-ger");
-      if (toggleGer) toggleGer.style.display = "none";
-      if (grupoGer)  grupoGer.style.display  = "none";
-
-      // Esconde itens de nav que são só admin
-      document.querySelectorAll(".sidebar-nav-item, .sidebar-nav-sub").forEach(el => {
-        const href = el.getAttribute("onclick") || "";
-        const adminPages = ["disponibilidades.html","justificativas.html","notificacoes.html","visibilidade.html","usuarios"];
-        if (adminPages.some(p => href.includes(p))) {
+      // Agente: esconde apenas "Cadastrar Usuário"
+      document.querySelectorAll(".sidebar-nav-sub").forEach(el => {
+        const onclick = el.getAttribute("onclick") || "";
+        if (onclick.includes("usuarios-cadastro")) {
           el.style.display = "none";
         }
       });
-
-      // Adiciona Membros no sidebar para agentes (já que Gerenciar está escondido)
-      const navAdmin = document.querySelector(".sidebar-admin-nav");
-      if (navAdmin) {
-        const linkMembros = document.createElement("a");
-        linkMembros.className = "sidebar-nav-item" + (paginaAtual() === "membros.html" ? " ativo" : "");
-        linkMembros.setAttribute("onclick", "irPara('membros.html')");
-        linkMembros.innerHTML = `<span class="sidebar-nav-icon">🎵</span> Membros`;
-        navAdmin.appendChild(linkMembros);
-      }
     } catch(e) {}
   }
 

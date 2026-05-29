@@ -404,6 +404,14 @@
         <div class="icone">🎛️</div>
         <div class="label">Visibilidade</div>
       </div>
+      <div class="quick-card" onclick="irPara('membros.html')">
+        <div class="icone">🎵</div>
+        <div class="label">Membros</div>
+      </div>
+      <div class="quick-card" onclick="irPara('minha-conta.html')">
+        <div class="icone">🔑</div>
+        <div class="label">Minha Conta</div>
+      </div>
       <div class="quick-card" onclick="irPara('notificacoes.html')">
         <div class="icone">🔔</div>
         <div class="label">Notificações</div>
@@ -437,20 +445,12 @@
       document.getElementById("nome-usuario").textContent = usuario.nome.split(" ")[0];
       document.getElementById("sidebar-user").textContent = usuario.nome;
 
-      // Se não for admin, esconde itens restritos
+      // Agente: pode ver tudo, só esconde "Cadastrar Usuário"
       if (usuario.papel !== "admin") {
-        document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
-        // Esconde Gerenciar e Usuários do sidebar
-        const toggleGer = document.getElementById("toggle-gerenciar");
-        if (toggleGer) toggleGer.style.display = "none";
-        const grupoGer = document.getElementById("grupo-gerenciar");
-        if (grupoGer) grupoGer.style.display = "none";
-        // Esconde cards de admin e mostra só o permitido para agentes
-        document.querySelectorAll(".quick-card").forEach(card => {
-          const txt = card.textContent;
-          if (txt.includes("Gerenciar") || txt.includes("Disponibilidades") ||
-              txt.includes("Justificativas") || txt.includes("Notificações") || txt.includes("Visibilidade")) {
-            card.style.display = "none";
+        document.querySelectorAll(".nav-sub, .quick-card").forEach(el => {
+          const onclick = el.getAttribute("onclick") || "";
+          if (onclick.includes("usuarios-cadastro")) {
+            el.style.display = "none";
           }
         });
       }

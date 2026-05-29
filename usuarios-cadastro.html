@@ -16,26 +16,95 @@
       border: 1px solid #a0b8d0; background: rgba(255,255,255,0.8);
       margin-bottom: 10px; display: block; color: #1a2e4a; font-size: 14px;
     }
+    .abas-cadastro { display: flex; gap: 8px; margin-bottom: 16px; }
+    .aba-cadastro {
+      flex: 1; padding: 10px; border-radius: 10px;
+      border: 2px solid #7a9ec4; background: transparent;
+      color: #1a2e4a; font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: 0.2s; text-align: center;
+      margin: 0; width: auto; min-height: 0;
+    }
+    .aba-cadastro.ativa { background: #7a9ec4; }
+    .painel { display: none; }
+    .painel.ativo { display: block; }
+    .btn-verde { background: #2e7d52; width: 100%; margin-top: 4px; }
+    .btn-verde:hover { background: #256642; }
+    .btn-azul { background: #1b4580; width: 100%; margin-top: 6px; }
+    .info-convite {
+      font-size: 12px; color: #3a5272; margin-bottom: 12px;
+      background: rgba(255,255,255,0.5); padding: 10px 12px;
+      border-radius: 8px; line-height: 1.5;
+    }
+    .link-box {
+      display: none; margin-top: 14px;
+      background: white; border-radius: 10px;
+      padding: 12px; border: 1px solid #a0b8d0;
+    }
+    .link-box p { font-size: 12px; color: #3a5272; margin-bottom: 8px; font-weight: 600; }
+    .link-box input {
+      width: 100%; padding: 8px 10px; border-radius: 8px;
+      border: 1px solid #a0b8d0; font-size: 12px;
+      color: #1a2e4a; background: #eaf0f8;
+      margin-bottom: 8px;
+    }
+    .btn-copiar { background: #4a7fc1; width: 100%; margin: 0; }
   </style>
 </head>
 <body class="admin-page">
   <div class="admin-box">
     <h2>Cadastrar Usuário</h2>
-    <button class="btn-voltar" onclick="voltarPagina()">← Voltar</button>
+    <button class="btn-voltar" onclick="window.location.href='usuarios.html'">← Voltar</button>
 
-    <div class="secao-wrap">
-      <div class="secao-header"><h3>➕ Novo usuário</h3></div>
-      <div class="secao-body">
-        <input type="text" id="novo-nome" placeholder="Nome completo">
-        <input type="email" id="novo-email" placeholder="Email">
-        <input type="password" id="novo-senha" placeholder="Senha">
-        <select id="novo-papel">
-          <option value="agente">Agente</option>
-          <option value="admin">Admin</option>
-        </select>
-        <button onclick="cadastrarUsuario()">Cadastrar</button>
+    <div class="abas-cadastro">
+      <button class="aba-cadastro ativa" id="aba-senha" onclick="trocarAba('senha', this)">🔑 Com senha</button>
+      <button class="aba-cadastro" id="aba-convite" onclick="trocarAba('convite', this)">✉️ Convidar</button>
+    </div>
+
+    <!-- COM SENHA -->
+    <div class="painel ativo" id="painel-senha">
+      <div class="secao-wrap">
+        <div class="secao-header"><h3>➕ Novo usuário com senha</h3></div>
+        <div class="secao-body">
+          <input type="text" id="novo-nome" placeholder="Nome completo">
+          <input type="email" id="novo-email" placeholder="Email">
+          <input type="password" id="novo-senha" placeholder="Senha">
+          <select id="novo-papel">
+            <option value="agente">Agente</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button onclick="cadastrarUsuario()">Cadastrar</button>
+        </div>
       </div>
     </div>
+
+    <!-- CONVIDAR -->
+    <div class="painel" id="painel-convite">
+      <div class="secao-wrap">
+        <div class="secao-header"><h3>✉️ Convidar usuário</h3></div>
+        <div class="secao-body">
+          <p class="info-convite">
+            O usuário receberá um link para definir a própria senha. Você pode mandar pelo email ou copiar e enviar pelo WhatsApp.
+          </p>
+          <input type="text" id="convite-nome" placeholder="Nome completo">
+          <input type="email" id="convite-email" placeholder="Email">
+          <select id="convite-papel">
+            <option value="agente">Agente</option>
+            <option value="admin">Admin</option>
+          </select>
+
+          <button class="btn-verde" onclick="convidarEmail()">✉️ Enviar convite por email</button>
+          <button class="btn-azul" id="btn-gerar-link" onclick="gerarLink()">🔗 Gerar link para WhatsApp</button>
+
+          <!-- Caixa do link gerado -->
+          <div class="link-box" id="link-box">
+            <p>🔗 Link gerado — copie e mande pelo WhatsApp:</p>
+            <input type="text" id="link-gerado" readonly onclick="this.select()">
+            <button class="btn-copiar" id="btn-copiar" onclick="copiarLink()">📋 Copiar link</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script src="sidebar.js"></script>
@@ -47,7 +116,6 @@
     async function iniciar() {
       const { data: sessao } = await supabase.auth.getSession();
       if (!sessao.session) { window.location.href = "login.html"; return; }
-
       const { data: eu } = await supabase.from("usuarios").select("papel").eq("id", sessao.session.user.id).single();
       if (!eu || eu.papel !== "admin") {
         alert("Acesso restrito ao administrador.");
@@ -56,34 +124,96 @@
       }
     }
 
-    async function cadastrarUsuario() {
-      const nome = document.getElementById("novo-nome").value.trim();
-      const email = document.getElementById("novo-email").value.trim();
-      const senha = document.getElementById("novo-senha").value;
-      const papel = document.getElementById("novo-papel").value;
+    function trocarAba(aba, btn) {
+      document.querySelectorAll('.aba-cadastro').forEach(b => b.classList.remove('ativa'));
+      document.querySelectorAll('.painel').forEach(p => p.classList.remove('ativo'));
+      document.getElementById('painel-' + aba).classList.add('ativo');
+      btn.classList.add('ativa');
+      document.getElementById('link-box').style.display = 'none';
+    }
 
-      if (!nome || !email || !senha) { alert("Preencha todos os campos."); return; }
-
+    async function getToken() {
       const { data: sessao } = await supabase.auth.getSession();
-      const token = sessao.session.access_token;
+      return sessao.session.access_token;
+    }
 
+    async function chamarAPI(body, btnEl, textoLoad, textoOriginal) {
+      const token = await getToken();
+      btnEl.disabled = true;
+      btnEl.textContent = textoLoad;
       const response = await fetch(
         "https://yasvanzqhvvpighfzttv.supabase.co/functions/v1/smooth-api",
         {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-          body: JSON.stringify({ nome, email, senha, papel }),
+          body: JSON.stringify(body),
         }
       );
+      btnEl.disabled = false;
+      btnEl.textContent = textoOriginal;
+      return response;
+    }
 
+    async function cadastrarUsuario() {
+      const nome  = document.getElementById("novo-nome").value.trim();
+      const email = document.getElementById("novo-email").value.trim();
+      const senha = document.getElementById("novo-senha").value;
+      const papel = document.getElementById("novo-papel").value;
+      if (!nome || !email || !senha) { alert("Preencha todos os campos."); return; }
+
+      const btn = document.querySelector('#painel-senha button:last-child');
+      const response = await chamarAPI({ nome, email, senha, papel }, btn, "Cadastrando...", "Cadastrar");
       const result = await response.json();
       if (!response.ok) { alert("Erro: " + result.error); return; }
 
       document.getElementById("novo-nome").value = "";
       document.getElementById("novo-email").value = "";
       document.getElementById("novo-senha").value = "";
+      alert("✅ Usuário cadastrado com sucesso!");
+    }
 
-      alert("Usuário cadastrado com sucesso!");
+    function getDadosConvite() {
+      const nome  = document.getElementById("convite-nome").value.trim();
+      const email = document.getElementById("convite-email").value.trim();
+      const papel = document.getElementById("convite-papel").value;
+      if (!nome || !email) { alert("Preencha nome e email."); return null; }
+      return { nome, email, papel };
+    }
+
+    async function convidarEmail() {
+      const dados = getDadosConvite();
+      if (!dados) return;
+      const btn = document.querySelector('.btn-verde');
+      const response = await chamarAPI({ ...dados, convite: true }, btn, "Enviando...", "✉️ Enviar convite por email");
+      const result = await response.json();
+      if (!response.ok) { alert("Erro: " + result.error); return; }
+      document.getElementById("convite-nome").value = "";
+      document.getElementById("convite-email").value = "";
+      document.getElementById('link-box').style.display = 'none';
+      alert(`✅ Convite enviado para ${dados.email}!`);
+    }
+
+    async function gerarLink() {
+      const dados = getDadosConvite();
+      if (!dados) return;
+      const btn = document.getElementById("btn-gerar-link");
+      const response = await chamarAPI({ ...dados, gerarLink: true }, btn, "Gerando...", "🔗 Gerar link para WhatsApp");
+      const result = await response.json();
+      if (!response.ok) { alert("Erro: " + result.error); return; }
+
+      // Exibe o link
+      document.getElementById("link-gerado").value = result.link;
+      document.getElementById("link-box").style.display = "block";
+      document.getElementById("link-gerado").select();
+    }
+
+    function copiarLink() {
+      const input = document.getElementById("link-gerado");
+      navigator.clipboard.writeText(input.value).then(() => {
+        const btn = document.getElementById("btn-copiar");
+        btn.textContent = "✅ Copiado!";
+        setTimeout(() => btn.textContent = "📋 Copiar link", 2000);
+      });
     }
 
     iniciar();

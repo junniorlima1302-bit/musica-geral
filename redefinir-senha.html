@@ -178,6 +178,22 @@
   <script src="supabase.js"></script>
 
   <script>
+    // Captura o token do hash da URL e estabelece a sessão
+    (async function() {
+      const hash = window.location.hash;
+      if (hash && hash.includes("access_token")) {
+        const params = new URLSearchParams(hash.substring(1));
+        const accessToken  = params.get("access_token");
+        const refreshToken = params.get("refresh_token");
+        if (accessToken) {
+          await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken || "",
+          });
+        }
+      }
+    })();
+
     async function redefinirSenha() {
       const nova = document.getElementById("nova-senha").value;
       const confirmar = document.getElementById("confirmar-senha").value;

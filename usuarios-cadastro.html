@@ -16,25 +16,14 @@
       border: 1px solid #a0b8d0; background: rgba(255,255,255,0.8);
       margin-bottom: 10px; display: block; color: #1a2e4a; font-size: 14px;
     }
-    .abas-cadastro { display: flex; gap: 8px; margin-bottom: 16px; }
-    .aba-cadastro {
-      flex: 1; padding: 10px; border-radius: 10px;
-      border: 2px solid #7a9ec4; background: transparent;
-      color: #1a2e4a; font-size: 13px; font-weight: 700;
-      cursor: pointer; transition: 0.2s; text-align: center;
-      margin: 0; width: auto; min-height: 0;
-    }
-    .aba-cadastro.ativa { background: #7a9ec4; }
-    .painel { display: none; }
-    .painel.ativo { display: block; }
-    .btn-verde { background: #2e7d52; width: 100%; margin-top: 4px; }
-    .btn-verde:hover { background: #256642; }
-    .btn-azul { background: #1b4580; width: 100%; margin-top: 6px; }
-    .info-convite {
-      font-size: 12px; color: #3a5272; margin-bottom: 12px;
+    .info { font-size: 12px; color: #3a5272; margin-bottom: 14px;
       background: rgba(255,255,255,0.5); padding: 10px 12px;
-      border-radius: 8px; line-height: 1.5;
-    }
+      border-radius: 8px; line-height: 1.6; }
+    .botoes-acao { display: flex; gap: 8px; margin-top: 4px; }
+    .btn-email { background: #2e7d52; flex: 1; margin: 0; }
+    .btn-email:hover { background: #256642; }
+    .btn-link  { background: #1b4580; flex: 1; margin: 0; }
+    .btn-link:hover  { background: #153560; }
     .link-box {
       display: none; margin-top: 14px;
       background: white; border-radius: 10px;
@@ -44,8 +33,7 @@
     .link-box input {
       width: 100%; padding: 8px 10px; border-radius: 8px;
       border: 1px solid #a0b8d0; font-size: 12px;
-      color: #1a2e4a; background: #eaf0f8;
-      margin-bottom: 8px;
+      color: #1a2e4a; background: #eaf0f8; margin-bottom: 8px;
     }
     .btn-copiar { background: #4a7fc1; width: 100%; margin: 0; }
   </style>
@@ -55,56 +43,32 @@
     <h2>Cadastrar Usuário</h2>
     <button class="btn-voltar" onclick="window.location.href='usuarios.html'">← Voltar</button>
 
-    <div class="abas-cadastro">
-      <button class="aba-cadastro ativa" id="aba-senha" onclick="trocarAba('senha', this)">🔑 Com senha</button>
-      <button class="aba-cadastro" id="aba-convite" onclick="trocarAba('convite', this)">✉️ Convidar</button>
-    </div>
+    <div class="secao-wrap">
+      <div class="secao-header"><h3>➕ Novo usuário</h3></div>
+      <div class="secao-body">
+        <p class="info">
+          Preencha os dados e escolha como enviar o acesso. A pessoa receberá um link para criar a própria senha.
+        </p>
+        <input type="text" id="novo-nome" placeholder="Nome completo">
+        <input type="email" id="novo-email" placeholder="Email">
+        <select id="novo-papel">
+          <option value="agente">Agente</option>
+          <option value="admin">Admin</option>
+        </select>
 
-    <!-- COM SENHA -->
-    <div class="painel ativo" id="painel-senha">
-      <div class="secao-wrap">
-        <div class="secao-header"><h3>➕ Novo usuário com senha</h3></div>
-        <div class="secao-body">
-          <input type="text" id="novo-nome" placeholder="Nome completo">
-          <input type="email" id="novo-email" placeholder="Email">
-          <input type="password" id="novo-senha" placeholder="Senha">
-          <select id="novo-papel">
-            <option value="agente">Agente</option>
-            <option value="admin">Admin</option>
-          </select>
-          <button onclick="cadastrarUsuario()">Cadastrar</button>
+        <div class="botoes-acao">
+          <button class="btn-email" id="btn-email" onclick="convidarEmail()">✉️ Enviar por email</button>
+          <button class="btn-link"  id="btn-link"  onclick="gerarLink()">🔗 Copiar link</button>
+        </div>
+
+        <!-- Link gerado -->
+        <div class="link-box" id="link-box">
+          <p>🔗 Copie e mande pelo WhatsApp:</p>
+          <input type="text" id="link-gerado" readonly onclick="this.select()">
+          <button class="btn-copiar" id="btn-copiar" onclick="copiarLink()">📋 Copiar link</button>
         </div>
       </div>
     </div>
-
-    <!-- CONVIDAR -->
-    <div class="painel" id="painel-convite">
-      <div class="secao-wrap">
-        <div class="secao-header"><h3>✉️ Convidar usuário</h3></div>
-        <div class="secao-body">
-          <p class="info-convite">
-            O usuário receberá um link para definir a própria senha. Você pode mandar pelo email ou copiar e enviar pelo WhatsApp.
-          </p>
-          <input type="text" id="convite-nome" placeholder="Nome completo">
-          <input type="email" id="convite-email" placeholder="Email">
-          <select id="convite-papel">
-            <option value="agente">Agente</option>
-            <option value="admin">Admin</option>
-          </select>
-
-          <button class="btn-verde" onclick="convidarEmail()">✉️ Enviar convite por email</button>
-          <button class="btn-azul" id="btn-gerar-link" onclick="gerarLink()">🔗 Gerar link para WhatsApp</button>
-
-          <!-- Caixa do link gerado -->
-          <div class="link-box" id="link-box">
-            <p>🔗 Link gerado — copie e mande pelo WhatsApp:</p>
-            <input type="text" id="link-gerado" readonly onclick="this.select()">
-            <button class="btn-copiar" id="btn-copiar" onclick="copiarLink()">📋 Copiar link</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <script src="sidebar.js"></script>
@@ -118,27 +82,23 @@
       if (!sessao.session) { window.location.href = "login.html"; return; }
       const { data: eu } = await supabase.from("usuarios").select("papel").eq("id", sessao.session.user.id).single();
       if (!eu || eu.papel !== "admin") {
-        alert("Acesso restrito ao administrador.");
+        alert("Acesso restrito.");
         window.location.href = "dashboard.html";
         return;
       }
     }
 
-    function trocarAba(aba, btn) {
-      document.querySelectorAll('.aba-cadastro').forEach(b => b.classList.remove('ativa'));
-      document.querySelectorAll('.painel').forEach(p => p.classList.remove('ativo'));
-      document.getElementById('painel-' + aba).classList.add('ativo');
-      btn.classList.add('ativa');
-      document.getElementById('link-box').style.display = 'none';
-    }
-
-    async function getToken() {
-      const { data: sessao } = await supabase.auth.getSession();
-      return sessao.session.access_token;
+    function getDados() {
+      const nome  = document.getElementById("novo-nome").value.trim();
+      const email = document.getElementById("novo-email").value.trim();
+      const papel = document.getElementById("novo-papel").value;
+      if (!nome || !email) { alert("Preencha nome e email."); return null; }
+      return { nome, email, papel };
     }
 
     async function chamarAPI(body, btnEl, textoLoad, textoOriginal) {
-      const token = await getToken();
+      const { data: sessao } = await supabase.auth.getSession();
+      const token = sessao.session.access_token;
       btnEl.disabled = true;
       btnEl.textContent = textoLoad;
       const response = await fetch(
@@ -154,54 +114,26 @@
       return response;
     }
 
-    async function cadastrarUsuario() {
-      const nome  = document.getElementById("novo-nome").value.trim();
-      const email = document.getElementById("novo-email").value.trim();
-      const senha = document.getElementById("novo-senha").value;
-      const papel = document.getElementById("novo-papel").value;
-      if (!nome || !email || !senha) { alert("Preencha todos os campos."); return; }
-
-      const btn = document.querySelector('#painel-senha button:last-child');
-      const response = await chamarAPI({ nome, email, senha, papel }, btn, "Cadastrando...", "Cadastrar");
+    async function convidarEmail() {
+      const dados = getDados();
+      if (!dados) return;
+      const btn = document.getElementById("btn-email");
+      const response = await chamarAPI({ ...dados, convite: true }, btn, "Enviando...", "✉️ Enviar por email");
       const result = await response.json();
       if (!response.ok) { alert("Erro: " + result.error); return; }
-
       document.getElementById("novo-nome").value = "";
       document.getElementById("novo-email").value = "";
-      document.getElementById("novo-senha").value = "";
-      alert("✅ Usuário cadastrado com sucesso!");
-    }
-
-    function getDadosConvite() {
-      const nome  = document.getElementById("convite-nome").value.trim();
-      const email = document.getElementById("convite-email").value.trim();
-      const papel = document.getElementById("convite-papel").value;
-      if (!nome || !email) { alert("Preencha nome e email."); return null; }
-      return { nome, email, papel };
-    }
-
-    async function convidarEmail() {
-      const dados = getDadosConvite();
-      if (!dados) return;
-      const btn = document.querySelector('.btn-verde');
-      const response = await chamarAPI({ ...dados, convite: true }, btn, "Enviando...", "✉️ Enviar convite por email");
-      const result = await response.json();
-      if (!response.ok) { alert("Erro: " + result.error); return; }
-      document.getElementById("convite-nome").value = "";
-      document.getElementById("convite-email").value = "";
-      document.getElementById('link-box').style.display = 'none';
+      document.getElementById("link-box").style.display = "none";
       alert(`✅ Convite enviado para ${dados.email}!`);
     }
 
     async function gerarLink() {
-      const dados = getDadosConvite();
+      const dados = getDados();
       if (!dados) return;
-      const btn = document.getElementById("btn-gerar-link");
-      const response = await chamarAPI({ ...dados, gerarLink: true }, btn, "Gerando...", "🔗 Gerar link para WhatsApp");
+      const btn = document.getElementById("btn-link");
+      const response = await chamarAPI({ ...dados, gerarLink: true }, btn, "Gerando...", "🔗 Copiar link");
       const result = await response.json();
       if (!response.ok) { alert("Erro: " + result.error); return; }
-
-      // Exibe o link
       document.getElementById("link-gerado").value = result.link;
       document.getElementById("link-box").style.display = "block";
       document.getElementById("link-gerado").select();

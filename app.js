@@ -1046,6 +1046,11 @@ function aplicarBusca() {
 async function renderizarRespostas(respostasFiltradas) {
 
   const container = document.getElementById("lista-respostas");
+
+  // Fade out antes de renderizar
+  container.style.transition = "opacity 0.2s ease";
+  container.style.opacity = "0";
+  await new Promise(r => setTimeout(r, 200));
   if (!container) return;
 
   container.innerHTML = "";
@@ -1184,6 +1189,11 @@ async function renderizarRespostas(respostasFiltradas) {
     divGrupo.appendChild(titulo);
     divGrupo.appendChild(lista);
     container.appendChild(divGrupo);
+  });
+
+  // Fade in após renderizar
+  requestAnimationFrame(() => {
+    container.style.opacity = "1";
   });
 }
 //////////////////////////////////////////////////////

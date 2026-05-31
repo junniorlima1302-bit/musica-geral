@@ -260,6 +260,12 @@
         <option value="todos">Todos os eventos</option>
       </select>
 
+      <select id="filtroTipo" onchange="aplicarBusca()">
+        <option value="todos">Cantores e Instrumental</option>
+        <option value="canta">🎤 Cantores</option>
+        <option value="instrumental">🎸 Instrumental</option>
+      </select>
+
       <div class="busca-box">
         <input type="text" id="buscaNome" oninput="aplicarBusca()" placeholder="Buscar por nome">
       </div>

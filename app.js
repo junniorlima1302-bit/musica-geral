@@ -1021,14 +1021,20 @@ function aplicarBusca() {
   const nomeBusca = normalizar(document.getElementById("buscaNome")?.value || "");
   const filtroMinisterio = document.getElementById("filtroMinisterio")?.value || "todos";
   const filtroEvento = document.getElementById("filtroEvento")?.value || "todos";
+  const filtroTipo = document.getElementById("filtroTipo")?.value || "todos";
 
-  // 1. Filtra respostas normais (Geral Eventos e Música Geral com indisponibilidade)
+  // 1. Filtra respostas normais
   let filtrado = respostasGlobais.filter(r => {
     const nomeOk = !nomeBusca || normalizar(r.nome_pessoa).includes(nomeBusca);
     const ministerioOk = filtroMinisterio === "todos" || r.ministerio === filtroMinisterio;
-    // Para evento: Música Geral marca o que NÃO pode, então não filtramos por evento aqui
-    // O filtro de evento é aplicado no renderizarRespostas via compromissosFiltrados
-    return nomeOk && ministerioOk;
+    // Filtro de tipo: canta ou instrumental (toca / toca_canta)
+    let tipoOk = true;
+    if (filtroTipo === "canta") {
+      tipoOk = r.tipo === "canta";
+    } else if (filtroTipo === "instrumental") {
+      tipoOk = r.tipo === "toca" || r.tipo === "toca_canta";
+    }
+    return nomeOk && ministerioOk && tipoOk;
   });
 
   // Nota: membros de Música Geral sem NENHUMA resposta NÃO são incluídos.

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Áudios — Coral Shalom</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#1b4580">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #e8f0fa 0%, #c5d8f0 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-start;
+      padding: 30px 20px; font-family: 'Nunito', sans-serif;
+    }
+
+    .topo { text-align: center; margin-bottom: 28px; width: 100%; }
+    .topo h1 { font-size: 22px; font-weight: 800; color: #1a2e4a; }
+    .topo p { font-size: 13px; color: #5a7a9a; margin-top: 4px; font-weight: 600; }
+
+    /* LISTA DE CATEGORIAS */
+    .grade-cats {
+      display: flex; flex-direction: column;
+      gap: 10px; width: 100%; max-width: 480px;
+    }
+    .bloco-cat {
+      background: white; border: 1.5px solid #a0b8d0; border-radius: 14px;
+      padding: 16px 20px; display: flex; align-items: center; gap: 14px;
+      cursor: pointer; transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(27,69,128,0.06);
+      text-decoration: none;
+    }
+    .bloco-cat:hover { background: #eaf0f8; border-color: #1b4580; }
+    .bloco-cat:active { transform: scale(0.99); }
+    .bloco-cat .label { font-size: 14px; font-weight: 700; color: #1a2e4a; flex: 1; }
+    .bloco-cat .seta { font-size: 14px; color: #a0b8d0; }
+
+    /* TELA DE EVENTOS */
+    .tela-eventos {
+      display: none; width: 100%; max-width: 480px;
+      flex-direction: column; gap: 0;
+    }
+    .tela-eventos.ativa { display: flex; }
+
+    .eventos-header {
+      display: flex; align-items: center; margin-bottom: 20px;
+      position: relative;
+    }
+    .btn-back {
+      background: none !important; border: none; color: #1b4580; font-size: 13px;
+      font-weight: 700; cursor: pointer; padding: 0; font-family: 'Nunito', sans-serif;
+      display: flex; align-items: center; gap: 4px; position: absolute; left: 0;
+      text-decoration: underline;
+    }
+    .btn-back:hover { background: none !important; color: #153560; }
+    .eventos-header h2 { font-size: 18px; font-weight: 800; color: #1a2e4a; width: 100%; text-align: center; }
+
+    .lista-eventos { display: flex; flex-direction: column; gap: 10px; }
+
+    .bloco-evento {
+      background: white; border: 1.5px solid #a0b8d0; border-radius: 14px;
+      padding: 16px 20px; display: flex; align-items: center; gap: 14px;
+      cursor: pointer; transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(27,69,128,0.06);
+      text-decoration: none;
+    }
+    .bloco-evento:hover { background: #eaf0f8; border-color: #1b4580; transform: translateX(3px); }
+    .bloco-evento .ev-icone { font-size: 24px; flex-shrink: 0; }
+    .bloco-evento .ev-nome { font-size: 14px; font-weight: 700; color: #1a2e4a; flex: 1; line-height: 1.3; }
+    .bloco-evento .ev-seta { font-size: 14px; color: #7a9ec4; flex-shrink: 0; }
+
+    .rodape { margin-top: 28px; text-align: center; }
+    .btn-voltar-hub {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 12px 28px; background: white; border: 1.5px solid #a0b8d0;
+      border-radius: 30px; color: #1a2e4a; font-size: 14px; font-weight: 700;
+      font-family: 'Nunito', sans-serif; cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(27,69,128,0.08);
+    }
+    .btn-voltar-hub:hover { background: #eaf0f8; border-color: #1b4580; }
+
+    @media (max-width: 600px) {
+      body { padding: 24px 14px; }
+      .grade-cats { gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topo">
+    <h1>Áudios</h1>
+    <p>Coral Shalom Fortaleza</p>
+  </div>
+
+  <!-- GRADE DE CATEGORIAS -->
+  <div class="grade-cats" id="grade-cats">
+    <a class="bloco-cat" onclick="abrirCategoria('guias')">
+      <div class="label">Áudios e Guias</div>
+      <div class="seta">→</div>
+    </a>
+    <a class="bloco-cat" onclick="abrirCategoria('tenores')">
+      <div class="label">Tenores</div>
+      <div class="seta">→</div>
+    </a>
+    <a class="bloco-cat" onclick="abrirCategoria('contraltos')">
+      <div class="label">Contraltos</div>
+      <div class="seta">→</div>
+    </a>
+    <a class="bloco-cat" onclick="abrirCategoria('sopranos')">
+      <div class="label">Sopranos</div>
+      <div class="seta">→</div>
+    </a>
+    <a class="bloco-cat" onclick="abrirCategoria('baixos')">
+      <div class="label">Baixos</div>
+      <div class="seta">→</div>
+    </a>
+  </div>
+
+  <!-- TELA DE EVENTOS -->
+  <div class="tela-eventos" id="tela-eventos">
+    <div class="eventos-header">
+      <button class="btn-back" onclick="voltarCats()">← Voltar</button>
+      <h2 id="titulo-categoria"></h2>
+      <div style="width:50px"></div>
+    </div>
+    <div class="lista-eventos" id="lista-eventos"></div>
+  </div>
+
+  <div class="rodape">
+    <button class="btn-voltar-hub" onclick="window.location.href='coral.html'">← Voltar</button>
+  </div>
+
+  <script>
+    const DADOS = {
+      guias: {
+        titulo: 'Áudios e Guias',
+        eventos: [
+          { nome: 'Domingo de Ramos',            url: 'https://drive.google.com/drive/folders/1Gs6E-7jw74S6bi2i6glii2hCVJjTCDhp?usp=sharing' },
+          { nome: 'Quinta-Feira - Lava Pés',     url: 'https://drive.google.com/drive/folders/177qXmy5CXscPVexDfzRyGLydDT3Zmxft?usp=sharing' },
+          { nome: 'Sexta-Feira da Paixão',       url: 'https://drive.google.com/drive/folders/1F86b2rbHYIbDKseQwMPJjVLpdkroQbca?usp=sharing' },
+          { nome: 'Sábado Santo - Vígilia Pascal', url: 'https://drive.google.com/drive/folders/1McW61kSmc7RGkZ32EqfnEUyXdLqQdMMM?usp=drive_link' },
+          { nome: 'Domingo de Páscoa',           url: 'https://drive.google.com/drive/folders/1yvZiXfercItJpFgwRc-dTi6iI3--6JhX?usp=drive_link' },
+        ]
+      },
+      tenores: {
+        titulo: 'Tenores',
+        eventos: [
+          { nome: 'Domingo de Ramos',            url: 'https://drive.google.com/drive/folders/1nod83KWL4JWJHj1BCIrAB25zC93tDuBL?usp=drive_link' },
+          { nome: 'Quinta-Feira - Lava Pés',     url: 'https://drive.google.com/drive/folders/1jzUsgJRgK5dDjJCkSLsju5HnIDCRVQ-A?usp=drive_link' },
+          { nome: 'Sexta-Feira da Paixão',       url: 'https://drive.google.com/drive/folders/1RqxbukiFS2em6YgrL_lOeUiiQRiVWeNx?usp=drive_link' },
+          { nome: 'Sábado Santo - Vígilia Pascal', url: 'https://drive.google.com/drive/folders/1kdgDvUPidHW7OrUtxnVYApHcc3rosMUs?usp=drive_link' },
+          { nome: 'Domingo de Páscoa',           url: 'https://drive.google.com/drive/folders/1Gt25b0vQz4rMr7_7RVfUZHXztYIpXE1m?usp=drive_link' },
+        ]
+      },
+      contraltos: {
+        titulo: 'Contraltos',
+        eventos: [
+          { nome: 'Domingo de Ramos',            url: 'https://drive.google.com/drive/folders/1d0dT5FKPstFFuWKFS8fAHCjXrd_IwM-5?usp=drive_link' },
+          { nome: 'Quinta-Feira - Lava Pés',     url: 'https://drive.google.com/drive/folders/1P6pvCrDx8pYhHc3Ma_XRNE2q2jFB1Ev4?usp=drive_link' },
+          { nome: 'Sexta-Feira da Paixão',       url: 'https://drive.google.com/drive/folders/124hcVFcUFJiEDkBZgphH1zu9Rl7eAspb?usp=drive_link' },
+          { nome: 'Sábado Santo - Vígilia Pascal', url: 'https://drive.google.com/drive/folders/1aHKep11RUFTE80Rjm0t994WEt6v2OeK9?usp=drive_link' },
+          { nome: 'Domingo de Páscoa',           url: 'https://drive.google.com/drive/folders/1yMlCH3hHmXcIb5Qtsws06qPxWqv76o7h?usp=drive_link' },
+        ]
+      },
+      sopranos: {
+        titulo: 'Sopranos',
+        eventos: [
+          { nome: 'Domingo de Ramos',            url: 'https://drive.google.com/drive/folders/1zJ2dd1W51mWu84zZw1f746OdoSFn2cfc?usp=drive_link' },
+          { nome: 'Quinta-Feira - Lava Pés',     url: 'https://drive.google.com/drive/folders/1KKDC65vgP8Jkc6NUWq7IMqr73lptvzYx?usp=drive_link' },
+          { nome: 'Sexta-Feira da Paixão',       url: 'https://drive.google.com/drive/folders/16pcBCqHprOBNaxrNGsqyYHs-oo3kiOul?usp=drive_link' },
+          { nome: 'Sábado Santo - Vígilia Pascal', url: 'https://drive.google.com/drive/folders/1rrCuUjSNRsCl-OTe-EqUrHsgHylMx_FM?usp=drive_link' },
+          { nome: 'Domingo de Páscoa',           url: 'https://drive.google.com/drive/folders/1Ss3dXyMVD029iITyqrTt4BzUpcsGdV1m?usp=drive_link' },
+        ]
+      },
+      baixos: {
+        titulo: 'Baixos',
+        eventos: [
+          { nome: 'Domingo de Ramos',            url: 'https://drive.google.com/drive/folders/1vzWBuLyICKQEzlkYD3UIIeVgYgz0WBE9?usp=drive_link' },
+          { nome: 'Quinta-Feira - Lava Pés',     url: 'https://drive.google.com/drive/folders/1-ezmn4Ow6LHBu4QA-oc3CRHpyVT5fE8K?usp=drive_link' },
+          { nome: 'Sexta-Feira da Paixão',       url: 'https://drive.google.com/drive/folders/18PPpak_SAosEPQYHDBGDxQQ16xNOszjV?usp=drive_link' },
+          { nome: 'Sábado Santo - Vígilia Pascal', url: 'https://drive.google.com/drive/folders/1MzUPDWkSLn6TlGHtW_-l9Hg-0kDJ4f8d?usp=drive_link' },
+          { nome: 'Domingo de Páscoa',           url: 'https://drive.google.com/drive/folders/1miSSCfI8RunW34WjVA0SaIG8vfwyM6jk?usp=drive_link' },
+        ]
+      },
+    };
+
+
+    function abrirCategoria(cat) {
+      const dados = DADOS[cat];
+      document.getElementById('titulo-categoria').textContent = dados.titulo;
+      document.getElementById('grade-cats').style.display = 'none';
+      document.querySelector('.rodape').style.display = 'none';
+
+      const lista = document.getElementById('lista-eventos');
+      lista.innerHTML = dados.eventos.map(ev => `
+        <a class="bloco-evento" href="${ev.url}" target="_blank">
+  
+          <span class="ev-nome">${ev.nome}</span>
+          <span class="ev-seta">→</span>
+        </a>
+      `).join('');
+
+      document.getElementById('tela-eventos').classList.add('ativa');
+    }
+
+    function voltarCats() {
+      document.getElementById('tela-eventos').classList.remove('ativa');
+      document.getElementById('grade-cats').style.display = 'grid';
+      document.querySelector('.rodape').style.display = 'block';
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>

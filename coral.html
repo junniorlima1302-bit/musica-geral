@@ -2,16 +2,142 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coral Shalom</title>
   <link rel="stylesheet" href="style.css">
   <meta name="theme-color" content="#1b4580">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #e8f0fa 0%, #c5d8f0 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .topo { text-align: center; margin-bottom: 32px; }
+    .topo h1 { font-size: 24px; font-weight: 800; color: #1a2e4a; letter-spacing: 0.5px; }
+    .topo p { font-size: 13px; color: #5a7a9a; margin-top: 6px; font-weight: 600; }
+
+    .grade {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    .bloco {
+      background: white;
+      border: 1.5px solid #a0b8d0;
+      border-radius: 16px;
+      padding: 22px 14px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(27,69,128,0.08);
+    }
+    .bloco:hover { background: #eaf0f8; border-color: #1b4580; transform: translateY(-3px); box-shadow: 0 6px 18px rgba(27,69,128,0.15); }
+    .bloco:active { transform: translateY(0px); }
+    .bloco .icone { font-size: 36px; line-height: 1; }
+    .bloco .label { font-size: 13px; font-weight: 800; color: #1a2e4a; text-align: center; line-height: 1.3; }
+
+    .rodape { margin-top: 28px; text-align: center; }
+    .btn-voltar-hub {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 12px 28px; background: white; border: 1.5px solid #a0b8d0;
+      border-radius: 30px; color: #1a2e4a; font-size: 14px; font-weight: 700;
+      font-family: 'Nunito', sans-serif; cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(27,69,128,0.08);
+    }
+    .btn-voltar-hub:hover { background: #eaf0f8; border-color: #1b4580; color: #1b4580; }
+
+    @media (max-width: 600px) {
+      body { padding: 32px 16px; }
+      .topo h1 { font-size: 20px; }
+      .topo { margin-bottom: 24px; }
+      .grade { gap: 12px; max-width: 100%; }
+      .bloco { padding: 20px 10px 16px; border-radius: 14px; }
+      .bloco .icone { font-size: 34px; }
+      .bloco .label { font-size: 12px; }
+    }
+  </style>
 </head>
-<body class="admin-page">
-  <div class="admin-box">
-    <h2>Coral Shalom</h2>
-    <button class="btn-voltar" onclick="history.back()">← Voltar</button>
+<body>
+
+  <div class="topo">
+    <h1>CORAL SHALOM FORTALEZA</h1>
+    <p>MINISTÉRIO DE MÚSICA GERAL</p>
   </div>
+
+  <div class="grade">
+    <a class="bloco" onclick="irPara('coral-escala.html')">
+      <div class="icone">📋</div>
+      <div class="label">Escala</div>
+    </a>
+
+    <a class="bloco" onclick="abrirRepertorio()">
+      <div class="icone">🎼</div>
+      <div class="label">Repertórios Semana Santa</div>
+    </a>
+
+    <a class="bloco" onclick="irPara('audios.html')">
+      <div class="icone">📚</div>
+      <div class="label">Material para Estudo</div>
+    </a>
+  </div>
+
+  <!-- IFRAME REPERTÓRIO -->
+  <div id="iframe-wrap" style="display:none;position:fixed;inset:0;flex-direction:column;background:#f0f2f5;z-index:999;">
+    <div style="display:flex;align-items:center;padding:10px 16px;background:white;box-shadow:0 2px 6px rgba(0,0,0,0.08);gap:12px;flex-shrink:0;">
+      <button onclick="fecharRepertorio()" style="width:auto;padding:6px 14px;margin:0;font-size:13px;border-radius:8px;background:none;color:#1b4580;border:none;cursor:pointer;font-weight:600;">← Voltar</button>
+      <h2 style="color:#1b4580;font-size:15px;flex:1;text-align:center;margin:0;font-weight:700;">Repertórios Semana Santa</h2>
+      <div style="width:80px"></div>
+    </div>
+    <div style="flex:1;overflow:hidden;background:white;position:relative;">
+      <div id="iframe-loading" style="position:absolute;inset:0;background:linear-gradient(135deg,#e8f0fa 0%,#c5d8f0 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:10;transition:opacity 0.4s ease;">
+        <div style="width:38px;height:38px;border:3px solid #c4d4e8;border-top-color:#1b4580;border-radius:50%;animation:spin 0.7s linear infinite;"></div>
+        <p style="font-size:14px;font-weight:600;color:#3a5272;">Carregando repertório...</p>
+      </div>
+      <iframe id="iframe-rep" src="" style="width:100%;height:calc(100% + 30px);border:none;min-width:600px;margin-top:-30px;"
+        onload="document.getElementById('iframe-loading').style.opacity='0';document.getElementById('iframe-loading').style.pointerEvents='none';">
+      </iframe>
+    </div>
+  </div>
+  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+
+  <div class="rodape">
+    <button class="btn-voltar-hub" onclick="window.location.href='index.html'">← Voltar</button>
+  </div>
+
+  <script>
+    function abrirRepertorio() {
+      document.getElementById('iframe-loading').style.opacity = '1';
+      document.getElementById('iframe-loading').style.pointerEvents = 'auto';
+      document.getElementById('iframe-rep').src = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQecXIRozekwDMq7KIDGhRF0yOnKY3rZqqQZI3JZzVjYy5_f4k0I7qvXdSfNqc1cCKuZmmHjaLMFBOX/pubhtml?gid=1890091763&single=true';
+      document.getElementById('iframe-wrap').style.display = 'flex';
+    }
+    function fecharRepertorio() {
+      document.getElementById('iframe-wrap').style.display = 'none';
+      document.getElementById('iframe-rep').src = '';
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase.js"></script>
+  <script src="app.js"></script>
+
 </body>
 </html>

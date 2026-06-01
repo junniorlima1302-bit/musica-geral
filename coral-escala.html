@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escala — Coral Shalom</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#1b4580">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #e8f0fa 0%, #c5d8f0 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-start;
+      padding: 30px 20px;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .topo-selecao { text-align: center; margin-bottom: 24px; width: 100%; max-width: 700px; }
+    .topo-selecao h1 { font-size: 22px; font-weight: 800; color: #1a2e4a; letter-spacing: 1px; }
+
+    .filtro-ano {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; margin-bottom: 24px; width: 100%; max-width: 700px;
+    }
+    .btn-ano {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid #a0b8d0; background: white; color: #1a2e4a;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: 0.2s; font-family: 'Nunito', sans-serif; padding: 0; margin: 0;
+    }
+    .btn-ano:hover { background: #eaf0f8; border-color: #1b4580; }
+    .btn-ano:disabled { opacity: 0.3; cursor: not-allowed; }
+    .ano-atual { font-size: 20px; font-weight: 800; color: #1a2e4a; min-width: 60px; text-align: center; }
+
+    .grade-meses {
+      display: grid; grid-template-columns: repeat(6, 1fr);
+      gap: 8px; width: 100%; max-width: 700px;
+    }
+    .btn-mes {
+      background: white; border: 1.5px solid #a0b8d0; border-radius: 14px;
+      padding: 22px 10px; display: flex; flex-direction: column;
+      align-items: center; gap: 6px; cursor: pointer;
+      transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(27,69,128,0.08);
+      font-family: 'Nunito', sans-serif;
+    }
+    .btn-mes:hover { background: #eaf0f8; border-color: #1b4580; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(27,69,128,0.15); }
+    .btn-mes:active { transform: translateY(0); }
+    .btn-mes .nome { font-size: 13px; font-weight: 800; color: #1a2e4a; }
+    .btn-mes.sem-escala { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+    .btn-mes.mes-atual { border-color: #1b4580; background: #eaf0f8; }
+    .btn-mes.mes-atual .nome { color: #1b4580; }
+
+    .rodape-selecao { margin-top: 28px; }
+    .btn-voltar-inicio {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 12px 28px; background: white; border: 1.5px solid #a0b8d0;
+      border-radius: 30px; color: #1a2e4a; font-size: 14px; font-weight: 700;
+      font-family: 'Nunito', sans-serif; cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(27,69,128,0.08);
+    }
+    .btn-voltar-inicio:hover { background: #eaf0f8; border-color: #1b4580; }
+
+    /* ── IFRAME ORIGINAL INTACTO ── */
+    .iframe-page-wrap {
+      display: none; position: fixed; inset: 0;
+      flex-direction: column; background: #f0f2f5;
+      font-family: Arial, sans-serif; z-index: 999;
+    }
+    .iframe-page-wrap.aberto { display: flex; }
+    .topo {
+      display: flex; align-items: center; padding: 10px 16px;
+      background: white; box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      gap: 12px; flex-shrink: 0;
+    }
+    .topo h2 { color: #1b4580; font-size: 15px; flex: 1; text-align: center; margin: 0; }
+    .topo button {
+      width: auto; padding: 6px 14px; margin: 0; font-size: 13px;
+      border-radius: 8px; background: none; color: #1b4580; border: none;
+      cursor: pointer; font-weight: 600;
+    }
+    .topo button:hover { text-decoration: underline; background: none; }
+    .iframe-wrap {
+      flex: 1; overflow: hidden; -webkit-overflow-scrolling: touch;
+      background: white; position: relative;
+    }
+    .iframe-wrap {
+      flex: 1; overflow: hidden; -webkit-overflow-scrolling: touch;
+      background: white; position: relative;
+    }
+    iframe {
+      width: 108%; height: calc(108% + 30px);
+      border: none; margin-top: -30px;
+      transform: scale(0.93);
+      transform-origin: top left;
+    }
+    .iframe-loading {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, #e8f0fa 0%, #c5d8f0 100%);
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 14px; z-index: 10; transition: opacity 0.4s ease;
+    }
+    .iframe-loading.oculto { opacity: 0; pointer-events: none; }
+    .iframe-spinner {
+      width: 38px; height: 38px; border: 3px solid #c4d4e8;
+      border-top-color: #1b4580; border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    .iframe-loading p {
+      font-size: 14px; font-weight: 600; color: #3a5272;
+      animation: pulse-txt 1.4s ease-in-out infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse-txt { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* ── MENSAGEM BLOQUEIO ── */
+    .iframe-loading {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, #e8f0fa 0%, #c5d8f0 100%);
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 14px; z-index: 10; transition: opacity 0.4s ease;
+    }
+    .iframe-loading.oculto { opacity: 0; pointer-events: none; }
+    .iframe-spinner {
+      width: 38px; height: 38px; border: 3px solid #c4d4e8;
+      border-top-color: #1b4580; border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    .iframe-loading p {
+      font-size: 14px; font-weight: 600; color: #3a5272;
+      animation: pulse-txt 1.4s ease-in-out infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse-txt { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* ── MENSAGEM BLOQUEIO ── */
+    .msg-bloqueio {
+      text-align: center; padding: 32px 20px;
+      background: white; border-radius: 20px;
+      box-shadow: 0 4px 16px rgba(27,69,128,0.1);
+      max-width: 320px; width: 100%;
+    }
+    .msg-bloqueio .icone { font-size: 48px; margin-bottom: 14px; }
+    .msg-bloqueio h3 { font-size: 18px; font-weight: 800; color: #1a2e4a; margin: 0 0 8px; }
+    .msg-bloqueio p { font-size: 13px; color: #5a7a9a; line-height: 1.6; margin: 0; }
+
+    @media (max-width: 600px) {
+      body { padding: 24px 14px; }
+      .topo-selecao h1 { font-size: 19px; }
+      .grade-meses { gap: 8px; grid-template-columns: repeat(4, 1fr); }
+      .btn-mes { padding: 16px 8px; border-radius: 12px; }
+      .btn-mes .nome { font-size: 12px; }
+    }
+
+    @media (max-width: 768px) {
+
+  .iframe-wrap {
+    overflow: auto;
+  }
+
+  iframe {
+    min-width: unset;
+
+    width: 160%;
+    height: 160%;
+
+    transform: scale(0.62);
+    transform-origin: top left;
+
+    margin-top: -15px;
+  }
+}
+  </style>
+</head>
+<body>
+<!-- IFRAME ORIGINAL -->
+  <div class="iframe-page-wrap" id="iframe-page-wrap">
+    <div class="topo">
+      <button onclick="fecharIframe()">← Voltar</button>
+      <h2 id="iframe-titulo">Escala do Mês</h2>
+      <div style="width:80px"></div>
+    </div>
+    <div class="iframe-wrap">
+      <div class="iframe-loading" id="iframe-loading">
+        <div class="iframe-spinner"></div>
+        <p>Carregando escala...</p>
+      </div>
+      <iframe id="iframe-escala" src=""
+        onload="document.getElementById('iframe-loading').classList.add('oculto')">
+      </iframe>
+    </div>
+  </div>
+<h3 id="bloqueio-titulo">Escala em Construção</h3>
+      <p id="bloqueio-texto">A escala deste mês ainda está sendo preparada.</p>
+      <button onclick="document.getElementById('popup-bloqueio').style.display='none'" style="margin-top:20px;padding:12px 28px;background:#1b4580;color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Fechar</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase.js"></script>
+
+  <script>
+    // Abre direto a escala do Coral Shalom
+    window.addEventListener('load', function() {
+      const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQecXIRozekwDMq7KIDGhRF0yOnKY3rZqqQZI3JZzVjYy5_f4k0I7qvXdSfNqc1cCKuZmmHjaLMFBOX/pubhtml?gid=0&single=true';
+      document.getElementById('iframe-loading').classList.remove('oculto');
+      document.getElementById('iframe-escala').src = url;
+      document.getElementById('iframe-titulo').textContent = 'Escala — Coral Shalom';
+      document.getElementById('iframe-page-wrap').classList.add('aberto');
+    });
+
+    function fecharIframe() {
+      window.location.href = 'coral.html';
+    }
+  </script>
+
+</body>
+</html>

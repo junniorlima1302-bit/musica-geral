@@ -112,12 +112,30 @@
         <div style="width:38px;height:38px;border:3px solid #c4d4e8;border-top-color:#1b4580;border-radius:50%;animation:spin 0.7s linear infinite;"></div>
         <p style="font-size:14px;font-weight:600;color:#3a5272;">Carregando repertório...</p>
       </div>
-      <iframe id="iframe-rep" src="" style="width:105%;height:calc(105% + 30px);border:none;margin-top:-30px;transform:scale(0.93);transform-origin:top left;"
+      <iframe id="iframe-rep" src="" class="iframe-rep-coral"
         onload="document.getElementById('iframe-loading').style.opacity='0';document.getElementById('iframe-loading').style.pointerEvents='none';">
       </iframe>
     </div>
   </div>
-  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+  <style>
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .iframe-rep-coral {
+      width: 108%; height: calc(108% + 30px);
+      border: none; margin-top: -30px;
+      transform: scale(0.93);
+      transform-origin: top left;
+    }
+    @media (max-width: 768px) {
+      .iframe-rep-coral {
+        min-width: unset;
+        width: 160%;
+        height: 160%;
+        transform: scale(0.62);
+        transform-origin: top left;
+        margin-top: -15px;
+      }
+    }
+  </style>
 
   <div class="rodape">
     <button class="btn-voltar-hub" onclick="window.location.href='index.html'">← Voltar</button>

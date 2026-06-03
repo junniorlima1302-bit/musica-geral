@@ -400,10 +400,12 @@
 
       // Verifica se já enviou respostas antes
       const mesAtual = new Date().toISOString().slice(0, 7); // YYYY-MM
-      const { data: respostas } = await supabase
+      const { data: respostas, error: errQ } = await supabase
         .from('disponibilidades')
-        .select('id, compromisso_id, pode_ir, mes_ref')
+        .select('id, compromisso_id, pode_ir, mes_ref, nome_pessoa')
         .eq('nome_pessoa', membroSelecionado.nome);
+
+      alert('nome buscado: [' + membroSelecionado.nome + ']\nresultados: ' + (respostas||[]).length + '\nerro: ' + (errQ ? errQ.message : 'nenhum') + '\nprimeiro nome_pessoa: ' + ((respostas||[])[0]?.nome_pessoa || 'vazio'));
 
       // Filtra pelo mês atual
       const respostasMes = (respostas || []).filter(r => r.mes_ref && r.mes_ref.startsWith(mesAtual));

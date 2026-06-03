@@ -261,9 +261,9 @@
       </select>
 
       <select id="filtroTipo" onchange="aplicarBusca()">
-        <option value="todos">Vocal e Instrumental</option>
-        <option value="canta">Vocal</option>
-        <option value="instrumental">Instrumental</option>
+        <option value="todos">Cantores e Instrumental</option>
+        <option value="canta">🎤 Cantores</option>
+        <option value="instrumental">🎸 Instrumental</option>
       </select>
 
       <div class="busca-box">
@@ -273,6 +273,9 @@
 
     <div class="barra-acoes-disp">
       <button class="btn-respostas-status" onclick="abrirModalStatus()">👥 Quem respondeu</button>
+      <button class="btn-respostas-status" id="btn-edicoes" onclick="abrirModalEdicoes()" style="display:none;background:#e74c3c;position:relative;">
+        ✏️ Editaram <span id="badge-edicoes" style="background:white;color:#e74c3c;border-radius:10px;padding:1px 6px;font-size:11px;font-weight:800;margin-left:4px;">0</span>
+      </button>
       <button class="btn-lembrar-push" onclick="lembrarPendentes()" style="background:#e67e22;color:white;">🔔 Lembrar pendentes</button>
       <button class="btn-excluir-selecionados-disp" onclick="excluirSelecionadosDisp()">🗑️ Excluir selecionados</button>
     </div>
@@ -592,6 +595,60 @@
       _statusFiltro = _statusFiltro === filtro ? "todos" : filtro;
       renderizarStatus();
     }
+
+    // ── EDIÇÕES ──
+    async function carregarEdicoes() {
+      const mesAtual = new Date().toISOString().slice(0, 7);
+      const { data } = await supabase
+        .from('edicoes_disponibilidade')
+        .select('*')
+        .eq('mes_ref', mesAtual)
+        .eq('visto', false)
+        .order('criado_em', { ascending: false });
+
+      if (data && data.length > 0) {
+        document.getElementById('btn-edicoes').style.display = 'inline-flex';
+        document.getElementById('badge-edicoes').textContent = data.length;
+        window._edicoesPendentes = data;
+      } else {
+        document.getElementById('btn-edicoes').style.display = 'none';
+        window._edicoesPendentes = [];
+      }
+    }
+
+    async function abrirModalEdicoes() {
+      const lista = document.getElementById('lista-edicoes');
+      const edicoes = window._edicoesPendentes || [];
+
+      lista.innerHTML = edicoes.length === 0
+        ? '<p style="text-align:center;color:#5a7a9a;padding:20px;">Nenhuma edição pendente.</p>'
+        : edicoes.map(e => {
+            const entraram = (e.entraram || []).join(', ') || null;
+            const sairam   = (e.sairam   || []).join(', ') || null;
+            return `
+              <div style="border-bottom:1px solid #dde8f0;padding:14px 0;">
+                <strong style="font-size:14px;color:#1a2e4a;">${e.nome_pessoa}</strong>
+                <span style="font-size:11px;color:#7a9ec4;margin-left:8px;">${e.ministerio}</span>
+                ${entraram ? `<div style="font-size:12px;color:#27ae60;margin-top:6px;">✅ Adicionou: ${entraram}</div>` : ''}
+                ${sairam ? `<div style="font-size:12px;color:#e74c3c;margin-top:4px;">❌ Removeu: ${sairam}</div>` : ''}
+              </div>`;
+          }).join('');
+
+      document.getElementById('modal-edicoes').classList.add('aberto');
+      document.body.style.overflow = 'hidden';
+    }
+
+    async function fecharModalEdicoes() {
+      const ids = (window._edicoesPendentes || []).map(e => e.id);
+      if (ids.length > 0) {
+        await supabase.from('edicoes_disponibilidade').update({ visto: true }).in('id', ids);
+      }
+      document.getElementById('modal-edicoes').classList.remove('aberto');
+      document.body.style.overflow = '';
+      carregarEdicoes();
+    }
+
+    carregarEdicoes();
   </script>
 
   <script>
@@ -643,6 +700,24 @@
         el.addEventListener('touchend', onEnd);
       });
     });
+  </script>
+
+  <!-- MODAL EDIÇÕES -->
+  <div class="modal-status-overlay" id="modal-edicoes" onclick="fecharModalEdicoesFora(event)">
+    <div class="modal-status-box" id="modal-edicoes-box">
+      <div class="modal-drag-handle" id="modal-edicoes-handle"></div>
+      <div class="modal-status-titulo" style="display:flex;align-items:center;justify-content:space-between;">
+        <span>✏️ Quem Editou</span>
+        <button onclick="fecharModalEdicoes()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#5a7a9a;padding:0;width:auto;min-height:0;">×</button>
+      </div>
+      <div id="lista-edicoes" style="overflow-y:auto;flex:1;padding-right:4px;"></div>
+    </div>
+  </div>
+
+  <script>
+    function fecharModalEdicoesFora(e) {
+      if (e.target === document.getElementById('modal-edicoes')) fecharModalEdicoes();
+    }
   </script>
 
   <script src="sidebar.js"></script>

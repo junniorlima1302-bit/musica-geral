@@ -254,6 +254,19 @@
     <button class="btn-inicio" onclick="abrirCadastro()" style="margin-top:10px;background:rgba(27,69,128,0.12);">➕ Sou novo, quero me cadastrar</button>
   </div>
 
+  <!-- POPUP EDITAR -->
+  <div id="popup-editar" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:white;border-radius:20px;padding:28px 24px;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,0.18);text-align:center;">
+      <div style="font-size:42px;margin-bottom:12px;">✏️</div>
+      <h3 style="font-size:17px;font-weight:800;color:#1a2e4a;margin-bottom:10px;">Você já respondeu!</h3>
+      <p style="font-size:14px;color:#5a7a9a;line-height:1.6;margin-bottom:20px;">Encontramos sua resposta deste mês. Deseja editar suas disponibilidades?</p>
+      <div style="display:flex;gap:10px;">
+        <button onclick="recusarEdicao()" style="flex:1;padding:12px;background:#e0e0e0;color:#333;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Não</button>
+        <button onclick="confirmarEdicao()" style="flex:1;padding:12px;background:#1b4580;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Sim, editar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- POPUP CADASTRO -->
   <div id="popup-cadastro" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:20px;">
     <div style="background:white;border-radius:20px;padding:28px 24px;width:100%;max-width:400px;box-shadow:0 8px 32px rgba(0,0,0,0.18);">
@@ -373,29 +386,48 @@
     async function continuar() {
       if (!membroSelecionado) return;
 
-      // Limpa dados de sessão anterior antes de salvar os novos
-      localStorage.removeItem("nome");
-      localStorage.removeItem("ministerio");
-      localStorage.removeItem("tipo");
-      localStorage.removeItem("instrumento");
-      localStorage.removeItem("membro_id");
-
+      // Salva identificação
       localStorage.setItem("nome", membroSelecionado.nome);
       localStorage.setItem("ministerio", membroSelecionado.ministerio);
       localStorage.setItem("tipo", membroSelecionado.tipo);
       localStorage.setItem("instrumento", membroSelecionado.instrumento || "");
       localStorage.setItem("membro_id", membroSelecionado.id);
 
-      // Vincula o token push ao membro — sem await para não bloquear navegação
+      // Vincula o token push ao membro
       if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
         registrarPush(membroSelecionado.id).catch(() => {});
       }
 
-      let historico = JSON.parse(localStorage.getItem("historico")) || [];
-      historico.push(window.location.pathname);
-      localStorage.setItem("historico", JSON.stringify(historico));
+      // Verifica se já enviou respostas antes
+      const mesAtual = new Date().toISOString().slice(0, 7); // YYYY-MM
+      const { data: respostas } = await supabase
+        .from('disponibilidades')
+        .select('id, compromisso_id, pode_ir')
+        .eq('nome_pessoa', membroSelecionado.nome)
+        .eq('ministerio', membroSelecionado.ministerio)
+        .gte('mes_ref', mesAtual + '-01')
+        .lte('mes_ref', mesAtual + '-31');
 
+      if (respostas && respostas.length > 0) {
+        // Já respondeu — salva as respostas anteriores e pergunta se quer editar
+        localStorage.setItem("respostas_anteriores", JSON.stringify(respostas));
+        document.getElementById("popup-editar").style.display = "flex";
+      } else {
+        localStorage.removeItem("respostas_anteriores");
+        window.location.href = "disponibilidade.html";
+      }
+    }
+
+    function confirmarEdicao() {
+      localStorage.setItem("modo_edicao", "true");
       window.location.href = "disponibilidade.html";
+    }
+
+    function recusarEdicao() {
+      localStorage.removeItem("respostas_anteriores");
+      localStorage.removeItem("modo_edicao");
+      document.getElementById("popup-editar").style.display = "none";
+      // Volta para a seleção sem redirecionar
     }
 
     // Fecha ao clicar fora

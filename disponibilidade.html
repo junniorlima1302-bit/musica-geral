@@ -195,7 +195,15 @@
         return;
       }
 
-      // 2. Carrega as datas
+      // 2. Carrega as datas — pré-seleciona respostas anteriores se modo edição
+      const modoEdicao = localStorage.getItem("modo_edicao") === "true";
+      const respostasAnteriores = JSON.parse(localStorage.getItem("respostas_anteriores") || "null");
+      if (modoEdicao && respostasAnteriores) {
+        window._respostasAnteriores = respostasAnteriores;
+        window._modoEdicao = true;
+        // Muda texto do botão
+        document.getElementById("btn-enviar").textContent = "Atualizar";
+      }
       carregarDisponibilidades();
 
       // 3. Aviso Música Geral
@@ -211,7 +219,44 @@
       }
     };
 
-    function mostrarPopup() {
+    async function mostrarPopup() {
+      // Se for edição, registra no banco para notificar a coord
+      if (window._modoEdicao) {
+        const nome = localStorage.getItem("nome");
+        const ministerio = localStorage.getItem("ministerio");
+        const respostasAntigas = window._respostasAnteriores || [];
+
+        // Busca respostas novas para comparar
+        const mesAtual = new Date().toISOString().slice(0, 7);
+        const { data: respostasNovas } = await supabase
+          .from('disponibilidades')
+          .select('compromisso_id, pode_ir, compromissos(titulo, data)')
+          .eq('nome_pessoa', nome)
+          .gte('mes_ref', mesAtual + '-01')
+          .lte('mes_ref', mesAtual + '-31');
+
+        // Calcula diferenças
+        const idsAntigas = new Set(respostasAntigas.map(r => r.compromisso_id));
+        const idsNovas   = new Set((respostasNovas || []).map(r => r.compromisso_id));
+
+        const entraram = (respostasNovas || []).filter(r => !idsAntigas.has(r.compromisso_id));
+        const sairam   = respostasAntigas.filter(r => !idsNovas.has(r.compromisso_id));
+
+        // Salva notificação de edição
+        await supabase.from('edicoes_disponibilidade').insert({
+          nome_pessoa: nome,
+          ministerio,
+          mes_ref: mesAtual,
+          entraram: entraram.map(r => r.compromissos?.titulo || r.compromisso_id),
+          sairam: sairam.map(r => r.compromisso_id),
+          visto: false,
+          criado_em: new Date().toISOString()
+        });
+
+        localStorage.removeItem("modo_edicao");
+        localStorage.removeItem("respostas_anteriores");
+      }
+
       // Limpa identificação ao concluir envio
       localStorage.removeItem("nome");
       localStorage.removeItem("ministerio");

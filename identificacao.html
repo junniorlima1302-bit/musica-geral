@@ -406,11 +406,9 @@
         .eq('nome_pessoa', membroSelecionado.nome)
         .eq('ministerio', membroSelecionado.ministerio);
 
-      console.log('DEBUG respostas:', respostas, 'erro:', errResp, 'mesAtual:', mesAtual);
-
       // Filtra pelo mês atual
       const respostasMes = (respostas || []).filter(r => r.mes_ref && r.mes_ref.startsWith(mesAtual));
-      console.log('DEBUG respostasMes:', respostasMes);
+      alert('mes_ref encontrados: ' + (respostas||[]).map(r=>r.mes_ref).join(', ') + '\nmesAtual: ' + mesAtual + '\nFiltrados: ' + respostasMes.length);
 
       if (respostasMes.length > 0) {
         // Já respondeu — salva as respostas anteriores e pergunta se quer editar

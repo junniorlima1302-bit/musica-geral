@@ -205,11 +205,15 @@
       }
       await carregarDisponibilidades();
 
-      // Pré-seleciona botões das respostas anteriores pelo compromisso_id
+      // Pré-seleciona botões das respostas anteriores
       if (modoEdicao && respostasAnteriores && respostasAnteriores.length > 0) {
-        const idsAnteriores = new Set(respostasAnteriores.map(r => r.compromisso_id).filter(Boolean));
+        const idsAnteriores  = new Set(respostasAnteriores.map(r => r.compromisso_id).filter(Boolean));
+        const eventosAnteriores = new Set(respostasAnteriores.map(r => r.evento).filter(Boolean));
+
         document.querySelectorAll(".btn-disponibilidade").forEach(btn => {
-          if (idsAnteriores.has(btn.dataset.compromissoId)) {
+          const idOk    = btn.dataset.compromissoId && idsAnteriores.has(btn.dataset.compromissoId);
+          const eventoOk = btn.dataset.valor && [...eventosAnteriores].some(ev => btn.dataset.valor.startsWith(ev));
+          if (idOk || eventoOk) {
             btn.classList.add("ativo");
           }
         });

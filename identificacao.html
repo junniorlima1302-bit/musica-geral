@@ -402,15 +402,13 @@
       const mesAtual = new Date().toISOString().slice(0, 7); // YYYY-MM
       const { data: respostas } = await supabase
         .from('disponibilidades')
-        .select('id, compromisso_id, mes_ref')
-        .eq('nome_pessoa', membroSelecionado.nome);
+        .select('id, evento, mes_ref, ministerio, compromisso_id')
+        .eq('nome_pessoa', membroSelecionado.nome)
+        .eq('mes_ref', mesAtual);
 
-      // Filtra pelo mês atual
-      const respostasMes = (respostas || []).filter(r => r.mes_ref && r.mes_ref.startsWith(mesAtual));
-
-      if (respostasMes.length > 0) {
-        // Já respondeu — salva as respostas anteriores e pergunta se quer editar
-        localStorage.setItem("respostas_anteriores", JSON.stringify(respostasMes));
+      if (respostas && respostas.length > 0) {
+        // Já respondeu — salva os eventos marcados e pergunta se quer editar
+        localStorage.setItem("respostas_anteriores", JSON.stringify(respostas));
         document.getElementById("popup-editar").style.display = "flex";
       } else {
         localStorage.removeItem("respostas_anteriores");

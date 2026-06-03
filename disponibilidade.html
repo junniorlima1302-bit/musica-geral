@@ -201,10 +201,19 @@
       if (modoEdicao && respostasAnteriores) {
         window._respostasAnteriores = respostasAnteriores;
         window._modoEdicao = true;
-        // Muda texto do botão
         document.getElementById("btn-enviar").textContent = "Atualizar";
       }
-      carregarDisponibilidades();
+      await carregarDisponibilidades();
+
+      // Pré-seleciona botões das respostas anteriores pelo compromisso_id
+      if (modoEdicao && respostasAnteriores && respostasAnteriores.length > 0) {
+        const idsAnteriores = new Set(respostasAnteriores.map(r => r.compromisso_id).filter(Boolean));
+        document.querySelectorAll(".btn-disponibilidade").forEach(btn => {
+          if (idsAnteriores.has(btn.dataset.compromissoId)) {
+            btn.classList.add("ativo");
+          }
+        });
+      }
 
       // 3. Aviso Música Geral
       if (ministerio && ministerio.includes("Música")) {

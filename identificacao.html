@@ -400,15 +400,13 @@
 
       // Verifica se já enviou respostas antes
       const mesAtual = new Date().toISOString().slice(0, 7); // YYYY-MM
-      const { data: respostas, error: errResp } = await supabase
+      const { data: respostas } = await supabase
         .from('disponibilidades')
         .select('id, compromisso_id, pode_ir, mes_ref')
-        .eq('nome_pessoa', membroSelecionado.nome)
-        .eq('ministerio', membroSelecionado.ministerio);
+        .eq('nome_pessoa', membroSelecionado.nome);
 
       // Filtra pelo mês atual
       const respostasMes = (respostas || []).filter(r => r.mes_ref && r.mes_ref.startsWith(mesAtual));
-      alert('mes_ref encontrados: ' + (respostas||[]).map(r=>r.mes_ref).join(', ') + '\nmesAtual: ' + mesAtual + '\nFiltrados: ' + respostasMes.length);
 
       if (respostasMes.length > 0) {
         // Já respondeu — salva as respostas anteriores e pergunta se quer editar

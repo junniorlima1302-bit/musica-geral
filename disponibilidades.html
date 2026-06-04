@@ -338,6 +338,12 @@
       });
     }
 
+    // Limpa campo de busca ao carregar (evita autocomplete do browser)
+    window.addEventListener('load', function() {
+      const busca = document.getElementById('buscaNome');
+      if (busca) { busca.value = ''; aplicarBusca(); }
+    });
+
     async function iniciarDisponibilidades() {
       const { data } = await supabase
         .from("disponibilidades")

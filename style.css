@@ -804,29 +804,20 @@ textarea {
   align-items: flex-start;
   justify-content: center;
   background: linear-gradient(135deg, #e8f0fa 0%, #c5d8f0 100%);
-  padding: 24px 40px;
+  padding: 20px;
   box-sizing: border-box;
 }
 
-/* Desktop: padding lateral com vão do sidebar */
-@media (min-width: 1024px) {
-  body:not(.sb-mobile) .admin-page {
-    padding: 24px 40px 24px 20px !important;
-  }
-  body:not(.sb-mobile) .admin-box {
-    max-width: 100% !important;
-    margin: 0 !important;
-  }
-}
+
 
 .admin-box {
   background: #eaf0f8;
   border: 1px solid #c4d4e8;
   backdrop-filter: none;
   border-radius: 16px;
-  padding: 24px 28px;
+  padding: 24px 16px;
   width: 100%;
-  max-width: 100%;
+  max-width: 900px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
 }
 

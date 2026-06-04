@@ -618,37 +618,93 @@
       const lista = document.getElementById('lista-edicoes');
       const edicoes = window._edicoesPendentes || [];
 
-      lista.innerHTML = edicoes.length === 0
-        ? '<p style="text-align:center;color:#5a7a9a;padding:20px;">Nenhuma edição pendente.</p>'
-        : edicoes.map(e => {
-            const entraram = (e.entraram || []).join(', ') || null;
-            const sairam   = (e.sairam   || []).join(', ') || null;
-            return `
-              <div style="border-bottom:1px solid #dde8f0;padding:14px 0;">
-                <strong style="font-size:14px;color:#1a2e4a;">${e.nome_pessoa}</strong>
-                <span style="font-size:11px;color:#7a9ec4;margin-left:8px;">${e.ministerio}</span>
-                ${entraram ? `<div style="font-size:12px;color:#27ae60;margin-top:6px;">✅ Adicionou: ${entraram}</div>` : ''}
-                ${sairam ? `<div style="font-size:12px;color:#e74c3c;margin-top:4px;">❌ Removeu: ${sairam}</div>` : ''}
-              </div>`;
+      if (edicoes.length === 0) {
+        lista.innerHTML = '<p style="text-align:center;color:#5a7a9a;padding:20px;">Nenhuma edição pendente.</p>';
+      } else {
+        lista.innerHTML = edicoes.map(e => {
+          const min = e.ministerio || '';
+          const isMG = min.toLowerCase().includes('música geral') || min.toLowerCase().includes('musica geral');
+
+          // Música Geral: adicionar = não pode servir / remover = voltou a poder
+          // Geral Eventos: adicionar = passou a poder / remover = não pode mais
+          const linhasEntrou = (e.entraram || []).map(item => {
+            const msg = isMG
+              ? `<span style="color:#e74c3c;">❌ Não pode mais servir em: <strong>${item}</strong></span>`
+              : `<span style="color:#27ae60;">✅ Passou a poder servir em: <strong>${item}</strong></span>`;
+            return `<div style="font-size:12px;margin-top:6px;">${msg}</div>`;
           }).join('');
+
+          const linhasSaiu = (e.sairam || []).map(item => {
+            const msg = isMG
+              ? `<span style="color:#27ae60;">✅ Voltou a poder servir em: <strong>${item}</strong></span>`
+              : `<span style="color:#e74c3c;">❌ Não pode mais servir em: <strong>${item}</strong></span>`;
+            return `<div style="font-size:12px;margin-top:6px;">${msg}</div>`;
+          }).join('');
+
+          return `
+            <div style="border-bottom:1px solid #dde8f0;padding:16px 0;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                <div>
+                  <strong style="font-size:14px;color:#1a2e4a;">${e.nome_pessoa}</strong>
+                  <span style="font-size:11px;color:#7a9ec4;margin-left:8px;">${e.ministerio}</span>
+                </div>
+              </div>
+              ${linhasEntrou}
+              ${linhasSaiu}
+              <button onclick="confirmarEdicaoVista('${e.id}', this)"
+                style="margin-top:12px;width:100%;padding:10px;background:#e67e22;color:white;
+                border:none;border-radius:8px;font-size:13px;font-weight:700;
+                cursor:pointer;font-family:inherit;">
+                ✅ Confirmar — Vi esta alteração
+              </button>
+            </div>`;
+        }).join('');
+      }
 
       document.getElementById('modal-edicoes').classList.add('aberto');
       document.body.style.overflow = 'hidden';
     }
 
+    async function confirmarEdicaoVista(id, btn) {
+      // Pede senha do admin para confirmar
+      const senha = prompt('Digite sua senha de acesso para confirmar:');
+      if (!senha) return;
+
+      // Verifica senha do usuário logado
+      const { data: sessao } = await supabase.auth.getSession();
+      if (!sessao?.session?.user?.email) { alert('Sessão inválida.'); return; }
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email: sessao.session.user.email,
+        password: senha
+      });
+
+      if (error) { alert('Senha incorreta.'); return; }
+
+      // Registra quem confirmou
+      const { data: eu } = await supabase.from('usuarios').select('nome').eq('id', sessao.session.user.id).single();
+      const quemViu = eu?.nome || sessao.session.user.email;
+
+      await supabase.from('edicoes_disponibilidade')
+        .update({ visto: true, visto_por: quemViu, visto_em: new Date().toISOString() })
+        .eq('id', id);
+
+      // Remove o item do DOM
+      btn.closest('div[style*="border-bottom"]').remove();
+
+      // Atualiza pendentes
+      window._edicoesPendentes = (window._edicoesPendentes || []).filter(e => e.id !== id);
+
+      if (window._edicoesPendentes.length === 0) {
+        document.getElementById('modal-edicoes').classList.remove('aberto');
+        document.body.style.overflow = '';
+        document.getElementById('btn-edicoes-float').style.display = 'none';
+      }
+    }
+
     async function fecharModalEdicoes() {
       document.getElementById('modal-edicoes').classList.remove('aberto');
       document.body.style.overflow = '';
-    }
-
-    async function confirmarEdicoesVistas() {
-      const ids = (window._edicoesPendentes || []).map(e => e.id);
-      if (ids.length > 0) {
-        await supabase.from('edicoes_disponibilidade').update({ visto: true }).in('id', ids);
-      }
-      document.getElementById('modal-edicoes').classList.remove('aberto');
-      document.body.style.overflow = '';
-      carregarEdicoes();
     }
 
     carregarEdicoes();
@@ -714,11 +770,7 @@
         <button onclick="fecharModalEdicoes()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#5a7a9a;padding:0;width:auto;min-height:0;">×</button>
       </div>
       <div id="lista-edicoes" style="overflow-y:auto;flex:1;padding-right:4px;"></div>
-      <button onclick="confirmarEdicoesVistas()" style="
-        margin-top:14px; width:100%; padding:12px; background:#e67e22;
-        color:white; border:none; border-radius:10px; font-size:14px;
-        font-weight:800; cursor:pointer; font-family:inherit;
-      ">✅ Confirmar — Vi tudo</button>
+
     </div>
   </div>
 

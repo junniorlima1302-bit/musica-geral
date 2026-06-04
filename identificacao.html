@@ -398,13 +398,20 @@
         registrarPush(membroSelecionado.id).catch(() => {});
       }
 
-      // Verifica se já enviou respostas antes
-      const mesAtual = new Date().toISOString().slice(0, 7); // YYYY-MM
+      // Busca o mês de referência ativo dos compromissos (pode ser mês seguinte)
+      const { data: compRef } = await supabase
+        .from('compromissos')
+        .select('mes_ref')
+        .not('mes_ref', 'is', null)
+        .order('mes_ref', { ascending: false })
+        .limit(1);
+      const mesRef = compRef?.[0]?.mes_ref || new Date().toISOString().slice(0, 7);
+
       const { data: respostas } = await supabase
         .from('disponibilidades')
         .select('id, evento, turno, mes_ref, ministerio, compromisso_id')
         .eq('nome_pessoa', membroSelecionado.nome)
-        .eq('mes_ref', mesAtual);
+        .eq('mes_ref', mesRef);
 
       if (respostas && respostas.length > 0) {
         // Já respondeu — salva os eventos marcados e pergunta se quer editar

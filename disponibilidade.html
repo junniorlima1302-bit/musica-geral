@@ -248,45 +248,41 @@
       if (window._modoEdicao) {
         const nome = localStorage.getItem("nome");
         const ministerio = localStorage.getItem("ministerio");
-        const mesAtual = new Date().toISOString().slice(0, 7);
         const respostasAntigas = window._respostasAnteriores || [];
 
-        // Busca respostas novas do banco
+        // Usa o mes_ref das respostas anteriores (pode ser mês seguinte)
+        const mesRef = respostasAntigas[0]?.mes_ref || new Date().toISOString().slice(0, 7);
+
+        // Busca respostas novas do banco (já foram salvas pelo enviarDisponibilidade)
         const { data: respostasNovas } = await supabase
           .from('disponibilidades')
           .select('evento, turno, compromisso_id')
           .eq('nome_pessoa', nome)
-          .eq('mes_ref', mesAtual);
+          .eq('mes_ref', mesRef);
 
-        // Normaliza: remove espaços extras e lowercase para comparação
+        // Normaliza para comparação
         const norm = s => (s||'').trim().toLowerCase();
         const chave = r => norm(r.evento) + '|' + norm(r.turno);
 
         const chavesAntigas = new Set(respostasAntigas.map(chave));
         const chavesNovas   = new Set((respostasNovas||[]).map(chave));
 
-        console.log('Antigas:', [...chavesAntigas]);
-        console.log('Novas:', [...chavesNovas]);
-
-        // O que entrou de novo
+        // O que entrou de novo (não estava antes, está agora)
         const entraram = (respostasNovas||[])
           .filter(r => !chavesAntigas.has(chave(r)))
           .map(r => (r.evento||'') + (r.turno ? ' - ' + r.turno : ''));
 
-        // O que saiu
+        // O que saiu (estava antes, não está mais)
         const sairam = respostasAntigas
           .filter(r => !chavesNovas.has(chave(r)))
           .map(r => (r.evento||'') + (r.turno ? ' - ' + r.turno : ''));
-
-        console.log('Entraram:', entraram);
-        console.log('Saíram:', sairam);
 
         // Só registra se houve mudança
         if (entraram.length > 0 || sairam.length > 0) {
           await supabase.from('edicoes_disponibilidade').insert({
             nome_pessoa: nome,
             ministerio,
-            mes_ref: mesAtual,
+            mes_ref: mesRef,
             entraram,
             sairam,
             visto: false,

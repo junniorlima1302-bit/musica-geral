@@ -808,6 +808,13 @@ textarea {
   box-sizing: border-box;
 }
 
+/* Desktop: compensa o padding-left do sidebar para centralizar */
+@media (min-width: 1024px) {
+  body.sb-desktop .admin-page {
+    padding: 24px 40px 24px 20px;
+  }
+}
+
 .admin-box {
   background: #eaf0f8;
   border: 1px solid #c4d4e8;

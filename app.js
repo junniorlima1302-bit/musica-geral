@@ -251,12 +251,40 @@ async function enviarDisponibilidade(){
 let justificativas = null;
 
 if (ministerio === "Música Geral") {
-  justificativas = await abrirPopupJustificativa(selecionados);
+  const modoEdicao = localStorage.getItem("modo_edicao") === "true";
+  const respostasAnteriores = JSON.parse(localStorage.getItem("respostas_anteriores") || "[]");
 
-  if (!justificativas) {
-    botao.disabled = false;
-    botao.innerText = "Enviar";
-    return;
+  let selecionadosParaJustificar = selecionados;
+
+  if (modoEdicao && respostasAnteriores.length > 0) {
+    // Só pede justificativa para datas NOVAS (que não estavam antes)
+    const idsAnteriores = new Set(respostasAnteriores.map(r => r.compromisso_id).filter(Boolean));
+    const eventoTurnoAnteriores = new Set(
+      respostasAnteriores.filter(r => !r.compromisso_id).map(r => (r.evento||'').trim() + '|' + (r.turno||'').trim())
+    );
+
+    selecionadosParaJustificar = [...selecionados].filter(btn => {
+      if (btn.dataset.compromissoId && idsAnteriores.has(btn.dataset.compromissoId)) return false;
+      const chave = (btn.dataset.valor||'').split(' | ').map(s=>s.trim()).join('|');
+      if (eventoTurnoAnteriores.has(chave)) return false;
+      return true; // é novo
+    });
+  }
+
+  if (selecionadosParaJustificar.length > 0) {
+    justificativas = await abrirPopupJustificativa(selecionadosParaJustificar);
+    if (!justificativas) {
+      botao.disabled = false;
+      botao.innerText = "Enviar";
+      return;
+    }
+    // Mapeia justificativas para os botões novos
+    const mapaJust = new Map();
+    [...selecionadosParaJustificar].forEach((btn, i) => mapaJust.set(btn, justificativas[i]));
+    justificativas = [...selecionados].map(btn => mapaJust.get(btn) || null);
+  } else {
+    // Nenhum novo — mantém justificativas anteriores (null para todos)
+    justificativas = [...selecionados].map(() => null);
   }
 } // 👈 ESSA CHAVE FALTAVA
   
@@ -276,7 +304,8 @@ if (ministerio === "Música Geral") {
       tipo: tipo,
       instrumento: instrumento,
       justificativa: justificativas ? justificativas[index] : null,
-      mes_ref: mesRef || null
+      mes_ref: mesRef || null,
+      compromisso_id: btn.dataset.compromissoId || null
     });
   });
 
@@ -1019,26 +1048,23 @@ function popularFiltroEventos(compromissos) {
 function aplicarBusca() {
 
   const nomeBusca = normalizar(document.getElementById("buscaNome")?.value || "");
-  const filtroMinisterio = document.getElementById("filtroMinisterio")?.value || "todos";
-  const filtroEvento = document.getElementById("filtroEvento")?.value || "todos";
-  const filtroTipo = document.getElementById("filtroTipo")?.value || "todos";
+  const filtroMinisterio = document.getElementById("filtroMinisterio")?.value;
+  const filtroEvento = document.getElementById("filtroEvento")?.value;
 
-  // 1. Filtra respostas normais
-  let filtrado = respostasGlobais.filter(r => {
-    const nomeOk = !nomeBusca || normalizar(r.nome_pessoa).includes(nomeBusca);
-    const ministerioOk = filtroMinisterio === "todos" || r.ministerio === filtroMinisterio;
-    // Filtro de tipo: canta ou instrumental (toca / toca_canta)
-    let tipoOk = true;
-    if (filtroTipo === "canta") {
-      tipoOk = r.tipo === "canta";
-    } else if (filtroTipo === "instrumental") {
-      tipoOk = r.tipo === "toca" || r.tipo === "toca_canta";
-    }
-    return nomeOk && ministerioOk && tipoOk;
+  let filtrado = respostasGlobais.filter(pessoa => {
+
+    const nomeOk = normalizar(pessoa.nome_pessoa).includes(nomeBusca);
+
+    const ministerioOk =
+      filtroMinisterio === "todos" ||
+      pessoa.ministerio === filtroMinisterio;
+
+    const eventoOk =
+      filtroEvento === "todos" ||
+      pessoa.evento === filtroEvento;
+
+    return nomeOk && ministerioOk && eventoOk;
   });
-
-  // Nota: membros de Música Geral sem NENHUMA resposta NÃO são incluídos.
-  // Se não responderam, não sabemos a disponibilidade deles.
 
   renderizarRespostas(filtrado);
 }
@@ -1046,11 +1072,6 @@ function aplicarBusca() {
 async function renderizarRespostas(respostasFiltradas) {
 
   const container = document.getElementById("lista-respostas");
-
-  // Fade out antes de renderizar
-  container.style.transition = "opacity 0.2s ease";
-  container.style.opacity = "0";
-  await new Promise(r => setTimeout(r, 200));
   if (!container) return;
 
   container.innerHTML = "";
@@ -1066,13 +1087,7 @@ async function renderizarRespostas(respostasFiltradas) {
   }
 
   // 🔥 lista de pessoas únicas
-  // Só inclui quem tem registro real — membros de Música Geral sem resposta
-  // NÃO aparecem (não responderam = não sabemos se podem ou não)
-  const pessoas = [...new Set(
-    respostas
-      .filter(r => !r._semResposta) // exclui registros sintéticos
-      .map(r => r.nome_pessoa)
-  )];
+  const pessoas = [...new Set(respostas.map(r => r.nome_pessoa))];
 
   let agrupado = {};
 
@@ -1090,12 +1105,7 @@ async function renderizarRespostas(respostasFiltradas) {
   pessoas.forEach(pessoa => {
 
     const dadosPessoa = respostas.filter(r => r.nome_pessoa === pessoa);
-    // Registro sintético (_semResposta) ou dados reais
-    const sintetico = respostas.find(r => r.nome_pessoa === pessoa && r._semResposta);
-    const membroBase = sintetico || (window._membrosMusica || []).find(m => m.nome.trim().toLowerCase() === pessoa.trim().toLowerCase());
-    const ministerio = dadosPessoa.find(r => !r._semResposta)?.ministerio || membroBase?.ministerio;
-    const tipoBase = dadosPessoa.find(r => !r._semResposta)?.tipo || membroBase?.tipo;
-    const instrBase = dadosPessoa.find(r => !r._semResposta)?.instrumento || membroBase?.instrumento;
+    const ministerio = dadosPessoa[0]?.ministerio;
 
     compromissosFiltrados.forEach(comp => {
 
@@ -1107,15 +1117,15 @@ async function renderizarRespostas(respostasFiltradas) {
       );
 
       if (ministerio === "Música Geral") {
-        // 👉 marcou = NÃO pode → aparece quem NÃO marcou (inclui quem não tem nenhuma resposta)
+        // 👉 marcou = NÃO pode → aparece quem NÃO marcou
         if (!marcou) {
           // Coleta IDs de todas as respostas desta pessoa neste evento/turno para exclusão precisa
           const idsResposta = dadosPessoa.map(r => r.id).filter(Boolean);
           agrupado[chave].push({
             nome: pessoa,
-            ministerio: ministerio,
-            tipo: tipoBase,
-            instrumento: instrBase,
+            ministerio: dadosPessoa[0]?.ministerio,
+            tipo: dadosPessoa[0]?.tipo,
+            instrumento: dadosPessoa[0]?.instrumento,
             ids: idsResposta,
             mesRef: dadosPessoa[0]?.mes_ref || null,
             compromissoId: comp.id || null
@@ -1169,16 +1179,11 @@ async function renderizarRespostas(respostasFiltradas) {
       item.dataset.mesRef = pessoa.mesRef || "";
       item.dataset.compromissoId = pessoa.compromissoId || "";
 
-      const tipoLabel = pessoa.tipo === "toca" ? "Toca"
-        : pessoa.tipo === "toca_canta" ? "Toca e Canta"
-        : pessoa.tipo === "canta" ? "Canta" : "";
-      const instrLabel = pessoa.instrumento ? ` — ${pessoa.instrumento}` : "";
-
       item.innerHTML = `
         <span class="badge-excluir">✕</span>
-        <strong>${pessoa.nome}</strong>
-        <small>${pessoa.ministerio}</small>
-        <small>${tipoLabel}${instrLabel}</small>
+        <strong>${pessoa.nome}</strong><br>
+        <small>${pessoa.ministerio}</small><br>
+        <small>${pessoa.tipo === "toca" ? "Toca" : pessoa.tipo === "toca_canta" ? "Toca e Canta" : pessoa.tipo === "canta" ? "Canta" : ""} ${pessoa.instrumento ? "- " + pessoa.instrumento : ""}</small>
       `;
 
       item.onclick = () => item.classList.toggle("selecionado");
@@ -1189,11 +1194,6 @@ async function renderizarRespostas(respostasFiltradas) {
     divGrupo.appendChild(titulo);
     divGrupo.appendChild(lista);
     container.appendChild(divGrupo);
-  });
-
-  // Fade in após renderizar
-  requestAnimationFrame(() => {
-    container.style.opacity = "1";
   });
 }
 //////////////////////////////////////////////////////

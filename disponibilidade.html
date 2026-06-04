@@ -258,20 +258,28 @@
           .eq('nome_pessoa', nome)
           .eq('mes_ref', mesAtual);
 
-        // Chave de comparação: evento|turno
-        const chave = r => ((r.evento||'') + '|' + (r.turno||'')).trim();
+        // Normaliza: remove espaços extras e lowercase para comparação
+        const norm = s => (s||'').trim().toLowerCase();
+        const chave = r => norm(r.evento) + '|' + norm(r.turno);
+
         const chavesAntigas = new Set(respostasAntigas.map(chave));
         const chavesNovas   = new Set((respostasNovas||[]).map(chave));
 
-        // O que entrou de novo (estava marcado antes, não estava)
+        console.log('Antigas:', [...chavesAntigas]);
+        console.log('Novas:', [...chavesNovas]);
+
+        // O que entrou de novo
         const entraram = (respostasNovas||[])
           .filter(r => !chavesAntigas.has(chave(r)))
           .map(r => (r.evento||'') + (r.turno ? ' - ' + r.turno : ''));
 
-        // O que saiu (estava antes, não está mais)
+        // O que saiu
         const sairam = respostasAntigas
           .filter(r => !chavesNovas.has(chave(r)))
           .map(r => (r.evento||'') + (r.turno ? ' - ' + r.turno : ''));
+
+        console.log('Entraram:', entraram);
+        console.log('Saíram:', sairam);
 
         // Só registra se houve mudança
         if (entraram.length > 0 || sairam.length > 0) {

@@ -606,10 +606,17 @@
         .eq('visto', false)
         .order('criado_em', { ascending: false });
 
-      window._edicoesPendentes = pendentes || [];
+      // Só conta uma pendente por pessoa (a mais recente)
+      const pendentesPorPessoa = new Map();
+      (pendentes || []).forEach(e => {
+        if (!pendentesPorPessoa.has(e.nome_pessoa)) {
+          pendentesPorPessoa.set(e.nome_pessoa, e);
+        }
+      });
+      window._edicoesPendentes = [...pendentesPorPessoa.values()];
       const btn = document.getElementById('btn-edicoes-float');
       const badge = document.getElementById('badge-edicoes');
-      const nPendentes = (pendentes || []).length;
+      const nPendentes = window._edicoesPendentes.length;
 
       // Botão sempre visível
       btn.style.display = 'flex';
@@ -667,7 +674,7 @@
       const lista = document.getElementById('lista-edicoes');
       const mesAtual = new Date().toISOString().slice(0, 7);
 
-      // Busca TODAS as edições do mês (pendentes e já vistas)
+      // Busca TODAS as edições do mês
       const { data: todasEdicoes } = await supabase
         .from('edicoes_disponibilidade')
         .select('*')
@@ -677,7 +684,14 @@
       if (!todasEdicoes || todasEdicoes.length === 0) {
         lista.innerHTML = '<p style="text-align:center;color:#5a7a9a;padding:20px;">Nenhuma edição este mês.</p>';
       } else {
-        lista.innerHTML = todasEdicoes.map(renderizarEdicao).join('');
+        // Mantém só a edição mais recente por pessoa
+        const ultimasPorPessoa = new Map();
+        todasEdicoes.forEach(e => {
+          if (!ultimasPorPessoa.has(e.nome_pessoa)) {
+            ultimasPorPessoa.set(e.nome_pessoa, e);
+          }
+        });
+        lista.innerHTML = [...ultimasPorPessoa.values()].map(renderizarEdicao).join('');
       }
 
       document.getElementById('modal-edicoes').classList.add('aberto');

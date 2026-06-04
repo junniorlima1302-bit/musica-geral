@@ -727,11 +727,10 @@
       // Atualiza pendentes e badge
       window._edicoesPendentes = (window._edicoesPendentes || []).filter(e => e.id !== id);
       const pendentes = window._edicoesPendentes.length;
-      document.getElementById('badge-edicoes').textContent = pendentes;
-      const btn = document.getElementById('btn-edicoes-float');
+      const btnFloat = document.getElementById('btn-edicoes-float');
       document.getElementById('badge-edicoes').textContent = pendentes > 0 ? pendentes : '✓';
       if (pendentes === 0) {
-        btn.classList.add('sem-pendentes');
+        btnFloat.classList.add('sem-pendentes');
       }
     }
 

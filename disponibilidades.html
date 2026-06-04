@@ -637,6 +637,11 @@
     }
 
     async function fecharModalEdicoes() {
+      document.getElementById('modal-edicoes').classList.remove('aberto');
+      document.body.style.overflow = '';
+    }
+
+    async function confirmarEdicoesVistas() {
       const ids = (window._edicoesPendentes || []).map(e => e.id);
       if (ids.length > 0) {
         await supabase.from('edicoes_disponibilidade').update({ visto: true }).in('id', ids);
@@ -709,6 +714,11 @@
         <button onclick="fecharModalEdicoes()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#5a7a9a;padding:0;width:auto;min-height:0;">×</button>
       </div>
       <div id="lista-edicoes" style="overflow-y:auto;flex:1;padding-right:4px;"></div>
+      <button onclick="confirmarEdicoesVistas()" style="
+        margin-top:14px; width:100%; padding:12px; background:#e67e22;
+        color:white; border:none; border-radius:10px; font-size:14px;
+        font-weight:800; cursor:pointer; font-family:inherit;
+      ">✅ Confirmar — Vi tudo</button>
     </div>
   </div>
 

@@ -207,13 +207,18 @@
 
       // Pré-seleciona botões das respostas anteriores
       if (modoEdicao && respostasAnteriores && respostasAnteriores.length > 0) {
-        const idsAnteriores  = new Set(respostasAnteriores.map(r => r.compromisso_id).filter(Boolean));
+        const idsAnteriores     = new Set(respostasAnteriores.map(r => r.compromisso_id).filter(Boolean));
         const eventosAnteriores = new Set(respostasAnteriores.map(r => r.evento).filter(Boolean));
 
         document.querySelectorAll(".btn-disponibilidade").forEach(btn => {
-          const idOk    = btn.dataset.compromissoId && idsAnteriores.has(btn.dataset.compromissoId);
-          const eventoOk = btn.dataset.valor && [...eventosAnteriores].some(ev => btn.dataset.valor.startsWith(ev));
-          if (idOk || eventoOk) {
+          // Se tem ID, usa ID (mais preciso)
+          if (btn.dataset.compromissoId && idsAnteriores.has(btn.dataset.compromissoId)) {
+            btn.classList.add("ativo");
+            return;
+          }
+          // Fallback: compara pelo nome do grupo (evento no banco = "MISSAS DOMINICAIS")
+          const nomeGrupo = (btn.dataset.valor || "").split(" | ")[0].trim();
+          if (eventosAnteriores.has(nomeGrupo)) {
             btn.classList.add("ativo");
           }
         });

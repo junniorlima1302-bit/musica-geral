@@ -808,10 +808,14 @@ textarea {
   box-sizing: border-box;
 }
 
-/* Desktop: padding menor à esquerda pois sidebar já ocupa 220px */
+/* Desktop: padding lateral com vão do sidebar */
 @media (min-width: 1024px) {
-  .admin-page {
-    padding: 24px 40px 24px 20px;
+  body:not(.sb-mobile) .admin-page {
+    padding: 24px 40px 24px 20px !important;
+  }
+  body:not(.sb-mobile) .admin-box {
+    max-width: 100% !important;
+    margin: 0 !important;
   }
 }
 

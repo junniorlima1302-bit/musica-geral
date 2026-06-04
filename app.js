@@ -1087,7 +1087,36 @@ async function renderizarRespostas(respostasFiltradas) {
   }
 
   // 🔥 lista de pessoas únicas
-  const pessoas = [...new Set(respostas.map(r => r.nome_pessoa))];
+  // Para Música Geral: inclui membros do banco que NÃO responderam (pois marcam o que NÃO podem)
+  const filtroMinisterioAtual = document.getElementById("filtroMinisterio")?.value || "todos";
+  let pessoas = [...new Set(respostas.map(r => r.nome_pessoa))];
+
+  // Se filtro é Música Geral ou Todos, busca membros de MG sem resposta no mês
+  if (filtroMinisterioAtual === "todos" || filtroMinisterioAtual === "Música Geral") {
+    const mesRef = respostas[0]?.mes_ref || null;
+    const { data: membrosMG } = await supabase
+      .from("membros")
+      .select("nome, ministerio")
+      .eq("ministerio", "Música Geral");
+
+    if (membrosMG) {
+      // Salva nomes de MG para usar no fallback de ministério
+      window._membrosMGNomes = new Set(membrosMG.map(m => m.nome));
+
+      // Pega nomes de MG que não estão nas respostas do mês
+      const nomesComResposta = new Set(
+        respostas.filter(r => r.ministerio === "Música Geral").map(r => r.nome_pessoa)
+      );
+      const semResposta = membrosMG
+        .filter(m => !nomesComResposta.has(m.nome))
+        .map(m => m.nome);
+
+      // Adiciona à lista de pessoas (sem duplicatas)
+      const pessoasSet = new Set(pessoas);
+      semResposta.forEach(n => pessoasSet.add(n));
+      pessoas = [...pessoasSet];
+    }
+  }
 
   let agrupado = {};
 
@@ -1105,7 +1134,11 @@ async function renderizarRespostas(respostasFiltradas) {
   pessoas.forEach(pessoa => {
 
     const dadosPessoa = respostas.filter(r => r.nome_pessoa === pessoa);
-    const ministerio = dadosPessoa[0]?.ministerio;
+    // Para membros sem resposta, busca ministério dos membros globais
+    let ministerio = dadosPessoa[0]?.ministerio;
+    if (!ministerio && window._membrosMGNomes && window._membrosMGNomes.has(pessoa)) {
+      ministerio = "Música Geral";
+    }
 
     compromissosFiltrados.forEach(comp => {
 

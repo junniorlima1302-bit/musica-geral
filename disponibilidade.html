@@ -207,18 +207,24 @@
 
       // Pré-seleciona botões das respostas anteriores
       if (modoEdicao && respostasAnteriores && respostasAnteriores.length > 0) {
-        const idsAnteriores     = new Set(respostasAnteriores.map(r => r.compromisso_id).filter(Boolean));
-        const eventosAnteriores = new Set(respostasAnteriores.map(r => r.evento).filter(Boolean));
+        const idsAnteriores = new Set(respostasAnteriores.map(r => r.compromisso_id).filter(Boolean));
+        // Fallback: "EVENTO | TURNO" para registros sem compromisso_id
+        const eventoTurnoAnteriores = new Set(
+          respostasAnteriores
+            .filter(r => !r.compromisso_id && r.evento && r.turno)
+            .map(r => r.evento.trim() + '|' + r.turno.trim())
+        );
 
         document.querySelectorAll(".btn-disponibilidade").forEach(btn => {
-          // Se tem ID, usa ID (mais preciso)
+          // 1. Por ID (mais preciso)
           if (btn.dataset.compromissoId && idsAnteriores.has(btn.dataset.compromissoId)) {
             btn.classList.add("ativo");
             return;
           }
-          // Fallback: compara pelo nome do grupo (evento no banco = "MISSAS DOMINICAIS")
-          const nomeGrupo = (btn.dataset.valor || "").split(" | ")[0].trim();
-          if (eventosAnteriores.has(nomeGrupo)) {
+          // 2. Por evento + turno (fallback para registros antigos sem ID)
+          const partes = (btn.dataset.valor || "").split(" | ");
+          const chave = (partes[0] || "").trim() + "|" + (partes[1] || "").trim();
+          if (eventoTurnoAnteriores.has(chave)) {
             btn.classList.add("ativo");
           }
         });

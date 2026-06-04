@@ -1200,13 +1200,10 @@ async function renderizarRespostas(respostasFiltradas) {
       const instrLabel = pessoa.instrumento ? ` — ${pessoa.instrumento}` : "";
 
       item.innerHTML = `
-        <span class="badge-excluir">✕</span>
         <strong>${pessoa.nome}</strong>
         <small>${pessoa.ministerio}</small>
         <small>${tipoLabel}${instrLabel}</small>
       `;
-
-      item.onclick = () => item.classList.toggle("selecionado");
 
       lista.appendChild(item);
     });

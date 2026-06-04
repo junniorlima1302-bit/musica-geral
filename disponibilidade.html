@@ -263,8 +263,15 @@
         const chavesAntigas = new Set(respostasAntigas.map(chave));
         const chavesNovas   = new Set((respostasNovas||[]).map(chave));
 
-        const entraram = (respostasNovas||[]).filter(r => !chavesAntigas.has(chave(r))).map(r => r.evento + ' - ' + r.turno);
-        const sairam   = respostasAntigas.filter(r => !chavesNovas.has(chave(r))).map(r => r.evento + ' - ' + r.turno);
+        // O que entrou de novo (estava marcado antes, não estava)
+        const entraram = (respostasNovas||[])
+          .filter(r => !chavesAntigas.has(chave(r)))
+          .map(r => (r.evento||'') + (r.turno ? ' - ' + r.turno : ''));
+
+        // O que saiu (estava antes, não está mais)
+        const sairam = respostasAntigas
+          .filter(r => !chavesNovas.has(chave(r)))
+          .map(r => (r.evento||'') + (r.turno ? ' - ' + r.turno : ''));
 
         // Só registra se houve mudança
         if (entraram.length > 0 || sairam.length > 0) {

@@ -402,7 +402,7 @@
       const mesAtual = new Date().toISOString().slice(0, 7); // YYYY-MM
       const { data: respostas } = await supabase
         .from('disponibilidades')
-        .select('id, evento, mes_ref, ministerio, compromisso_id')
+        .select('id, evento, turno, mes_ref, ministerio, compromisso_id')
         .eq('nome_pessoa', membroSelecionado.nome)
         .eq('mes_ref', mesAtual);
 

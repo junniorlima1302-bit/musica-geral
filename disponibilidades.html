@@ -273,9 +273,7 @@
 
     <div class="barra-acoes-disp">
       <button class="btn-respostas-status" onclick="abrirModalStatus()">👥 Quem respondeu</button>
-      <button class="btn-respostas-status" id="btn-edicoes" onclick="abrirModalEdicoes()" style="display:none;background:#e74c3c;position:relative;">
-        ✏️ Editaram <span id="badge-edicoes" style="background:white;color:#e74c3c;border-radius:10px;padding:1px 6px;font-size:11px;font-weight:800;margin-left:4px;">0</span>
-      </button>
+
       <button class="btn-lembrar-push" onclick="lembrarPendentes()" style="background:#e67e22;color:white;">🔔 Lembrar pendentes</button>
       <button class="btn-excluir-selecionados-disp" onclick="excluirSelecionadosDisp()">🗑️ Excluir selecionados</button>
     </div>
@@ -607,11 +605,11 @@
         .order('criado_em', { ascending: false });
 
       if (data && data.length > 0) {
-        document.getElementById('btn-edicoes').style.display = 'inline-flex';
+        document.getElementById('btn-edicoes-float').style.display = 'flex';
         document.getElementById('badge-edicoes').textContent = data.length;
         window._edicoesPendentes = data;
       } else {
-        document.getElementById('btn-edicoes').style.display = 'none';
+        document.getElementById('btn-edicoes-float').style.display = 'none';
         window._edicoesPendentes = [];
       }
     }
@@ -719,6 +717,18 @@
       if (e.target === document.getElementById('modal-edicoes')) fecharModalEdicoes();
     }
   </script>
+
+  <!-- BOTÃO FLUTUANTE EDIÇÕES -->
+  <div id="btn-edicoes-float" onclick="abrirModalEdicoes()" style="
+    display:none; position:fixed; bottom:24px; right:24px; z-index:998;
+    background:#e67e22; color:white; border-radius:50px;
+    padding:12px 18px; font-size:13px; font-weight:800;
+    box-shadow:0 4px 16px rgba(0,0,0,0.25); cursor:pointer;
+    align-items:center; gap:8px; font-family:inherit;
+  ">
+    ✏️ Editaram
+    <span id="badge-edicoes" style="background:white;color:#e67e22;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:800;">0</span>
+  </div>
 
   <script src="sidebar.js"></script>
 </body>

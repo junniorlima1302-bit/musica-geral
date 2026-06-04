@@ -804,7 +804,13 @@ textarea {
   align-items: flex-start;
   justify-content: center;
   background: linear-gradient(135deg, #e8f0fa 0%, #c5d8f0 100%);
-  padding: 20px 16px;
+  padding: 20px 32px;
+}
+
+@media (min-width: 1024px) {
+  body.sb-desktop .admin-page {
+    padding: 20px 40px;
+  }
 }
 
 .admin-box {

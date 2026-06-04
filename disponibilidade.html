@@ -248,34 +248,36 @@
       if (window._modoEdicao) {
         const nome = localStorage.getItem("nome");
         const ministerio = localStorage.getItem("ministerio");
+        const mesAtual = new Date().toISOString().slice(0, 7);
         const respostasAntigas = window._respostasAnteriores || [];
 
-        // Busca respostas novas para comparar
-        const mesAtual = new Date().toISOString().slice(0, 7);
+        // Busca respostas novas do banco
         const { data: respostasNovas } = await supabase
           .from('disponibilidades')
-          .select('compromisso_id, pode_ir, compromissos(titulo, data)')
+          .select('evento, turno, compromisso_id')
           .eq('nome_pessoa', nome)
-          .gte('mes_ref', mesAtual + '-01')
-          .lte('mes_ref', mesAtual + '-31');
+          .eq('mes_ref', mesAtual);
 
-        // Calcula diferenças
-        const idsAntigas = new Set(respostasAntigas.map(r => r.compromisso_id));
-        const idsNovas   = new Set((respostasNovas || []).map(r => r.compromisso_id));
+        // Chave de comparação: evento|turno
+        const chave = r => ((r.evento||'') + '|' + (r.turno||'')).trim();
+        const chavesAntigas = new Set(respostasAntigas.map(chave));
+        const chavesNovas   = new Set((respostasNovas||[]).map(chave));
 
-        const entraram = (respostasNovas || []).filter(r => !idsAntigas.has(r.compromisso_id));
-        const sairam   = respostasAntigas.filter(r => !idsNovas.has(r.compromisso_id));
+        const entraram = (respostasNovas||[]).filter(r => !chavesAntigas.has(chave(r))).map(r => r.evento + ' - ' + r.turno);
+        const sairam   = respostasAntigas.filter(r => !chavesNovas.has(chave(r))).map(r => r.evento + ' - ' + r.turno);
 
-        // Salva notificação de edição
-        await supabase.from('edicoes_disponibilidade').insert({
-          nome_pessoa: nome,
-          ministerio,
-          mes_ref: mesAtual,
-          entraram: entraram.map(r => r.compromissos?.titulo || r.compromisso_id),
-          sairam: sairam.map(r => r.compromisso_id),
-          visto: false,
-          criado_em: new Date().toISOString()
-        });
+        // Só registra se houve mudança
+        if (entraram.length > 0 || sairam.length > 0) {
+          await supabase.from('edicoes_disponibilidade').insert({
+            nome_pessoa: nome,
+            ministerio,
+            mes_ref: mesAtual,
+            entraram,
+            sairam,
+            visto: false,
+            criado_em: new Date().toISOString()
+          });
+        }
 
         localStorage.removeItem("modo_edicao");
         localStorage.removeItem("respostas_anteriores");

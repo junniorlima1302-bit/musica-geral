@@ -87,8 +87,7 @@
   }
 
   function isMobile() {
-    const ehTouch = /Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(navigator.userAgent || '');
-    return ehTouch || window.innerWidth < 1024;
+    return window.innerWidth <= 1023 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
   }
 
   function navItem(icon, label, href, sub) {

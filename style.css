@@ -801,10 +801,10 @@ textarea {
 .admin-page {
   min-height: 100vh;
   display: flex;
-  align-items: flex-start; /* ✅ era center — conteúdo longo ficava cortado em celular */
+  align-items: flex-start;
   justify-content: center;
   background: linear-gradient(135deg, #e8f0fa 0%, #c5d8f0 100%);
-  padding: 20px;
+  padding: 20px 16px;
 }
 
 .admin-box {
@@ -812,9 +812,9 @@ textarea {
   border: 1px solid #c4d4e8;
   backdrop-filter: none;
   border-radius: 16px;
-  padding: 24px 16px; /* ✅ era 30px 25px — padding lateral reduzido para celular */
+  padding: 24px 28px;
   width: 100%;
-  max-width: 900px;
+  max-width: 1400px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
 }
 

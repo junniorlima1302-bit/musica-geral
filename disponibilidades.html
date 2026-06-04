@@ -698,18 +698,60 @@
       document.body.style.overflow = 'hidden';
     }
 
-    async function confirmarEdicaoVista(id, btn) {
-      const senha = prompt('Digite sua senha para confirmar:');
+    // Armazena o id e btn pendentes para usar após confirmação de senha
+    window._pendingSenhaId  = null;
+    window._pendingSenhaBtn = null;
+
+    function confirmarEdicaoVista(id, btn) {
+      window._pendingSenhaId  = id;
+      window._pendingSenhaBtn = btn;
+      document.getElementById('input-senha-confirmacao').value = '';
+      document.getElementById('erro-senha').style.display = 'none';
+      document.getElementById('modal-senha-overlay').style.display = 'flex';
+      setTimeout(() => document.getElementById('input-senha-confirmacao').focus(), 100);
+    }
+
+    function fecharModalSenha() {
+      document.getElementById('modal-senha-overlay').style.display = 'none';
+      window._pendingSenhaId  = null;
+      window._pendingSenhaBtn = null;
+    }
+
+    async function confirmarSenhaModal() {
+      const senha = document.getElementById('input-senha-confirmacao').value;
       if (!senha) return;
 
+      const btnConfirmar = document.getElementById('btn-confirmar-senha');
+      btnConfirmar.disabled = true;
+      btnConfirmar.textContent = 'Verificando...';
+
       const { data: sessao } = await supabase.auth.getSession();
-      if (!sessao?.session?.user?.email) { alert('Sessão inválida.'); return; }
+      if (!sessao?.session?.user?.email) {
+        btnConfirmar.disabled = false;
+        btnConfirmar.textContent = 'Confirmar';
+        return;
+      }
 
       const { error } = await supabase.auth.signInWithPassword({
         email: sessao.session.user.email,
         password: senha
       });
-      if (error) { alert('Senha incorreta.'); return; }
+
+      btnConfirmar.disabled = false;
+      btnConfirmar.textContent = 'Confirmar';
+
+      if (error) {
+        document.getElementById('erro-senha').style.display = 'block';
+        document.getElementById('input-senha-confirmacao').value = '';
+        document.getElementById('input-senha-confirmacao').focus();
+        return;
+      }
+
+      // Senha correta — registra confirmação
+      document.getElementById('modal-senha-overlay').style.display = 'none';
+
+      const id  = window._pendingSenhaId;
+      const btn = window._pendingSenhaBtn;
 
       const { data: eu } = await supabase.from('usuarios').select('nome').eq('id', sessao.session.user.id).single();
       const quemViu = eu?.nome || sessao.session.user.email;
@@ -796,6 +838,25 @@
       });
     });
   </script>
+
+  <!-- MODAL SENHA -->
+  <div id="modal-senha-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:10000;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:white;border-radius:20px;padding:28px 24px;width:100%;max-width:360px;box-shadow:0 8px 32px rgba(0,0,0,0.25);text-align:center;">
+      <div style="font-size:36px;margin-bottom:12px;">🔐</div>
+      <h3 style="font-size:16px;font-weight:800;color:#1a2e4a;margin-bottom:6px;">Confirmar identidade</h3>
+      <p style="font-size:13px;color:#5a7a9a;margin-bottom:20px;">Digite sua senha para registrar a confirmação</p>
+      <input type="password" id="input-senha-confirmacao" placeholder="••••••••"
+        style="width:100%;padding:12px 16px;border-radius:10px;border:1.5px solid #a0b8d0;
+        font-size:16px;color:#1a2e4a;background:#eaf0f8;margin-bottom:16px;
+        box-sizing:border-box;text-align:center;letter-spacing:4px;"
+        onkeydown="if(event.key==='Enter') confirmarSenhaModal()">
+      <div id="erro-senha" style="color:#e74c3c;font-size:12px;margin-bottom:12px;display:none;">Senha incorreta. Tente novamente.</div>
+      <div style="display:flex;gap:10px;">
+        <button onclick="fecharModalSenha()" style="flex:1;padding:12px;background:#e0e8f0;color:#1a2e4a;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Cancelar</button>
+        <button onclick="confirmarSenhaModal()" id="btn-confirmar-senha" style="flex:1;padding:12px;background:#e67e22;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Confirmar</button>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL EDIÇÕES -->
   <div class="modal-status-overlay" id="modal-edicoes" onclick="fecharModalEdicoesFora(event)">

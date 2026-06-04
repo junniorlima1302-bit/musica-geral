@@ -763,9 +763,19 @@
       const quemViu = eu?.nome || sessao.session.user.email;
       const agora = new Date().toISOString();
 
-      await supabase.from('edicoes_disponibilidade')
-        .update({ visto: true, visto_por: quemViu, visto_em: agora })
-        .eq('id', id);
+      // Marca todas as edições desta pessoa como vistas (não só a última)
+      const nomePessoa = window._edicoesPendentes.find(e => e.id === id)?.nome_pessoa;
+      if (nomePessoa) {
+        const mesAtual = new Date().toISOString().slice(0, 7);
+        await supabase.from('edicoes_disponibilidade')
+          .update({ visto: true, visto_por: quemViu, visto_em: agora })
+          .eq('nome_pessoa', nomePessoa)
+          .eq('mes_ref', mesAtual);
+      } else {
+        await supabase.from('edicoes_disponibilidade')
+          .update({ visto: true, visto_por: quemViu, visto_em: agora })
+          .eq('id', id);
+      }
 
       // Torna opaco e mostra quem viu
       const item = document.querySelector(`[data-edicao-id="${id}"]`);
@@ -776,14 +786,8 @@
         }));
       }
 
-      // Atualiza pendentes e badge
-      window._edicoesPendentes = (window._edicoesPendentes || []).filter(e => e.id !== id);
-      const pendentes = window._edicoesPendentes.length;
-      const btnFloat = document.getElementById('btn-edicoes-float');
-      document.getElementById('badge-edicoes').textContent = pendentes > 0 ? pendentes : '✓';
-      if (pendentes === 0) {
-        btnFloat.classList.add('sem-pendentes');
-      }
+      // Recarrega contagem de pendentes do banco
+      await carregarEdicoes();
     }
 
     async function fecharModalEdicoes() {

@@ -606,29 +606,19 @@
         .eq('visto', false)
         .order('criado_em', { ascending: false });
 
-      // Busca total (incluindo vistas) pra saber se deve mostrar o botão
-      const { data: todas } = await supabase
-        .from('edicoes_disponibilidade')
-        .select('id')
-        .eq('mes_ref', mesAtual);
-
       window._edicoesPendentes = pendentes || [];
       const btn = document.getElementById('btn-edicoes-float');
       const badge = document.getElementById('badge-edicoes');
+      const nPendentes = (pendentes || []).length;
 
-      if (todas && todas.length > 0) {
-        btn.style.display = 'flex';
-        const nPendentes = (pendentes || []).length;
-        badge.textContent = nPendentes;
+      // Botão sempre visível
+      btn.style.display = 'flex';
+      badge.textContent = nPendentes > 0 ? nPendentes : '✓';
 
-        if (nPendentes > 0) {
-          btn.classList.remove('sem-pendentes');
-        } else {
-          btn.classList.add('sem-pendentes');
-          badge.textContent = '✓';
-        }
+      if (nPendentes > 0) {
+        btn.classList.remove('sem-pendentes');
       } else {
-        btn.style.display = 'none';
+        btn.classList.add('sem-pendentes');
       }
     }
 

@@ -597,68 +597,97 @@
     // ── EDIÇÕES ──
     async function carregarEdicoes() {
       const mesAtual = new Date().toISOString().slice(0, 7);
-      const { data } = await supabase
+
+      // Busca pendentes
+      const { data: pendentes } = await supabase
         .from('edicoes_disponibilidade')
         .select('*')
         .eq('mes_ref', mesAtual)
         .eq('visto', false)
         .order('criado_em', { ascending: false });
 
-      if (data && data.length > 0) {
-        document.getElementById('btn-edicoes-float').style.display = 'flex';
-        document.getElementById('badge-edicoes').textContent = data.length;
-        window._edicoesPendentes = data;
+      // Busca total (incluindo vistas) pra saber se deve mostrar o botão
+      const { data: todas } = await supabase
+        .from('edicoes_disponibilidade')
+        .select('id')
+        .eq('mes_ref', mesAtual);
+
+      window._edicoesPendentes = pendentes || [];
+      const btn = document.getElementById('btn-edicoes-float');
+      const badge = document.getElementById('badge-edicoes');
+
+      if (todas && todas.length > 0) {
+        btn.style.display = 'flex';
+        const nPendentes = (pendentes || []).length;
+        badge.textContent = nPendentes;
+
+        if (nPendentes > 0) {
+          btn.classList.remove('sem-pendentes');
+        } else {
+          btn.classList.add('sem-pendentes');
+          badge.textContent = '✓';
+        }
       } else {
-        document.getElementById('btn-edicoes-float').style.display = 'none';
-        window._edicoesPendentes = [];
+        btn.style.display = 'none';
       }
+    }
+
+    function renderizarEdicao(e) {
+      const min = e.ministerio || '';
+      const isMG = min.toLowerCase().includes('música geral') || min.toLowerCase().includes('musica geral');
+      const visto = e.visto;
+
+      const linhasEntrou = (e.entraram || []).map(item => {
+        const msg = isMG
+          ? `<span style="color:#e74c3c;">❌ Não pode mais servir em: <strong>${item}</strong></span>`
+          : `<span style="color:#27ae60;">✅ Passou a poder servir em: <strong>${item}</strong></span>`;
+        return `<div style="font-size:12px;margin-top:6px;">${msg}</div>`;
+      }).join('');
+
+      const linhasSaiu = (e.sairam || []).map(item => {
+        const msg = isMG
+          ? `<span style="color:#27ae60;">✅ Voltou a poder servir em: <strong>${item}</strong></span>`
+          : `<span style="color:#e74c3c;">❌ Não pode mais servir em: <strong>${item}</strong></span>`;
+        return `<div style="font-size:12px;margin-top:6px;">${msg}</div>`;
+      }).join('');
+
+      const vistoHtml = visto
+        ? `<div style="margin-top:10px;font-size:11px;color:#888;font-style:italic;">
+             ✅ Visto por <strong>${e.visto_por || '—'}</strong>
+             ${e.visto_em ? '· ' + new Date(e.visto_em).toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : ''}
+           </div>`
+        : `<button onclick="confirmarEdicaoVista('${e.id}', this)"
+             style="margin-top:12px;width:100%;padding:10px;background:#e67e22;color:white;
+             border:none;border-radius:8px;font-size:13px;font-weight:700;
+             cursor:pointer;font-family:inherit;">
+             ✅ Confirmar — Vi esta alteração
+           </button>`;
+
+      return `
+        <div data-edicao-id="${e.id}" style="border-bottom:1px solid #dde8f0;padding:16px 0;${visto ? 'opacity:0.45;' : ''}">
+          <strong style="font-size:14px;color:#1a2e4a;">${e.nome_pessoa}</strong>
+          <span style="font-size:11px;color:#7a9ec4;margin-left:8px;">${e.ministerio}</span>
+          ${linhasEntrou}
+          ${linhasSaiu}
+          ${vistoHtml}
+        </div>`;
     }
 
     async function abrirModalEdicoes() {
       const lista = document.getElementById('lista-edicoes');
-      const edicoes = window._edicoesPendentes || [];
+      const mesAtual = new Date().toISOString().slice(0, 7);
 
-      if (edicoes.length === 0) {
-        lista.innerHTML = '<p style="text-align:center;color:#5a7a9a;padding:20px;">Nenhuma edição pendente.</p>';
+      // Busca TODAS as edições do mês (pendentes e já vistas)
+      const { data: todasEdicoes } = await supabase
+        .from('edicoes_disponibilidade')
+        .select('*')
+        .eq('mes_ref', mesAtual)
+        .order('criado_em', { ascending: false });
+
+      if (!todasEdicoes || todasEdicoes.length === 0) {
+        lista.innerHTML = '<p style="text-align:center;color:#5a7a9a;padding:20px;">Nenhuma edição este mês.</p>';
       } else {
-        lista.innerHTML = edicoes.map(e => {
-          const min = e.ministerio || '';
-          const isMG = min.toLowerCase().includes('música geral') || min.toLowerCase().includes('musica geral');
-
-          // Música Geral: adicionar = não pode servir / remover = voltou a poder
-          // Geral Eventos: adicionar = passou a poder / remover = não pode mais
-          const linhasEntrou = (e.entraram || []).map(item => {
-            const msg = isMG
-              ? `<span style="color:#e74c3c;">❌ Não pode mais servir em: <strong>${item}</strong></span>`
-              : `<span style="color:#27ae60;">✅ Passou a poder servir em: <strong>${item}</strong></span>`;
-            return `<div style="font-size:12px;margin-top:6px;">${msg}</div>`;
-          }).join('');
-
-          const linhasSaiu = (e.sairam || []).map(item => {
-            const msg = isMG
-              ? `<span style="color:#27ae60;">✅ Voltou a poder servir em: <strong>${item}</strong></span>`
-              : `<span style="color:#e74c3c;">❌ Não pode mais servir em: <strong>${item}</strong></span>`;
-            return `<div style="font-size:12px;margin-top:6px;">${msg}</div>`;
-          }).join('');
-
-          return `
-            <div style="border-bottom:1px solid #dde8f0;padding:16px 0;">
-              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-                <div>
-                  <strong style="font-size:14px;color:#1a2e4a;">${e.nome_pessoa}</strong>
-                  <span style="font-size:11px;color:#7a9ec4;margin-left:8px;">${e.ministerio}</span>
-                </div>
-              </div>
-              ${linhasEntrou}
-              ${linhasSaiu}
-              <button onclick="confirmarEdicaoVista('${e.id}', this)"
-                style="margin-top:12px;width:100%;padding:10px;background:#e67e22;color:white;
-                border:none;border-radius:8px;font-size:13px;font-weight:700;
-                cursor:pointer;font-family:inherit;">
-                ✅ Confirmar — Vi esta alteração
-              </button>
-            </div>`;
-        }).join('');
+        lista.innerHTML = todasEdicoes.map(renderizarEdicao).join('');
       }
 
       document.getElementById('modal-edicoes').classList.add('aberto');
@@ -666,11 +695,9 @@
     }
 
     async function confirmarEdicaoVista(id, btn) {
-      // Pede senha do admin para confirmar
-      const senha = prompt('Digite sua senha de acesso para confirmar:');
+      const senha = prompt('Digite sua senha para confirmar:');
       if (!senha) return;
 
-      // Verifica senha do usuário logado
       const { data: sessao } = await supabase.auth.getSession();
       if (!sessao?.session?.user?.email) { alert('Sessão inválida.'); return; }
 
@@ -678,27 +705,33 @@
         email: sessao.session.user.email,
         password: senha
       });
-
       if (error) { alert('Senha incorreta.'); return; }
 
-      // Registra quem confirmou
       const { data: eu } = await supabase.from('usuarios').select('nome').eq('id', sessao.session.user.id).single();
       const quemViu = eu?.nome || sessao.session.user.email;
+      const agora = new Date().toISOString();
 
       await supabase.from('edicoes_disponibilidade')
-        .update({ visto: true, visto_por: quemViu, visto_em: new Date().toISOString() })
+        .update({ visto: true, visto_por: quemViu, visto_em: agora })
         .eq('id', id);
 
-      // Remove o item do DOM
-      btn.closest('div[style*="border-bottom"]').remove();
+      // Torna opaco e mostra quem viu
+      const item = document.querySelector(`[data-edicao-id="${id}"]`);
+      if (item) {
+        item.style.opacity = '0.45';
+        btn.replaceWith(Object.assign(document.createElement('div'), {
+          innerHTML: `<div style="margin-top:10px;font-size:11px;color:#888;font-style:italic;">✅ Visto por <strong>${quemViu}</strong> · ${new Date(agora).toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>`
+        }));
+      }
 
-      // Atualiza pendentes
+      // Atualiza pendentes e badge
       window._edicoesPendentes = (window._edicoesPendentes || []).filter(e => e.id !== id);
-
-      if (window._edicoesPendentes.length === 0) {
-        document.getElementById('modal-edicoes').classList.remove('aberto');
-        document.body.style.overflow = '';
-        document.getElementById('btn-edicoes-float').style.display = 'none';
+      const pendentes = window._edicoesPendentes.length;
+      document.getElementById('badge-edicoes').textContent = pendentes;
+      const btn = document.getElementById('btn-edicoes-float');
+      document.getElementById('badge-edicoes').textContent = pendentes > 0 ? pendentes : '✓';
+      if (pendentes === 0) {
+        btn.classList.add('sem-pendentes');
       }
     }
 
@@ -781,12 +814,24 @@
   </script>
 
   <!-- BOTÃO FLUTUANTE EDIÇÕES -->
+  <style>
+    @keyframes pulsar {
+      0%, 100% { transform: scale(1); box-shadow: 0 4px 16px rgba(230,126,34,0.4); }
+      50% { transform: scale(1.08); box-shadow: 0 6px 24px rgba(230,126,34,0.7); }
+    }
+    #btn-edicoes-float { animation: pulsar 1.6s ease-in-out infinite; }
+    #btn-edicoes-float.sem-pendentes {
+      animation: none;
+      opacity: 0.45;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+  </style>
   <div id="btn-edicoes-float" onclick="abrirModalEdicoes()" style="
     display:none; position:fixed; bottom:24px; right:24px; z-index:998;
     background:#e67e22; color:white; border-radius:50px;
     padding:12px 18px; font-size:13px; font-weight:800;
-    box-shadow:0 4px 16px rgba(0,0,0,0.25); cursor:pointer;
-    align-items:center; gap:8px; font-family:inherit;
+    cursor:pointer; align-items:center; gap:8px; font-family:inherit;
+    transition: opacity 0.3s ease;
   ">
     ✏️ Editaram
     <span id="badge-edicoes" style="background:white;color:#e67e22;border-radius:10px;padding:1px 8px;font-size:12px;font-weight:800;">0</span>

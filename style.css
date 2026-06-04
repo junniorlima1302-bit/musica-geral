@@ -808,9 +808,9 @@ textarea {
   box-sizing: border-box;
 }
 
-/* Desktop: compensa o padding-left do sidebar para centralizar */
+/* Desktop: padding menor à esquerda pois sidebar já ocupa 220px */
 @media (min-width: 1024px) {
-  body.sb-desktop .admin-page {
+  .admin-page {
     padding: 24px 40px 24px 20px;
   }
 }

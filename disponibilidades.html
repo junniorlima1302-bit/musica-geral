@@ -277,7 +277,25 @@
       <button class="btn-lembrar-push" onclick="lembrarPendentes()" style="background:#e67e22;color:white;">🔔 Lembrar pendentes</button>
     </div>
 
-    <div id="lista-respostas"></div>
+    <!-- Seção indisponíveis Geral Eventos -->
+  <div id="secao-nenhuma-data" style="display:none; margin-bottom:20px;">
+    <div style="background:#c0392b; color:white; padding:12px 18px; border-radius:10px 10px 0 0; font-weight:700; font-size:14px;">
+      ❌ Não podem em nenhuma data — Geral Eventos
+    </div>
+    <div id="lista-nenhuma-data" style="background:#fde8e8; border:1px solid #e74c3c; border-top:none; border-radius:0 0 10px 10px; padding:14px 18px;">
+    </div>
+  </div>
+
+  <!-- Seção pode em todas — Música Geral -->
+  <div id="secao-todas-datas" style="display:none; margin-bottom:20px;">
+    <div style="background:#27ae60; color:white; padding:12px 18px; border-radius:10px 10px 0 0; font-weight:700; font-size:14px;">
+      ✅ Podem em todas as datas — Música Geral
+    </div>
+    <div id="lista-todas-datas" style="background:#e8f8ef; border:1px solid #27ae60; border-top:none; border-radius:0 0 10px 10px; padding:14px 18px;">
+    </div>
+  </div>
+
+  <div id="lista-respostas"></div>
   </div>
 
   <!-- ── MODAL STATUS ── -->
@@ -374,6 +392,7 @@
       _mesDispAtivo = document.getElementById("filtroMesDisp").value;
       document.getElementById("filtroEvento").value = "todos";
       await carregarRespostasComMes();
+      carregarIndisponiveis();
     }
 
     async function carregarRespostasComMes() {
@@ -795,6 +814,69 @@
     }
 
     carregarEdicoes();
+    carregarIndisponiveis();
+  </script>
+
+  <script>
+    async function carregarIndisponiveis() {
+      const filtroMes = document.getElementById("filtroMesDisp")?.value || "todos";
+      if (filtroMes === "todos") {
+        document.getElementById("secao-nenhuma-data").style.display = "none";
+        document.getElementById("secao-todas-datas").style.display = "none";
+        return;
+      }
+
+      // Busca quem marcou nenhuma data (Geral Eventos)
+      const { data: nenhuma } = await supabase
+        .from("disponibilidades")
+        .select("nome_pessoa, ministerio, tipo, instrumento")
+        .eq("mes_ref", filtroMes)
+        .eq("nenhuma_data", true);
+
+      // Busca quem marcou todas as datas (Música Geral)
+      const { data: todas } = await supabase
+        .from("disponibilidades")
+        .select("nome_pessoa, ministerio, tipo, instrumento")
+        .eq("mes_ref", filtroMes)
+        .eq("todas_datas", true);
+
+      // Renderiza indisponíveis Geral Eventos
+      const secNenhuma = document.getElementById("secao-nenhuma-data");
+      const listaNenhuma = document.getElementById("lista-nenhuma-data");
+      if (nenhuma && nenhuma.length > 0) {
+        secNenhuma.style.display = "block";
+        listaNenhuma.innerHTML = nenhuma.map(p => `
+          <div style="display:inline-block; margin:4px 8px 4px 0; padding:6px 14px;
+            background:white; border:1px solid #e74c3c; border-radius:20px;
+            font-size:13px; font-weight:700; color:#c0392b;">
+            ${p.nome_pessoa}
+            <span style="font-size:11px; color:#7f8c8d; font-weight:400;">
+              — ${p.tipo || ""}${p.instrumento ? " · " + p.instrumento : ""}
+            </span>
+          </div>`).join("");
+      } else {
+        secNenhuma.style.display = "none";
+      }
+
+      // Renderiza podem em todas — Música Geral
+      const secTodas = document.getElementById("secao-todas-datas");
+      const listaTodas = document.getElementById("lista-todas-datas");
+      if (todas && todas.length > 0) {
+        secTodas.style.display = "block";
+        listaTodas.innerHTML = todas.map(p => `
+          <div style="display:inline-block; margin:4px 8px 4px 0; padding:6px 14px;
+            background:white; border:1px solid #27ae60; border-radius:20px;
+            font-size:13px; font-weight:700; color:#1a7a40;">
+            ${p.nome_pessoa}
+            <span style="font-size:11px; color:#7f8c8d; font-weight:400;">
+              — ${p.tipo || ""}${p.instrumento ? " · " + p.instrumento : ""}
+            </span>
+          </div>`).join("");
+      } else {
+        secTodas.style.display = "none";
+      }
+    }
+
   </script>
 
   <script>

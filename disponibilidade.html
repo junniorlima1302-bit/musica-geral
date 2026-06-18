@@ -121,6 +121,22 @@
     <br>
 
     <button id="btn-enviar" onclick="enviarDisponibilidade()">Enviar</button>
+
+    <!-- Botão especial Geral Eventos -->
+    <button id="btn-nenhuma-data" onclick="responderNenhumaData()"
+      style="display:none; width:100%; margin-top:10px; background:#7f8c8d; color:white;
+      border:none; border-radius:12px; padding:14px; font-size:15px; font-weight:700;
+      cursor:pointer; font-family:inherit;">
+      ❌ Não posso em nenhuma data
+    </button>
+
+    <!-- Botão especial Música Geral -->
+    <button id="btn-todas-datas" onclick="responderTodasDatas()"
+      style="display:none; width:100%; margin-top:10px; background:#27ae60; color:white;
+      border:none; border-radius:12px; padding:14px; font-size:15px; font-weight:700;
+      cursor:pointer; font-family:inherit;">
+      ✅ Posso em todas as datas
+    </button>
   </div>
 
   <!-- POPUP SUCESSO -->
@@ -193,6 +209,13 @@
         `;
         document.getElementById("btn-enviar").style.display = "none";
         return;
+      }
+
+      // Mostra botão especial conforme ministério
+      if (ministerio && ministerio.includes("Música")) {
+        document.getElementById("btn-todas-datas").style.display = "block";
+      } else {
+        document.getElementById("btn-nenhuma-data").style.display = "block";
       }
 
       // 2. Carrega as datas — pré-seleciona respostas anteriores se modo edição
@@ -301,6 +324,65 @@
       localStorage.removeItem("instrumento");
       localStorage.removeItem("membro_id");
       document.getElementById("popup-sucesso").style.display = "flex";
+    }
+
+    async function responderNenhumaData() {
+      if (!confirm("Confirmar que não pode em nenhuma data deste mês?")) return;
+      const btn = document.getElementById("btn-nenhuma-data");
+      btn.disabled = true;
+      btn.textContent = "Enviando...";
+
+      const mesRef = await obterMesRefAtivo();
+      // Salva registro especial no banco
+      const { error } = await supabase.from("disponibilidades").insert({
+        nome_pessoa: nome,
+        ministerio: ministerio,
+        evento: "__NENHUMA_DATA__",
+        turno: "__NENHUMA__",
+        tipo: localStorage.getItem("tipo") || "",
+        instrumento: localStorage.getItem("instrumento") || "",
+        mes_ref: mesRef,
+        nenhuma_data: true
+      });
+
+      btn.disabled = false;
+      btn.textContent = "❌ Não posso em nenhuma data";
+
+      if (error) { alert("Erro ao enviar. Tente novamente."); return; }
+      await mostrarPopup();
+    }
+
+    async function responderTodasDatas() {
+      if (!confirm("Confirmar que pode em todas as datas deste mês?")) return;
+      const btn = document.getElementById("btn-todas-datas");
+      btn.disabled = true;
+      btn.textContent = "Enviando...";
+
+      // Para Música Geral: não marcar nada = pode em tudo
+      // Só precisamos garantir que não há registros antigos deste mês
+      const mesRef = await obterMesRefAtivo();
+      // Remove respostas antigas se for edição
+      if (localStorage.getItem("modo_edicao") === "true") {
+        await supabase.from("disponibilidades")
+          .delete()
+          .eq("nome_pessoa", nome)
+          .eq("mes_ref", mesRef);
+      }
+      // Salva registro especial indicando "pode em tudo"
+      await supabase.from("disponibilidades").insert({
+        nome_pessoa: nome,
+        ministerio: ministerio,
+        evento: "__TODAS_DATAS__",
+        turno: "__TODAS__",
+        tipo: localStorage.getItem("tipo") || "",
+        instrumento: localStorage.getItem("instrumento") || "",
+        mes_ref: mesRef,
+        todas_datas: true
+      });
+
+      btn.disabled = false;
+      btn.textContent = "✅ Posso em todas as datas";
+      await mostrarPopup();
     }
 
     function fecharPopup() {

@@ -75,7 +75,7 @@
 
   <div class="admin-box">
     <h2>Justificativas</h2>
-    <button class="btn-voltar" onclick="window.location.href='dashboard.html'">← Voltar</button>
+    <button class="btn-voltar" onclick="voltarPagina()">← Voltar</button>
 
     <div class="abas">
       <button class="aba ativa" id="aba-pessoa" onclick="alternarAba('pessoa')">Por Pessoa</button>
@@ -83,6 +83,9 @@
     </div>
 
     <div class="filtros-just">
+      <select id="filtro-mes-just" onchange="carregarJustificativas()">
+        <option value="todos">Todos os meses</option>
+      </select>
       <select id="filtro-nome-just" onchange="renderizar()">
         <option value="todos">Todas as pessoas</option>
       </select>
@@ -108,24 +111,62 @@
       const { data: eu } = await supabase
         .from("usuarios").select("papel").eq("id", userId).single();
 
-      // Todos os usuários logados podem ver justificativas
+      if (!eu || eu.papel !== "admin") {
+        alert("Acesso restrito ao administrador.");
+        window.location.href = "dashboard.html";
+        return;
+      }
 
-      await carregarJustificativas();
+      await popularFiltroMeses();
     }
 
     async function carregarJustificativas() {
-      const { data, error } = await supabase
+      const mesSel = document.getElementById("filtro-mes-just")?.value || "todos";
+
+      let query = supabase
         .from("disponibilidades")
         .select("*")
         .eq("ministerio", "Música Geral")
         .not("justificativa", "is", null)
         .neq("justificativa", "");
 
+      if (mesSel !== "todos") {
+        query = query.eq("mes_ref", mesSel);
+      }
+
+      const { data, error } = await query;
       if (error) { console.error(error); return; }
 
       dadosJustificativas = data;
       popularFiltroNomes(data);
       renderizar();
+    }
+
+    async function popularFiltroMeses() {
+      const { data } = await supabase
+        .from("disponibilidades")
+        .select("mes_ref")
+        .eq("ministerio", "Música Geral")
+        .not("justificativa", "is", null)
+        .not("mes_ref", "is", null);
+
+      const meses = [...new Set((data || []).map(d => d.mes_ref).filter(Boolean))].sort().reverse();
+      const sel = document.getElementById("filtro-mes-just");
+      sel.innerHTML = '<option value="todos">Todos os meses</option>';
+      meses.forEach(m => {
+        const [ano, mes] = m.split("-");
+        const nomes = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = `${nomes[parseInt(mes)-1]} ${ano}`;
+        sel.appendChild(opt);
+      });
+
+      // Seleciona o mês mais recente por padrão
+      if (meses.length > 0) {
+        sel.value = meses[0];
+        await popularFiltroMeses();
+      }
     }
 
     function popularFiltroNomes(data) {
@@ -147,8 +188,9 @@
     }
 
     function limparFiltro() {
+      document.getElementById("filtro-mes-just").value = "todos";
       document.getElementById("filtro-nome-just").value = "todos";
-      renderizar();
+      carregarJustificativas();
     }
 
     function alternarAba(modo) {

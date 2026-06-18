@@ -28,8 +28,29 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  const url = event.request.url;
+
+  // Ignora requisições não-GET, APIs externas e chrome-extension
+  if (
+    event.request.method !== 'GET' ||
+    url.includes('supabase.co') ||
+    url.includes('googleapis.com') ||
+    url.includes('jsdelivr.net') ||
+    url.startsWith('chrome-extension')
+  ) {
+    return;
+  }
+
   event.respondWith(
-    fetch(event.request).catch(() => caches.match(event.request))
+    fetch(event.request)
+      .then(response => {
+        // Só cacheia respostas válidas
+        if (!response || response.status !== 200 || response.type === 'opaque') {
+          return response;
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
 

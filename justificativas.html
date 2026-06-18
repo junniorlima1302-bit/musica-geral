@@ -146,27 +146,24 @@
       const { data } = await supabase
         .from("disponibilidades")
         .select("mes_ref")
-        .eq("ministerio", "Música Geral")
-        .not("justificativa", "is", null)
         .not("mes_ref", "is", null);
 
       const meses = [...new Set((data || []).map(d => d.mes_ref).filter(Boolean))].sort().reverse();
       const sel = document.getElementById("filtro-mes-just");
       sel.innerHTML = '<option value="todos">Todos os meses</option>';
-      meses.forEach(m => {
-        const [ano, mes] = m.split("-");
-        const nomes = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+      meses.forEach(mes => {
+        const [ano, m] = mes.split("-");
+        const label = new Date(ano, m - 1).toLocaleString("pt-BR", { month: "long", year: "numeric" });
         const opt = document.createElement("option");
-        opt.value = m;
-        opt.textContent = `${nomes[parseInt(mes)-1]} ${ano}`;
+        opt.value = mes;
+        opt.textContent = label.charAt(0).toUpperCase() + label.slice(1);
         sel.appendChild(opt);
       });
 
-      // Seleciona o mês mais recente por padrão
       if (meses.length > 0) {
         sel.value = meses[0];
-        await popularFiltroMeses();
       }
+      await carregarJustificativas();
     }
 
     function popularFiltroNomes(data) {

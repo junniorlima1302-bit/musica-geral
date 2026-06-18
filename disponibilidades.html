@@ -277,18 +277,16 @@
       <button class="btn-lembrar-push" onclick="lembrarPendentes()" style="background:#e67e22;color:white;">🔔 Lembrar pendentes</button>
     </div>
 
-    <!-- Seção indisponíveis Geral Eventos -->
-  <div id="secao-nenhuma-data" style="display:none; margin-bottom:20px;">
+  <div id="lista-respostas"></div>
+
+  <!-- Seção indisponíveis Geral Eventos — final da página -->
+  <div id="secao-nenhuma-data" style="display:none; margin-top:24px;">
     <div style="background:#c0392b; color:white; padding:12px 18px; border-radius:10px 10px 0 0; font-weight:700; font-size:14px;">
       ❌ Não podem em nenhuma data — Geral Eventos
     </div>
     <div id="lista-nenhuma-data" style="background:#fde8e8; border:1px solid #e74c3c; border-top:none; border-radius:0 0 10px 10px; padding:14px 18px;">
     </div>
   </div>
-
-
-
-  <div id="lista-respostas"></div>
   </div>
 
   <!-- ── MODAL STATUS ── -->
@@ -379,6 +377,7 @@
       }
 
       await carregarRespostasComMes();
+      carregarIndisponiveis();
     }
 
     async function trocarMesDisp() {
@@ -824,7 +823,6 @@
       const filtroMes = document.getElementById("filtroMesDisp")?.value || "todos";
       if (filtroMes === "todos") {
         document.getElementById("secao-nenhuma-data").style.display = "none";
-        document.getElementById("secao-todas-datas").style.display = "none";
         return;
       }
 

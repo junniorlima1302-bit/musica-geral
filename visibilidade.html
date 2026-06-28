@@ -13,48 +13,23 @@
     .secao-header h3 { color: #1a2e4a; font-size: 14px; margin: 0; font-weight: 700; }
     .secao-body { background: #cfd8e8; padding: 14px; }
 
-    .grade-vis {
-      display: grid !important;
-      grid-template-columns: repeat(4, 1fr) !important;
-      gap: 8px;
-    }
-
+    .grade-vis { display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 8px; }
     .btn-vis {
-      padding: 10px 4px !important;
-      border-radius: 10px !important;
-      border: 2px solid #a0b8d0 !important;
-      background: white !important;
-      font-size: 11px !important;
-      font-weight: 700 !important;
-      color: #1a2e4a !important;
-      cursor: pointer !important;
-      transition: 0.2s;
-      text-align: center !important;
-      font-family: 'Nunito', sans-serif !important;
-      margin: 0 !important;
-      width: 100% !important;
-      min-height: 0 !important;
-      display: block !important;
+      padding: 10px 4px !important; border-radius: 10px !important;
+      border: 2px solid #a0b8d0 !important; background: white !important;
+      font-size: 11px !important; font-weight: 700 !important; color: #1a2e4a !important;
+      cursor: pointer !important; text-align: center !important;
+      font-family: 'Nunito', sans-serif !important; margin: 0 !important;
+      width: 100% !important; min-height: 0 !important; display: block !important;
     }
     .btn-vis:hover { border-color: #1b4580 !important; background: #eaf0f8 !important; }
-    .btn-vis.liberado {
-      background: #d8f0e0 !important;
-      border-color: #2e7d52 !important;
-      color: #1a4a2a !important;
-    }
-    .btn-vis.liberado:hover { background: #c4e8d0 !important; }
+    .btn-vis.liberado { background: #d8f0e0 !important; border-color: #2e7d52 !important; color: #1a4a2a !important; }
 
-    .ano-vis {
-      display: flex; align-items: center; justify-content: center;
-      gap: 10px; margin-bottom: 12px;
-    }
+    .ano-vis { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
     .btn-ano-vis {
-      width: 30px; height: 30px; border-radius: 50%;
-      border: 1.5px solid #a0b8d0; background: white;
-      font-size: 14px; cursor: pointer; display: flex;
-      align-items: center; justify-content: center;
-      transition: 0.2s; padding: 0; margin: 0;
-      color: #1a2e4a;
+      width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid #a0b8d0;
+      background: white; font-size: 14px; cursor: pointer; display: flex;
+      align-items: center; justify-content: center; transition: 0.2s; padding: 0; margin: 0; color: #1a2e4a;
     }
     .btn-ano-vis:hover { background: #eaf0f8; }
     .btn-ano-vis:disabled { opacity: 0.3; cursor: not-allowed; }
@@ -65,17 +40,49 @@
     .leg-dot { width: 12px; height: 12px; border-radius: 3px; }
     .leg-dot.lib { background: #d8f0e0; border: 1.5px solid #2e7d52; }
     .leg-dot.blo { background: white; border: 1.5px solid #a0b8d0; }
+
+    /* Links */
+    .grade-links { display: flex; flex-direction: column; gap: 8px; }
+    .link-row {
+      display: flex; align-items: center; gap: 10px; background: white;
+      border-radius: 10px; padding: 10px 12px; border: 1px solid #a0b8d0;
+    }
+    .link-row label { font-size: 12px; font-weight: 700; color: #1a2e4a; min-width: 36px; }
+    .link-row input {
+      flex: 1; border: 1px solid #a0b8d0; border-radius: 8px; padding: 6px 10px;
+      font-size: 12px; color: #1a2e4a; background: #eaf0f8; font-family: 'Nunito', sans-serif;
+      margin: 0;
+    }
+    .link-row input:focus { outline: 2px solid #1b4580; background: white; }
+    .link-row input.tem-link { background: #d8f0e0; border-color: #2e7d52; }
+    .btn-salvar-links {
+      margin-top: 12px; width: 100%; padding: 12px; background: #1b4580;
+      color: white; border: none; border-radius: 10px; font-size: 14px;
+      font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif;
+    }
+    .btn-salvar-links:hover { background: #153560; }
+    .btn-salvar-links:disabled { opacity: 0.6; cursor: not-allowed; }
+    .hal-link-row {
+      display: flex; align-items: center; gap: 10px; background: white;
+      border-radius: 10px; padding: 10px 12px; border: 1px solid #a0b8d0; margin-top: 8px;
+    }
+    .hal-link-row label { font-size: 12px; font-weight: 700; color: #1a2e4a; min-width: 60px; }
+    .hal-link-row input {
+      flex: 1; border: 1px solid #a0b8d0; border-radius: 8px; padding: 6px 10px;
+      font-size: 12px; color: #1a2e4a; background: #eaf0f8; font-family: 'Nunito', sans-serif; margin: 0;
+    }
+    .hal-link-row input.tem-link { background: #d8f0e0; border-color: #2e7d52; }
   </style>
 </head>
 <body class="admin-page">
 <div class="admin-box">
   <h2>🎛️ Visibilidade</h2>
   <button class="btn-voltar" onclick="window.location.href='dashboard.html'">← Voltar</button>
-  <p style="font-size:13px;color:#5a7a9a;margin-bottom:16px;">Clique nos meses para liberar ou bloquear a visualização.</p>
+  <p style="font-size:13px;color:#5a7a9a;margin-bottom:16px;">Gerencie a visibilidade dos meses e os links de Escalas e Repertórios.</p>
 
-  <!-- ESCALAS -->
+  <!-- ESCALAS — VISIBILIDADE -->
   <div class="secao-wrap">
-    <div class="secao-header"><h3>📋 Escalas</h3></div>
+    <div class="secao-header"><h3>📋 Escalas — Visibilidade</h3></div>
     <div class="secao-body">
       <div class="ano-vis">
         <button class="btn-ano-vis" id="esc-prev" onclick="mudarAnoEsc(-1)">‹</button>
@@ -91,9 +98,27 @@
     </div>
   </div>
 
-  <!-- REPERTÓRIOS -->
+  <!-- ESCALAS — LINKS -->
   <div class="secao-wrap">
-    <div class="secao-header"><h3>🎼 Repertórios</h3></div>
+    <div class="secao-header"><h3>📋 Escalas — Links</h3></div>
+    <div class="secao-body">
+      <div class="ano-vis">
+        <button class="btn-ano-vis" id="esc-link-prev" onclick="mudarAnoEscLink(-1)">‹</button>
+        <span class="ano-vis-label" id="esc-link-ano">2026</span>
+        <button class="btn-ano-vis" onclick="mudarAnoEscLink(1)">›</button>
+      </div>
+      <div class="grade-links" id="grade-links-escalas"></div>
+      <div class="hal-link-row">
+        <label>Halleluya</label>
+        <input type="url" id="link-esc-halleluya" placeholder="Cole o link do Google Sheets..." oninput="marcarInput(this)">
+      </div>
+      <button class="btn-salvar-links" id="btn-salvar-esc" onclick="salvarLinksEscalas()">💾 Salvar links de Escalas</button>
+    </div>
+  </div>
+
+  <!-- REPERTÓRIOS — VISIBILIDADE -->
+  <div class="secao-wrap">
+    <div class="secao-header"><h3>🎼 Repertórios — Visibilidade</h3></div>
     <div class="secao-body">
       <div class="ano-vis">
         <button class="btn-ano-vis" id="rep-prev" onclick="mudarAnoRep(-1)">‹</button>
@@ -108,57 +133,69 @@
       <div style="margin-top:8px;" id="hal-rep-wrap"></div>
     </div>
   </div>
+
+  <!-- REPERTÓRIOS — LINKS -->
+  <div class="secao-wrap">
+    <div class="secao-header"><h3>🎼 Repertórios — Links</h3></div>
+    <div class="secao-body">
+      <div class="ano-vis">
+        <button class="btn-ano-vis" id="rep-link-prev" onclick="mudarAnoRepLink(-1)">‹</button>
+        <span class="ano-vis-label" id="rep-link-ano">2026</span>
+        <button class="btn-ano-vis" onclick="mudarAnoRepLink(1)">›</button>
+      </div>
+      <div class="grade-links" id="grade-links-repertorios"></div>
+      <div class="hal-link-row">
+        <label>Halleluya</label>
+        <input type="url" id="link-rep-halleluya" placeholder="Cole o link do Google Sheets..." oninput="marcarInput(this)">
+      </div>
+      <button class="btn-salvar-links" id="btn-salvar-rep" onclick="salvarLinksRepertorios()">💾 Salvar links de Repertórios</button>
+    </div>
+  </div>
+
 </div>
 
 <script src="sidebar.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script src="supabase.js"></script>
 <script src="app.js"></script>
 
 <script>
-  const VIS_MESES_NOMES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-  const VIS_MESES_NUMS =  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  const ANO_MIN = 2026;
+  const MESES_NOMES  = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const MESES_FULL   = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const ANO_MIN = 2024;
 
-  let anoEsc = new Date().getFullYear();
-  let anoRep = new Date().getFullYear();
-  let escalasLiberadas = {};
+  let anoEsc     = new Date().getFullYear();
+  let anoRep     = new Date().getFullYear();
+  let anoEscLink = new Date().getFullYear();
+  let anoRepLink = new Date().getFullYear();
+
+  let escalasLiberadas    = {};
   let repertoriosLiberados = {};
+  let linksEscalas        = {};
+  let linksRepertorios    = {};
 
   async function iniciar() {
     const { data: sessao } = await supabase.auth.getSession();
     if (!sessao.session) { window.location.href = 'login.html'; return; }
+    const { data: eu } = await supabase.from('usuarios').select('papel').eq('id', sessao.session.user.id).single();
+    if (!eu || eu.papel !== 'admin') { alert('Acesso restrito.'); window.location.href = 'dashboard.html'; return; }
 
-    const { data: eu } = await supabase
-      .from('usuarios').select('papel').eq('id', sessao.session.user.id).single();
-    if (!eu || eu.papel !== 'admin') {
-      alert('Acesso restrito ao administrador.');
-      window.location.href = 'dashboard.html';
-      return;
-    }
+    const { data } = await supabase.from('configuracoes').select('*').eq('id', 2).single();
+    window._configId = data?.id || 2;
 
-    // Tenta buscar as colunas novas
-    // Busca o registro com respostas_ativas (o principal)
-    const { data, error } = await supabase
-      .from('configuracoes')
-      .select('id, escalas_liberadas, repertorios_liberados')
-      .eq('id', 2)
-      .single();
-    
-    // Guarda o id para atualizar depois
-    window._configId = data?.id || 1;
-
-    if (error) {
-      console.warn('Colunas de visibilidade não encontradas. Rode o SQL de criação.');
-    }
-
-    escalasLiberadas = data?.escalas_liberadas || {};
+    escalasLiberadas     = data?.escalas_liberadas     || {};
     repertoriosLiberados = data?.repertorios_liberados || {};
+    linksEscalas         = data?.links_escalas         || {};
+    linksRepertorios     = data?.links_repertorios     || {};
 
     renderizarEscalas();
     renderizarRepertorios();
     renderizarHalleluya();
+    renderizarLinksEscalas();
+    renderizarLinksRepertorios();
   }
+
+  // ── VISIBILIDADE ──
 
   function mudarAnoEsc(d) {
     const novo = anoEsc + d;
@@ -178,100 +215,164 @@
     renderizarRepertorios();
   }
 
-  function renderizarHalleluya() {
-    // Escala Halleluya
-    const libEsc = escalasLiberadas['halleluya'] === true;
-    const bgE = libEsc ? '#d8f0e0' : 'white';
-    const borderE = libEsc ? '#2e7d52' : '#a0b8d0';
-    const colorE = libEsc ? '#1a4a2a' : '#1a2e4a';
-    document.getElementById('hal-escala-wrap').innerHTML = `
-      <button onclick="toggleHalEscala()" style="
-        padding:10px 16px;border-radius:10px;border:2px solid ${borderE};
-        background:${bgE};font-size:11px;font-weight:700;color:${colorE};
-        cursor:pointer;font-family:'Nunito',sans-serif;margin:0;width:auto;display:inline-block;
-      ">${libEsc ? '✅' : '🔒'} Halleluya</button>`;
-
-    // Repertório Halleluya
-    const libRep = repertoriosLiberados['halleluya'] === true;
-    const bgR = libRep ? '#d8f0e0' : 'white';
-    const borderR = libRep ? '#2e7d52' : '#a0b8d0';
-    const colorR = libRep ? '#1a4a2a' : '#1a2e4a';
-    document.getElementById('hal-rep-wrap').innerHTML = `
-      <button onclick="toggleHalRep()" style="
-        padding:10px 16px;border-radius:10px;border:2px solid ${borderR};
-        background:${bgR};font-size:11px;font-weight:700;color:${colorR};
-        cursor:pointer;font-family:'Nunito',sans-serif;margin:0;width:auto;display:inline-block;
-      ">${libRep ? '✅' : '🔒'} Halleluya</button>`;
-  }
-
-  async function toggleHalEscala() {
-    escalasLiberadas['halleluya'] = !escalasLiberadas['halleluya'];
-    await salvar();
-    renderizarHalleluya();
-  }
-
-  async function toggleHalRep() {
-    repertoriosLiberados['halleluya'] = !repertoriosLiberados['halleluya'];
-    await salvar();
-    renderizarHalleluya();
-  }
-
   function renderizarEscalas() {
     document.getElementById('esc-prev').disabled = anoEsc <= ANO_MIN;
     const lib = escalasLiberadas[anoEsc] || {};
-    document.getElementById('grade-escalas').innerHTML = VIS_MESES_NOMES.map((n, i) => {
-      const num = VIS_MESES_NUMS[i];
+    document.getElementById('grade-escalas').innerHTML = MESES_NOMES.map((n, i) => {
+      const num = i + 1;
       const ok = lib[num] === true;
-      const bg = ok ? '#d8f0e0' : 'white';
-      const border = ok ? '#2e7d52' : '#a0b8d0';
-      const color = ok ? '#1a4a2a' : '#1a2e4a';
-      const label = num === 0 ? 'Hal' : n;
-      return `<button onclick="toggleEscala(${num})" style="
-        padding:10px 4px;border-radius:10px;border:2px solid ${border};
-        background:${bg};font-size:11px;font-weight:700;color:${color};
-        cursor:pointer;text-align:center;font-family:'Nunito',sans-serif;
-        margin:0;width:100%;min-height:0;display:block;
-      ">${ok ? '✅' : '🔒'} ${n}</button>`;
+      return `<button onclick="toggleEscala(${num})" class="btn-vis${ok ? ' liberado' : ''}">${ok ? '✅' : '🔒'} ${n}</button>`;
     }).join('');
   }
 
   function renderizarRepertorios() {
     document.getElementById('rep-prev').disabled = anoRep <= ANO_MIN;
     const lib = repertoriosLiberados[anoRep] || {};
-    document.getElementById('grade-repertorios').innerHTML = VIS_MESES_NOMES.map((n, i) => {
-      const num = VIS_MESES_NUMS[i];
+    document.getElementById('grade-repertorios').innerHTML = MESES_NOMES.map((n, i) => {
+      const num = i + 1;
       const ok = lib[num] === true;
-      const bg = ok ? '#d8f0e0' : 'white';
-      const border = ok ? '#2e7d52' : '#a0b8d0';
-      const color = ok ? '#1a4a2a' : '#1a2e4a';
-      const label2 = num === 0 ? 'Hal' : n;
-      return `<button onclick="toggleRepertorio(${num})" style="
-        padding:10px 4px;border-radius:10px;border:2px solid ${border};
-        background:${bg};font-size:11px;font-weight:700;color:${color};
-        cursor:pointer;text-align:center;font-family:'Nunito',sans-serif;
-        margin:0;width:100%;min-height:0;display:block;
-      ">${ok ? '✅' : '🔒'} ${n}</button>`;
+      return `<button onclick="toggleRepertorio(${num})" class="btn-vis${ok ? ' liberado' : ''}">${ok ? '✅' : '🔒'} ${n}</button>`;
     }).join('');
+  }
+
+  function renderizarHalleluya() {
+    const libEsc = escalasLiberadas['halleluya'] === true;
+    document.getElementById('hal-escala-wrap').innerHTML = `
+      <button onclick="toggleHalEscala()" style="
+        padding:10px 16px;border-radius:10px;border:2px solid ${libEsc ? '#2e7d52' : '#a0b8d0'};
+        background:${libEsc ? '#d8f0e0' : 'white'};font-size:11px;font-weight:700;
+        color:${libEsc ? '#1a4a2a' : '#1a2e4a'};cursor:pointer;font-family:'Nunito',sans-serif;
+        margin:0;width:auto;display:inline-block;">
+        ${libEsc ? '✅' : '🔒'} Halleluya</button>`;
+
+    const libRep = repertoriosLiberados['halleluya'] === true;
+    document.getElementById('hal-rep-wrap').innerHTML = `
+      <button onclick="toggleHalRep()" style="
+        padding:10px 16px;border-radius:10px;border:2px solid ${libRep ? '#2e7d52' : '#a0b8d0'};
+        background:${libRep ? '#d8f0e0' : 'white'};font-size:11px;font-weight:700;
+        color:${libRep ? '#1a4a2a' : '#1a2e4a'};cursor:pointer;font-family:'Nunito',sans-serif;
+        margin:0;width:auto;display:inline-block;">
+        ${libRep ? '✅' : '🔒'} Halleluya</button>`;
   }
 
   async function toggleEscala(num) {
     if (!escalasLiberadas[anoEsc]) escalasLiberadas[anoEsc] = {};
     escalasLiberadas[anoEsc][num] = !escalasLiberadas[anoEsc][num];
-    await salvar();
-    renderizarEscalas();
+    await salvar(); renderizarEscalas();
   }
-
   async function toggleRepertorio(num) {
     if (!repertoriosLiberados[anoRep]) repertoriosLiberados[anoRep] = {};
     repertoriosLiberados[anoRep][num] = !repertoriosLiberados[anoRep][num];
+    await salvar(); renderizarRepertorios();
+  }
+  async function toggleHalEscala() {
+    escalasLiberadas['halleluya'] = !escalasLiberadas['halleluya'];
+    await salvar(); renderizarHalleluya();
+  }
+  async function toggleHalRep() {
+    repertoriosLiberados['halleluya'] = !repertoriosLiberados['halleluya'];
+    await salvar(); renderizarHalleluya();
+  }
+
+  // ── LINKS ──
+
+  function mudarAnoEscLink(d) {
+    const novo = anoEscLink + d;
+    if (novo < ANO_MIN) return;
+    anoEscLink = novo;
+    document.getElementById('esc-link-ano').textContent = anoEscLink;
+    document.getElementById('esc-link-prev').disabled = anoEscLink <= ANO_MIN;
+    renderizarLinksEscalas();
+  }
+
+  function mudarAnoRepLink(d) {
+    const novo = anoRepLink + d;
+    if (novo < ANO_MIN) return;
+    anoRepLink = novo;
+    document.getElementById('rep-link-ano').textContent = anoRepLink;
+    document.getElementById('rep-link-prev').disabled = anoRepLink <= ANO_MIN;
+    renderizarLinksRepertorios();
+  }
+
+  function marcarInput(el) {
+    el.classList.toggle('tem-link', el.value.trim().length > 0);
+  }
+
+  function renderizarLinksEscalas() {
+    document.getElementById('esc-link-prev').disabled = anoEscLink <= ANO_MIN;
+    const links = linksEscalas[anoEscLink] || {};
+    document.getElementById('grade-links-escalas').innerHTML = MESES_FULL.map((nome, i) => {
+      const num = i + 1;
+      const val = links[num] || '';
+      return `<div class="link-row">
+        <label>${MESES_NOMES[i]}</label>
+        <input type="url" id="link-esc-${num}" value="${val}" placeholder="Cole o link do Google Sheets..."
+          class="${val ? 'tem-link' : ''}" oninput="marcarInput(this)">
+      </div>`;
+    }).join('');
+
+    // Halleluya
+    const halVal = (linksEscalas['halleluya'] || '');
+    document.getElementById('link-esc-halleluya').value = halVal;
+    document.getElementById('link-esc-halleluya').className = halVal ? 'tem-link' : '';
+  }
+
+  function renderizarLinksRepertorios() {
+    document.getElementById('rep-link-prev').disabled = anoRepLink <= ANO_MIN;
+    const links = linksRepertorios[anoRepLink] || {};
+    document.getElementById('grade-links-repertorios').innerHTML = MESES_FULL.map((nome, i) => {
+      const num = i + 1;
+      const val = links[num] || '';
+      return `<div class="link-row">
+        <label>${MESES_NOMES[i]}</label>
+        <input type="url" id="link-rep-${num}" value="${val}" placeholder="Cole o link do Google Sheets..."
+          class="${val ? 'tem-link' : ''}" oninput="marcarInput(this)">
+      </div>`;
+    }).join('');
+
+    const halVal = (linksRepertorios['halleluya'] || '');
+    document.getElementById('link-rep-halleluya').value = halVal;
+    document.getElementById('link-rep-halleluya').className = halVal ? 'tem-link' : '';
+  }
+
+  async function salvarLinksEscalas() {
+    const btn = document.getElementById('btn-salvar-esc');
+    btn.disabled = true; btn.textContent = 'Salvando...';
+
+    if (!linksEscalas[anoEscLink]) linksEscalas[anoEscLink] = {};
+    for (let i = 1; i <= 12; i++) {
+      const val = document.getElementById(`link-esc-${i}`)?.value.trim() || '';
+      linksEscalas[anoEscLink][i] = val;
+    }
+    linksEscalas['halleluya'] = document.getElementById('link-esc-halleluya').value.trim();
+
     await salvar();
-    renderizarRepertorios();
+    btn.disabled = false; btn.textContent = '✅ Salvo!';
+    setTimeout(() => { btn.textContent = '💾 Salvar links de Escalas'; }, 2000);
+  }
+
+  async function salvarLinksRepertorios() {
+    const btn = document.getElementById('btn-salvar-rep');
+    btn.disabled = true; btn.textContent = 'Salvando...';
+
+    if (!linksRepertorios[anoRepLink]) linksRepertorios[anoRepLink] = {};
+    for (let i = 1; i <= 12; i++) {
+      const val = document.getElementById(`link-rep-${i}`)?.value.trim() || '';
+      linksRepertorios[anoRepLink][i] = val;
+    }
+    linksRepertorios['halleluya'] = document.getElementById('link-rep-halleluya').value.trim();
+
+    await salvar();
+    btn.disabled = false; btn.textContent = '✅ Salvo!';
+    setTimeout(() => { btn.textContent = '💾 Salvar links de Repertórios'; }, 2000);
   }
 
   async function salvar() {
     await supabase.from('configuracoes').update({
-      escalas_liberadas: escalasLiberadas,
-      repertorios_liberados: repertoriosLiberados
+      escalas_liberadas:     escalasLiberadas,
+      repertorios_liberados: repertoriosLiberados,
+      links_escalas:         linksEscalas,
+      links_repertorios:     linksRepertorios
     }).eq('id', 2);
   }
 

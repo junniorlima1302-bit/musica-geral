@@ -197,7 +197,22 @@
   <script src="supabase.js"></script>
 
   <script>
-    let REPERTORIOS = {};
+    const REPERTORIOS = {
+      2026: {
+        1:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=531544686&single=true',
+        2:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=1099452756&single=true',
+        3:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=669226356&single=true',
+        4:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=1883124743&single=true',
+        5:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=1782742187&single=true',
+        6:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=863673809&single=true',
+        7:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=123112502&single=true',
+        8:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=718738599&single=true',
+        9:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=1239180923&single=true',
+        10: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=57333792&single=true',
+        11: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=643276376&single=true',
+        12: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=1653566941&single=true',
+      }
+    };
 
     const MESES = [
       { num: 1,  nome: 'Janeiro'   },
@@ -207,7 +222,7 @@
       { num: 5,  nome: 'Maio'      },
       { num: 6,  nome: 'Junho'     },
       { num: 7,  nome: 'Julho'     },
-      { num: 0, nome: 'Halleluya', url: REPERTORIOS['halleluya'] || '', fixo: true },
+      { num: 0,  nome: 'Halleluya', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=1424286698&single=true', fixo: true },
       { num: 8,  nome: 'Agosto'    },
       { num: 9,  nome: 'Setembro'  },
       { num: 10, nome: 'Outubro'   },
@@ -223,11 +238,10 @@
     async function carregarConfig() {
       const { data } = await supabase
         .from('configuracoes')
-        .select('repertorios_liberados, links_repertorios')
+        .select('repertorios_liberados')
         .eq('id', 2)
         .single();
       repertoriosLiberados = data?.repertorios_liberados || {};
-      REPERTORIOS = data?.links_repertorios || {};
       renderizarGrade();
     }
 

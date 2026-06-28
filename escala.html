@@ -198,13 +198,22 @@
   <script src="supabase.js"></script>
 
   <script>
-    // Links carregados do banco (configurados em Visibilidade)
-    let ESCALAS = {};
-
-    async function carregarLinksEscalas() {
-      const { data } = await supabase.from('configuracoes').select('links_escalas').eq('id', 2).single();
-      ESCALAS = data?.links_escalas || {};
-    }
+    const ESCALAS = {
+      2026: {
+        1:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTagfHmQa28E6o31u3zpBc_PukU8TasS5EaB3nmcgPSB5yorbdvegDIqZhHUBkP586uSRWJNZiTKdJ3/pubhtml?gid=730728701&single=true',
+        2:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTagfHmQa28E6o31u3zpBc_PukU8TasS5EaB3nmcgPSB5yorbdvegDIqZhHUBkP586uSRWJNZiTKdJ3/pubhtml?gid=988997767&single=true',
+        3:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTagfHmQa28E6o31u3zpBc_PukU8TasS5EaB3nmcgPSB5yorbdvegDIqZhHUBkP586uSRWJNZiTKdJ3/pubhtml?gid=648709550&single=true',
+        4:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTagfHmQa28E6o31u3zpBc_PukU8TasS5EaB3nmcgPSB5yorbdvegDIqZhHUBkP586uSRWJNZiTKdJ3/pubhtml?gid=2143851099&single=true',
+        5:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTagfHmQa28E6o31u3zpBc_PukU8TasS5EaB3nmcgPSB5yorbdvegDIqZhHUBkP586uSRWJNZiTKdJ3/pubhtml?gid=0&single=true',
+        6:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTagfHmQa28E6o31u3zpBc_PukU8TasS5EaB3nmcgPSB5yorbdvegDIqZhHUBkP586uSRWJNZiTKdJ3/pubhtml?gid=490700562&single=true',
+        7:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTagfHmQa28E6o31u3zpBc_PukU8TasS5EaB3nmcgPSB5yorbdvegDIqZhHUBkP586uSRWJNZiTKdJ3/pubhtml?gid=1572787071&single=true',
+        8:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTagfHmQa28E6o31u3zpBc_PukU8TasS5EaB3nmcgPSB5yorbdvegDIqZhHUBkP586uSRWJNZiTKdJ3/pubhtml?gid=1581535435&single=true',
+        9:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTagfHmQa28E6o31u3zpBc_PukU8TasS5EaB3nmcgPSB5yorbdvegDIqZhHUBkP586uSRWJNZiTKdJ3/pubhtml?gid=421089766&single=true',
+        10: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTagfHmQa28E6o31u3zpBc_PukU8TasS5EaB3nmcgPSB5yorbdvegDIqZhHUBkP586uSRWJNZiTKdJ3/pubhtml?gid=1851774441&single=true',
+        11: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTagfHmQa28E6o31u3zpBc_PukU8TasS5EaB3nmcgPSB5yorbdvegDIqZhHUBkP586uSRWJNZiTKdJ3/pubhtml?gid=1895725809&single=true',
+        12: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTagfHmQa28E6o31u3zpBc_PukU8TasS5EaB3nmcgPSB5yorbdvegDIqZhHUBkP586uSRWJNZiTKdJ3/pubhtml?gid=12955142&single=true',
+      }
+    };
 
     const MESES = [
       { num: 1,  nome: 'Janeiro'   },
@@ -214,7 +223,7 @@
       { num: 5,  nome: 'Maio'      },
       { num: 6,  nome: 'Junho'     },
       { num: 7,  nome: 'Julho'     },
-      { num: 0, nome: 'Halleluya', url: ESCALAS['halleluya'] || '', fixo: true },
+      { num: 0,  nome: 'Halleluya', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTagfHmQa28E6o31u3zpBc_PukU8TasS5EaB3nmcgPSB5yorbdvegDIqZhHUBkP586uSRWJNZiTKdJ3/pubhtml?gid=1457402506&single=true', fixo: true },
       { num: 8,  nome: 'Agosto'    },
       { num: 9,  nome: 'Setembro'  },
       { num: 10, nome: 'Outubro'   },
@@ -230,11 +239,10 @@
     async function carregarConfig() {
       const { data } = await supabase
         .from('configuracoes')
-        .select('escalas_liberadas, links_escalas')
+        .select('escalas_liberadas')
         .eq('id', 2)
         .single();
       escalasLiberadas = data?.escalas_liberadas || {};
-      ESCALAS = data?.links_escalas || {};
       renderizarGrade();
     }
 

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Links — Escalas e Repertórios</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#1b4580">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .secao-wrap { border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.10); margin-top: 16px; }
+    .secao-header { background: #7a9ec4; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .secao-header h3 { color: #1a2e4a; font-size: 14px; margin: 0; font-weight: 700; }
+    .secao-body { background: #cfd8e8; padding: 14px; }
+
+    .ano-nav { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; }
+    .btn-ano {
+      width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid #a0b8d0;
+      background: white; font-size: 14px; cursor: pointer; display: flex;
+      align-items: center; justify-content: center; transition: 0.2s;
+      padding: 0; margin: 0; color: #1a2e4a;
+    }
+    .btn-ano:hover { background: #eaf0f8; }
+    .btn-ano:disabled { opacity: 0.3; cursor: not-allowed; }
+    .ano-label { font-size: 16px; font-weight: 800; color: #1a2e4a; min-width: 50px; text-align: center; }
+
+    .grade-links { display: flex; flex-direction: column; gap: 8px; }
+    .link-row {
+      display: flex; align-items: center; gap: 10px; background: white;
+      border-radius: 10px; padding: 10px 12px; border: 1px solid #a0b8d0;
+    }
+    .link-row label { font-size: 12px; font-weight: 700; color: #1a2e4a; min-width: 36px; }
+    .link-row input {
+      flex: 1; border: 1px solid #a0b8d0; border-radius: 8px; padding: 8px 10px;
+      font-size: 12px; color: #1a2e4a; background: #eaf0f8;
+      font-family: 'Nunito', sans-serif; margin: 0;
+    }
+    .link-row input.tem-link { background: #d8f0e0; border-color: #2e7d52; }
+    .hal-row {
+      display: flex; align-items: center; gap: 10px; background: white;
+      border-radius: 10px; padding: 10px 12px; border: 1px solid #a0b8d0; margin-top: 8px;
+    }
+    .hal-row label { font-size: 12px; font-weight: 700; color: #1a2e4a; min-width: 62px; }
+    .hal-row input {
+      flex: 1; border: 1px solid #a0b8d0; border-radius: 8px; padding: 8px 10px;
+      font-size: 12px; color: #1a2e4a; background: #eaf0f8;
+      font-family: 'Nunito', sans-serif; margin: 0;
+    }
+    .hal-row input.tem-link { background: #d8f0e0; border-color: #2e7d52; }
+    .btn-salvar {
+      margin-top: 12px; width: 100%; padding: 12px; background: #1b4580;
+      color: white; border: none; border-radius: 10px; font-size: 14px;
+      font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif;
+      transition: 0.2s;
+    }
+    .btn-salvar:hover { background: #153560; }
+    .btn-salvar:disabled { opacity: 0.6; cursor: not-allowed; }
+  </style>
+</head>
+<body class="admin-page">
+<div class="admin-box">
+  <h2>🔗 Links — Escalas e Repertórios</h2>
+  <button class="btn-voltar" onclick="window.location.href='dashboard.html'">← Voltar</button>
+  <p style="font-size:13px;color:#5a7a9a;margin-bottom:4px;">Cole os links do Google Sheets para cada mês. O campo fica verde quando tem link salvo.</p>
+
+  <!-- ESCALAS -->
+  <div class="secao-wrap">
+    <div class="secao-header"><h3>📋 Escalas</h3></div>
+    <div class="secao-body">
+      <div class="ano-nav">
+        <button class="btn-ano" id="esc-prev" onclick="mudarAno('esc', -1)">‹</button>
+        <span class="ano-label" id="esc-ano">2026</span>
+        <button class="btn-ano" onclick="mudarAno('esc', 1)">›</button>
+      </div>
+      <div class="grade-links" id="grade-esc"></div>
+      <div class="hal-row">
+        <label>Halleluya</label>
+        <input type="url" id="esc-halleluya" placeholder="Cole o link do Google Sheets..." oninput="marcar(this)">
+      </div>
+      <button class="btn-salvar" id="btn-esc" onclick="salvar('esc')">💾 Salvar links de Escalas</button>
+    </div>
+  </div>
+
+  <!-- REPERTÓRIOS -->
+  <div class="secao-wrap">
+    <div class="secao-header"><h3>🎼 Repertórios</h3></div>
+    <div class="secao-body">
+      <div class="ano-nav">
+        <button class="btn-ano" id="rep-prev" onclick="mudarAno('rep', -1)">‹</button>
+        <span class="ano-label" id="rep-ano">2026</span>
+        <button class="btn-ano" onclick="mudarAno('rep', 1)">›</button>
+      </div>
+      <div class="grade-links" id="grade-rep"></div>
+      <div class="hal-row">
+        <label>Halleluya</label>
+        <input type="url" id="rep-halleluya" placeholder="Cole o link do Google Sheets..." oninput="marcar(this)">
+      </div>
+      <button class="btn-salvar" id="btn-rep" onclick="salvar('rep')">💾 Salvar links de Repertórios</button>
+    </div>
+  </div>
+</div>
+
+<script src="sidebar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="supabase.js"></script>
+<script src="app.js"></script>
+
+<script>
+  const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const ANO_MIN = 2024;
+
+  let anoEsc = new Date().getFullYear();
+  let anoRep = new Date().getFullYear();
+  let linksEsc = {};
+  let linksRep = {};
+
+  async function iniciar() {
+    const { data: sessao } = await supabase.auth.getSession();
+    if (!sessao.session) { window.location.href = 'login.html'; return; }
+    const { data: eu } = await supabase.from('usuarios').select('papel').eq('id', sessao.session.user.id).single();
+    if (!eu || eu.papel !== 'admin') { alert('Acesso restrito.'); window.location.href = 'dashboard.html'; return; }
+
+    const { data } = await supabase.from('configuracoes').select('links_escalas, links_repertorios').eq('id', 2).single();
+    linksEsc = data?.links_escalas    || {};
+    linksRep = data?.links_repertorios || {};
+
+    renderizar('esc');
+    renderizar('rep');
+  }
+
+  function mudarAno(tipo, d) {
+    if (tipo === 'esc') {
+      const novo = anoEsc + d;
+      if (novo < ANO_MIN) return;
+      anoEsc = novo;
+      document.getElementById('esc-ano').textContent = anoEsc;
+      document.getElementById('esc-prev').disabled = anoEsc <= ANO_MIN;
+    } else {
+      const novo = anoRep + d;
+      if (novo < ANO_MIN) return;
+      anoRep = novo;
+      document.getElementById('rep-ano').textContent = anoRep;
+      document.getElementById('rep-prev').disabled = anoRep <= ANO_MIN;
+    }
+    renderizar(tipo);
+  }
+
+  function marcar(el) {
+    el.classList.toggle('tem-link', el.value.trim().length > 0);
+  }
+
+  function renderizar(tipo) {
+    const ano  = tipo === 'esc' ? anoEsc : anoRep;
+    const links = tipo === 'esc' ? (linksEsc[ano] || {}) : (linksRep[ano] || {});
+    const halVal = tipo === 'esc' ? (linksEsc['halleluya'] || '') : (linksRep['halleluya'] || '');
+
+    document.getElementById(`grade-${tipo}`).innerHTML = MESES.map((nome, i) => {
+      const num = i + 1;
+      const val = links[num] || '';
+      return `<div class="link-row">
+        <label>${nome}</label>
+        <input type="url" id="${tipo}-${num}" value="${val}"
+          placeholder="Cole o link do Google Sheets..."
+          class="${val ? 'tem-link' : ''}" oninput="marcar(this)">
+      </div>`;
+    }).join('');
+
+    const halInput = document.getElementById(`${tipo}-halleluya`);
+    halInput.value = halVal;
+    halInput.className = halVal ? 'tem-link' : '';
+
+    document.getElementById(`${tipo}-prev`).disabled = (tipo === 'esc' ? anoEsc : anoRep) <= ANO_MIN;
+  }
+
+  async function salvar(tipo) {
+    const btn = document.getElementById(`btn-${tipo}`);
+    btn.disabled = true;
+    btn.textContent = 'Salvando...';
+
+    const ano = tipo === 'esc' ? anoEsc : anoRep;
+    const links = tipo === 'esc' ? linksEsc : linksRep;
+
+    if (!links[ano]) links[ano] = {};
+    for (let i = 1; i <= 12; i++) {
+      const val = document.getElementById(`${tipo}-${i}`)?.value.trim() || '';
+      if (val) links[ano][i] = val;
+      else delete links[ano][i];
+    }
+    const halVal = document.getElementById(`${tipo}-halleluya`).value.trim();
+    if (halVal) links['halleluya'] = halVal;
+    else delete links['halleluya'];
+
+    const update = tipo === 'esc'
+      ? { links_escalas: linksEsc }
+      : { links_repertorios: linksRep };
+
+    const { error } = await supabase.from('configuracoes').update(update).eq('id', 2);
+
+    btn.disabled = false;
+    if (error) {
+      btn.textContent = '❌ Erro ao salvar';
+      setTimeout(() => btn.textContent = tipo === 'esc' ? '💾 Salvar links de Escalas' : '💾 Salvar links de Repertórios', 2000);
+    } else {
+      btn.textContent = '✅ Salvo!';
+      setTimeout(() => btn.textContent = tipo === 'esc' ? '💾 Salvar links de Escalas' : '💾 Salvar links de Repertórios', 2000);
+    }
+  }
+
+  iniciar();
+</script>
+</body>
+</html>

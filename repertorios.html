@@ -197,7 +197,7 @@
   <script src="supabase.js"></script>
 
   <script>
-    const REPERTORIOS = {
+    const REPERTORIOS_FIXOS = {
       2026: {
         1:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=531544686&single=true',
         2:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=1099452756&single=true',
@@ -214,6 +214,9 @@
       }
     };
 
+    let REPERTORIOS_BANCO = {};
+    let REPERTORIOS = { ...REPERTORIOS_FIXOS };
+
     const MESES = [
       { num: 1,  nome: 'Janeiro'   },
       { num: 2,  nome: 'Fevereiro' },
@@ -222,7 +225,7 @@
       { num: 5,  nome: 'Maio'      },
       { num: 6,  nome: 'Junho'     },
       { num: 7,  nome: 'Julho'     },
-      { num: 0,  nome: 'Halleluya', url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=1424286698&single=true', fixo: true },
+      { num: 0, nome: 'Halleluya', url: REPERTORIOS['halleluya'] || 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTr65QLWl-yL_TZov0sA7vEZmuFCmjqkOogHrw5geP58Wd4IEESGToOF7YRts6yiJ1E9_GpbU56YSBK/pubhtml?gid=1424286698&single=true', fixo: true },
       { num: 8,  nome: 'Agosto'    },
       { num: 9,  nome: 'Setembro'  },
       { num: 10, nome: 'Outubro'   },
@@ -238,10 +241,20 @@
     async function carregarConfig() {
       const { data } = await supabase
         .from('configuracoes')
-        .select('repertorios_liberados')
+        .select('repertorios_liberados, links_repertorios')
         .eq('id', 2)
         .single();
       repertoriosLiberados = data?.repertorios_liberados || {};
+      REPERTORIOS_BANCO = data?.links_repertorios || {};
+      // Mescla: banco tem prioridade sobre hardcoded
+      REPERTORIOS = { ...REPERTORIOS_FIXOS };
+      Object.keys(REPERTORIOS_BANCO).forEach(ano => {
+        if (!REPERTORIOS[ano]) REPERTORIOS[ano] = {};
+        Object.keys(REPERTORIOS_BANCO[ano] || {}).forEach(mes => {
+          if (REPERTORIOS_BANCO[ano][mes]) REPERTORIOS[ano][mes] = REPERTORIOS_BANCO[ano][mes];
+        });
+      });
+      if (REPERTORIOS_BANCO['halleluya']) REPERTORIOS['halleluya'] = REPERTORIOS_BANCO['halleluya'];
       renderizarGrade();
     }
 

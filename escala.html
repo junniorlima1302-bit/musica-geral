@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>Escala</title>
   <link rel="stylesheet" href="style.css">
   <meta name="theme-color" content="#1b4580">
@@ -134,18 +134,15 @@
 
   .iframe-wrap {
     overflow: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   iframe {
-    min-width: unset;
-
-    width: 160%;
-    height: 160%;
-
-    transform: scale(0.62);
-    transform-origin: top left;
-
-    margin-top: -15px;
+    min-width: 900px;
+    width: 900px;
+    height: 100%;
+    margin-top: -30px;
+    transform: none;
   }
 }
   </style>

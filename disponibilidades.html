@@ -807,6 +807,14 @@
 
       // Recarrega contagem de pendentes do banco
       await carregarEdicoes();
+
+      // Recarrega a tela principal de disponibilidades para refletir a mudança validada
+      await carregarRespostasComMes();
+
+      // Se o modal de status (Responderam/Pendentes) estiver aberto, atualiza também
+      if (document.getElementById('modal-status')?.classList.contains('aberto')) {
+        await carregarStatus();
+      }
     }
 
     async function fecharModalEdicoes() {

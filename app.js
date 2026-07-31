@@ -1122,18 +1122,34 @@ async function renderizarRespostas(respostasFiltradas) {
     const tipoBase = dadosPessoa.find(r => !r._semResposta)?.tipo || membroBase?.tipo;
     const instrBase = dadosPessoa.find(r => !r._semResposta)?.instrumento || membroBase?.instrumento;
 
+    // Registros especiais: "não posso em nenhuma data" / "posso em todas as datas".
+    // Eles não têm evento/turno reais, então nunca batem com nenhum compromisso —
+    // por isso precisam ser tratados à parte, ou a pessoa acaba aparecendo (ou
+    // sumindo) em TODOS os compromissos por engano.
+    const temNenhumaData = dadosPessoa.some(r => r.nenhuma_data === true || r.evento === "__NENHUMA_DATA__");
+    const temTodasDatas  = dadosPessoa.some(r => r.todas_datas  === true || r.evento === "__TODAS_DATAS__");
+
     compromissosFiltrados.forEach(comp => {
 
       const chave = `${comp.nome}|||${comp.turno}`;
 
-      const marcou = dadosPessoa.find(r =>
-        r.evento === comp.nome &&
-        r.turno === comp.turno
-      );
+      // Compara por compromisso_id (estável mesmo se o nome/turno do evento
+      // for editado depois). Só cai para comparação de texto (normalizada,
+      // sem acento/maiúsculas/espaços) em registros antigos sem compromisso_id.
+      const marcou = dadosPessoa.find(r => {
+        if (r.compromisso_id && comp.id) {
+          return r.compromisso_id === comp.id;
+        }
+        return normalizar(r.evento) === normalizar(comp.nome) &&
+               normalizar(r.turno) === normalizar(comp.turno);
+      });
 
       if (ministerio === "Música Geral") {
         // 👉 marcou = NÃO pode → aparece quem NÃO marcou (inclui quem não tem nenhuma resposta)
-        if (!marcou) {
+        // "Não posso em nenhuma data" = marcou tudo → nunca aparece.
+        // "Posso em todas as datas" = não marcou nada → aparece sempre.
+        const disponivel = temNenhumaData ? false : (temTodasDatas ? true : !marcou);
+        if (disponivel) {
           // Coleta IDs de todas as respostas desta pessoa neste evento/turno para exclusão precisa
           const idsResposta = dadosPessoa.map(r => r.id).filter(Boolean);
           agrupado[chave].push({
@@ -1148,7 +1164,10 @@ async function renderizarRespostas(respostasFiltradas) {
         }
       } else {
         // 👉 marcou = PODE
-        if (marcou) {
+        // "Posso em todas as datas" = disponível em tudo mesmo sem registro por evento.
+        // "Não posso em nenhuma data" = nunca aparece.
+        const disponivel = temNenhumaData ? false : (temTodasDatas ? true : !!marcou);
+        if (disponivel) {
           const idsResposta = dadosPessoa.map(r => r.id).filter(Boolean);
           agrupado[chave].push({
             nome: pessoa,
